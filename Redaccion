@@ -1,0 +1,72 @@
+---
+title: "Indice AKATU: Propuesta de Medicion para el Consumo Consciente"
+title-es: "Índice AKATU: Propuesta de medición para el consumo consciente"
+running-title: "Índice AKATU"
+
+author:
+  - name: Nicolás Outerbridge
+    email: nicolas.outerbridge@ug.uchile.cl
+    affiliations:
+      - ref: 1
+  - name: Alejandro Marambio
+    affiliations:
+      - ref: 2
+
+affiliations:
+  - id: 1
+    name: Departamento de Sociología, Universidad de Chile
+  - id: 2
+    name: Departamento de Trabajo Social, Universidad de Chile
+
+format:
+  docx:
+    reference-doc: psicothema-reference.docx
+    fig-width: 5.51
+    fig-height: 3.5
+    fig-dpi: 300
+    toc: false
+    number-sections: false
+    highlight-style: none
+
+lang: es
+
+bibliography: "AKATU.bib"
+csl: "apa.csl"
+
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+### Introducción
+
+El consumo consciente se define como una práctica en la que el consumidor deja de ser un simple espectador para convertirse en un participante activo que busca soluciones sostenibles (Santos y Vasconcelos, 2022). Según el Instituto Akatu (2006), este tipo de consumo implica que el individuo analice los impactos de sus elecciones ya sean positivos o negativos sobre sí mismo; las relaciones sociales, la economía y la naturaleza, buscando un equilibrio entre sus necesidades personales y las del planeta. Por lo tanto, no se trata solo de la compra, sino de un acto de movilización para construir un mundo mejor a través del poder de elección del ciudadano (Bierwagen, 2016; Silva y Oliveira, 2012).
+
+El consumo sustentable es descrito como aquel patrón de consumo que satisface las necesidades de las generaciones presentes sin comprometer las capacidades de las generaciones futuras (Ham et al., 2018, citando a Brundtland, 1987). Este concepto se vincula estrechamente con la búsqueda de estrategias que permitan la concienciación de las "corresponsabilidades" frente a la decisión de compra (Acuña-Moraga y Severino-González, 2018). Además, se entiende como una convergencia entre la responsabilidad social y la preservación del medio ambiente, motivando el diseño de modelos que disminuyan la pérdida de recursos (Severino-González et al., 2020).
+
+El consumo responsable en contextos específicos, como el chileno, se ha fragmentado en tipologías que van desde el consumidor "indiferente" hasta el "consciente", siendo este último aquel que reconoce prácticas explícitas de protección ambiental y posee un alto nivel de educación (Ariztía et al., 2009). Por su parte, el comportamiento del consumidor socialmente responsable se centra en las intenciones de compra influenciadas por preocupaciones sociales y ambientales, donde el individuo utiliza su poder de mercado para incentivar prácticas corporativas éticas (Han y Stoel, 2016; Boccia y Sarnacchiaro, 2017).
+
+El consumo ético explora cómo los consumidores consideran los estándares de producción y si estos cumplen con aspectos morales, aunque a menudo se enfrentan al fenómeno de las "excusas baratas" o licencias morales para optar por productos menos éticos (Engel y Szech, 2020). Finalmente, el consumidor verde es analizado desde el constructo del comportamiento de compra basado específicamente en el conocimiento ambiental, el afecto ambiental y la preocupación ecológica, especialmente en sectores como el de cosméticos (Larios-Gómez, 2018).
+
+#####
+
+Silva (2011), propone una escala de ampliacion de complejidad en la que las diversas practicas reponsables se encadenan jeraquicamente para un nuevo pradigma; de tal forma que el consumo verde compone el nivel mas basico, el consumo consciente se constituye como una vision ampliada; y el consumo sustentable como el mas complejo de accion individual.
+
+
+### Mediciónes.
+
+Para medir los diferentes tipos de consumo, se han desarrollado diversos instrumentos como el Índice de Consumo Consciente (ICC), el cual evalúa dimensiones sociales, ambientales y personales mediante una escala de frecuencia de acciones (Instituto Akatu, 2005), y la escala de los 12 principios del consumo consciente, utilizada para analizar actitudes específicas en grupos académicos y ciudadanos (Santos y Vasconcelos, 2022). Otros enfoques incluyen el modelo KAB, que vincula el conocimiento y la actitud con el comportamiento final de compra (Boccia et al., 2017), y la medición de constructos como el afecto ambiental y la preocupación ecológica para entender al consumidor verde (Larios-Gómez, 2018). Estos instrumentos comparten indicadores comunes relacionados con la gestión de recursos básicos, como el ahorro de agua, luz, la separación de residuos y la planificación sistemática de las compras para evitar el exceso (Acuña-Moraga y Severino-González, 2018). Sin embargo, presentan diferencias en su enfoque, pues mientras unos se centran en el comportamiento reportado y la segmentación conductual, otros profundizan en las variables cognitivas y las motivaciones psicológicas detrás del acto de compra (Boccia et al., 2017; Larios-Gómez, 2019). Para el caso de Chile se implementó una adaptación de la metodología y la escala jerárquica del Instituto Akatu a través de la Encuesta Nacional de Percepciones y Actitudes Sociales, lo que permitió segmentar a la población chilena bajo los mismos criterios de conciencia ambiental y responsabilidad ciudadana (Ariztía, Melero y Montero, 2009).
+
+### Analisis factorial.
+
+El análisis factorial (AF) se define como un procedimiento estadístico diseñado para identificar variables latentes con el fin de confirmar, proponer o refutar las dimensiones cuantitativas de un modelo (Garrido et al., 2023). Su función primordial es reducir un grupo homogéneo de variables que guardan correlación entre sí, buscando el número mínimo de factores capaces de explicar la máxima cantidad de información contenida en los datos recolectados (Garrido et al., 2023). Desde una perspectiva causal, este análisis parte de la premisa de que los conceptos medidos (variables latentes) existen y son los que causan la variación en las medidas observables o ítems (Martínez & Martínez, 2009).
+
+### Metodología
+
+Se aplico la prueba de esfericidad de Bartlett para evaluar la adecuación de los datos para el análisis factorial, obteniendo un valor de 6661.319, lo que indica que las variables están correlacionadas y son aptas para este tipo de análisis. Además, se calculó el índice Kaiser-Meyer-Olkin (KMO) para medir la adecuación muestral, obteniendo un valor de 0.82 lo que sugiere que la muestra es adecuada para realizar un análisis factorial.
+
+Posteriormente, se determino la estructura optima del cosntructo mediante analisis factorial exploratorio sobre la primera mitad de la muestra; luego se confirmo la estructura para la segunda mitad de la muestra mediante analisis factorial confirmatorio. 
+
+
