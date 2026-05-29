@@ -1,121 +1,151 @@
 ---
-title: "Reporte de Reproducibilidad"
-subtitle: "Artículo: [título del artículo a reproducir]
- <br><a href='https://github.com/data-soc/template-repro' target='_blank' ><i class='bi bi-github'></i></a>" # reemplazar con dirección al repositorio del proyecto
+title: "Indice AKATU: Propuesta de Medicion para el Consumo Consciente"
+title-es: "Índice AKATU: Propuesta de medición para el consumo consciente"
+running-title: "Índice AKATU"
+
 author:
-  - name: Autor 1
-    email: mail@mail.com 
+  - name: Nicolás Outerbridge
+    email: nicolas.outerbridge@ug.uchile.cl
+    corresponding: true
     affiliations:
       - ref: 1
-  - name: Autor 2
-    email: mail@mail.com 
+  - name: Alejandro Marambio
     affiliations:
-      - ref: 1
-  - name: Autor 3
-    email: mail@mail.com 
-    affiliations:
-      - ref: 1 
-affiliations: 
+      - ref: 2
+
+affiliations:
   - id: 1
     name: Departamento de Sociología, Universidad de Chile
+  - id: 2
+    name: Departamento de Trabajo Social, Universidad de Chile
+
+lang: es
 date: today
-lang: "es"
-fontsize: 13pt
+
+bibliography: "input/bib/akatu.bib"
+csl: "input/bib/apa.csl"
+
+# Fuente y formato global (aplica a PDF)
+fontsize: 12pt
+mainfont: Times New Roman
+linestretch: 2          # doble espacio — Psicothema
+link-citations: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+
 format:
+
   html:
-    code-fold: true
-    code-summary: "Show the code"
     toc: true
     toc-location: right
     toc-depth: 2
-    toc-expand: 2
     toc-title: Contenidos
     number-sections: true
     number-depth: 3
-    theme:
-        - libs/ocs.scss
+    theme: cosmo
+    code-fold: true
     code-link: true
     title-block-banner: true
     include-in-header:
       text: |
         <style>
-          h1.title {
-            color: #ffffff !important;
+          body {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            line-height: 2 !important;
+            text-align: left !important;
           }
-          .subtitle {
-            color: #ffffff !important;
-          }x
+          p { text-indent: 1.25cm; margin-bottom: 0; }
+          h1, h2, h3 {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            font-weight: bold;
+            text-indent: 0;
+          }
+          table, figure { line-height: 1.2 !important; }
+          h1.title, .subtitle { color: #ffffff !important; }
         </style>
+
+  docx:
+
+    toc: false
+    number-sections: false
+    highlight-style: none
+
   pdf:
-    toc: true
-    number-sections: true
-    geometry: margin=2.5cm
-editor_options: 
-  chunk_output_type: console
-# bibliography: "input/bib/mi_coleccion.bib"
-csl: "input/bib/apa6.csl"
+    geometry: "margin=3cm"    # márgenes 3 cm — Psicothema
+    toc: false
+    number-sections: false
+    colorlinks: true
+    keep-tex: false
+    include-in-header:
+      text: |
+        \usepackage{setspace}
+        \setlength{\parindent}{1.25cm}
+        \pagestyle{plain}
+        \usepackage{fancyhdr}
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyfoot[R]{\thepage}
+        \renewcommand{\headrulewidth}{0pt}
 ---
 
+### Introducción
 
+En las últimas décadas, las democracias occidentales han experimentado una notable diversificación en los repertorios de acción política. Mientras que las formas tradicionales de participación, como el voto o la militancia en partidos, muestran signos de declive en cuanto a su popularidad, han emergido formas de compromiso individualizadas y no institucionalizadas que desafían las concepciones clásicas de ciudadanía. En este escenario, el consumismo político se ha consolidado como una de las prácticas más extendidas, llegando a ser, en ciertos contextos, la forma de participación por excelencia. No obstante, su medición y conceptualización técnica han generado debate en la literatura contemporánea, resultando en propuestas que buscan descifrar qué impulsa a un ciudadano a utilizar su poder de compra como una herramienta de transformación social.
+Copeland (2013) justifica la necesidad de profundizar en este fenómeno argumentando que el consumo consciente no debe ser tratado como un acto homogéneo. Para Copeland, la clave de la medición reside en la distinción conceptual entre el boicot (orientado al castigo) y el buycott (orientado a la recompensa), los cuales responden a lógicas ciudadanas distintas. Según su planteamiento, mientras el boicot se vincula a normas de ciudadanía del deber (más cercanas a la política tradicional de intereses), el buycott refleja normas de ciudadanía comprometida, donde el individuo busca soluciones colectivas a través de redes sociales informales y el altruismo. Así, Copeland sostiene que la medición tradicional, que a menudo combina ambos actos, pierde de vista los matices normativos que definen al nuevo consumidor-ciudadano.
 
-# Selección de artículo/reporte
+Ackermann (2020) complementa esta la discusión al enfocarse en las raíces psicológicas del comportamiento, argumentando que las disposiciones internas son esenciales para entender por qué los individuos optan por estas vías de acción política. Al ser el consumo político una práctica altamente individualizada que no depende de la movilización de redes colectivas, los rasgos de personalidad adquieren una relevancia mayor para satisfacer necesidades psicológicas inmediatas. Basándose en el modelo de los "Big Five", Ackermann identifica que la apertura a la experiencia es el motor principal tanto del boicot como del buycott, ya que las personas curiosas se sienten atraídas por temas globales y estilos de vida alternativos. En contraste, la escrupulosidad tiende a inhibir este tipo de consumo, pues estos individuos suelen preferir acciones institucionales que perciben como su "deber cívico" tradicional. Además, esta autora refuerza la distinción de Copeland mediante el rasgo de amabilidad: mientras que las personas amables evitan el boicot por su carácter conflictivo y punitivo, no presentan la misma aversión hacia el buycott, percibido como un acto cooperativo de recompensa. Por último, Ackermann sostiene que la influencia de la personalidad en el consumo consciente es independiente de las actitudes políticas, lo que sugiere que la medición del fenómeno debe integrar variables psicográficas para ser realmente predictiva.
 
-- Referencia del artículo seleccionado
-- Breve resumen del artículo seleccionado
-- Justificación de la selección del artículo
+Aquello que en la discusión contemporánea anteriormente mencionada se denomina como consumismo político (Ackermann, 2020; Copeland, 2013) ha sido objeto de estudio previo a través de una diversidad de términos que, aunque presentan matices conceptuales, comparten la raíz de integrar valores éticos, sociales y ambientales en las decisiones de compra. La bibliografía reconoce una frecuente "confusión terminológica" y el uso indiscriminado de estos conceptos en la literatura académica y oficial (Bierwagen, 2016; Silva, Oliveira & Gómez, 2013; Santos & Vasconcelos, 2022).
 
-# Evaluación de reproducibilidad
+Dentro de esta variedad, destacan el consumo consciente, definido primordialmente por actitudes y comportamientos de carácter individual (Silva, 2012; Instituto Akatu, 2007), y el consumo sustentable, que se posiciona como un fenómeno colectivo y político resultante de las interrelaciones entre ciudadanos, empresas y gobiernos (Silva, 2012; Portilho, 2005). De igual manera, el fenómeno se ha abordado mediante el concepto de consumo responsable (o socialmente responsable), el cual se caracteriza por un consumidor que toma en consideración las consecuencias públicas de sus decisiones privadas (Ariztía, Melero & Montero, 2009; Webster, 1975), y el consumo ético, centrado en la adquisición de productos con el mínimo impacto negativo sobre la sociedad y el medio ambiente (Harrison, Newholm & Shaw, 2005).
 
-Análisis detallado del artículo seleccionado, evaluando los siguientes aspectos:
+Todos estos enfoques convergen en la transición del "ciudadano consumidor" al "consumidor-ciudadano" (Instituto Akatu, 2004; Santos, Leite, Tacconi & Alexandre, 2008), validando el acto de compra como un ejercicio de poder transformador y una herramienta de movilización ciudadana análoga al sufragio (Ariztía et al., 2009)
 
-  -   **Disponibilidad de datos**: ¿El artículo proporciona acceso a los datos utilizados en el estudio? Si no es así, ¿qué dificultades se enfrentaron para obtener los datos?
-  -   **Disponibilidad de código**: ¿El artículo proporciona acceso al código utilizado para el análisis? Si es así, ¿cómo se puede acceder?
-  -   **Documentación**: ¿El artículo incluye una descripción clara de los métodos y procedimientos utilizados en el estudio? ¿Es suficiente para que otro investigador pueda replicar el estudio?
-  -   **Transparencia**: ¿El artículo proporciona información sobre los posibles conflictos de interés, financiamiento, y otros aspectos relacionados con la transparencia de la investigación?   
+## Tipos de consumo
 
-# Análisis reproducible
+### Consumo consciente
+El consumo consciente se define como una práctica en la que el consumidor deja de ser un simple espectador para convertirse en un participante activo que busca soluciones sostenibles (Santos y Vasconcelos, 2022). Según el Instituto Akatu (2006), este tipo de consumo implica que el individuo analice los impactos de sus elecciones ya sean positivos o negativos sobre sí mismo; las relaciones sociales, la economía y la naturaleza, buscando un equilibrio entre sus necesidades personales y las del planeta. Por lo tanto, no se trata solo de la compra, sino de un acto de movilización para construir un mundo mejor a través del poder de elección del ciudadano (Bierwagen, 2016; Silva y Oliveira, 2012).
 
-Seleccionar un resultado específico del artículo (por ejemplo, una tabla de resultados o una figura) y tratar de reproducirlo utilizando los datos y el código proporcionados. Documentar el proceso de reproducción, incluyendo cualquier dificultad encontrada y cómo se resolvió.
+### Consumo sustentable
+El consumo sustentable es descrito como aquel patrón de consumo que satisface las necesidades de las generaciones presentes sin comprometer las capacidades de las generaciones futuras (Ham et al., 2018, citando a Brundtland, 1987). Este concepto se vincula estrechamente con la búsqueda de estrategias que permitan la concienciación de las "corresponsabilidades" frente a la decisión de compra (Acuña-Moraga y Severino-González, 2018). Además, se entiende como una convergencia entre la responsabilidad social y la preservación del medio ambiente, motivando el diseño de modelos que disminuyan la pérdida de recursos (Severino-González et al., 2020).
 
-## Resultado a reproducir
+### Consumo responsable
+En contextos específicos, como el chileno, el consumo responsable se ha fragmentado en tipologías que van desde el consumidor "indiferente" hasta el "consciente", siendo este último aquel que reconoce prácticas explícitas de protección ambiental y posee un alto nivel de educación (Ariztía et al., 2009). El comportamiento del consumidor socialmente responsable se centra en las intenciones de compra influenciadas por preocupaciones sociales y ambientales, donde el individuo utiliza su poder de mercado para incentivar prácticas corporativas éticas (Han y Stoel, 2016; Boccia y Sarnacchiaro, 2017).
 
-- Imagen de tabla(s), figura(s) o resultado específico del artículo seleccionado, junto a una breve descripción.
+### Consumo ético y consumidor verde
+El consumo ético explora cómo los consumidores consideran los estándares de producción y si estos cumplen con aspectos morales, aunque a menudo se enfrentan al fenómeno de las "excusas baratas" o licencias morales para optar por productos menos éticos (Engel y Szech, 2020). El consumidor verde se analiza desde el constructo del comportamiento de compra basado específicamente en el conocimiento ambiental, el afecto ambiental y la preocupación ecológica, especialmente en sectores como el de cosméticos (Larios-Gómez, 2018).
 
-## Proceso de reproducción
+### Consumo sustentable
 
-- Descripción detallada del proceso seguido para reproducir el resultado seleccionado, incluyendo los pasos realizados, las herramientas utilizadas, y cualquier ajuste necesario para lograr la reproducción. Incluye las siguientes sub secciones:
+Por otro lado, el consumo sustentable es descrito como aquel patrón de consumo que satisface las necesidades de las generaciones presentes sin comprometer las capacidades de las generaciones futuras (Ham et al., 2018, citando a Brundtland, 1987). Este concepto se vincula estrechamente con la búsqueda de estrategias que permitan la concienciación de las "corresponsabilidades" frente a la decisión de compra (Acuña-Moraga y Severino-González, 2018). Además, se entiende como una convergencia entre la responsabilidad social y la preservación del medio ambiente, motivando el diseño de modelos que disminuyan la pérdida de recursos (Severino-González et al., 2020).
 
-### Procesamiento
+### Consumo etico.
 
-- Incluye el código utilizado para procesar los datos, junto con una explicación de cada paso. 
+El consumo ético explora cómo los consumidores consideran los estándares de producción y si estos cumplen con aspectos morales, aunque a menudo se enfrentan al fenómeno de las "excusas baratas" o licencias morales para optar por productos menos éticos (Engel y Szech, 2020). Finalmente, el consumidor verde es analizado desde el constructo del comportamiento de compra basado específicamente en el conocimiento ambiental, el afecto ambiental y la preocupación ecológica, especialmente en sectores como el de cosméticos (Larios-Gómez, 2018).
 
-- Los datos originales deben ser llamados desde input/data/original, el código de procesamiento se debe incluir en este mismo archivo (reporte-repro.qmd).
+## Instrumentos de medición.
 
-### Reproducción
+La operacionalización y medición de los diversos tipos de consumo ha evolucionado desde el conteo de hábitos individuales hacia modelos integrados que evalúan la conciencia política y psicológica del sujeto en diversos contextos geográficos. El enfoque precursor es el Índice Akatu, aplicado sistemáticamente en Brasil a nivel nacional y en sus principales capitales regionales desde 2003; instrumento operacionaliza el consumo consciente a través de 13 comportamientos segmentantes. Bajo este esquema, autores como Ariztía et al. (2009) han adaptado estas variables al contexto chileno a través de la Encuesta Nacional UDP, clasificando a los ciudadanos según la cantidad de prácticas declaradas en una escala que va desde el "indiferente" hasta el "consciente". Por su parte, Silva et al. (2013) implementaron una medición más robusta en la ciudad de Recife, Brasil, mediante un instrumento integrado de 40 indicadores que combina la escala Akatu con métricas de impacto global como el Greendex y el Ecological Footprint Method.
+En una línea convergente de refinamiento técnico, el modelo de Acuña-Moraga y Severino-González (2018) ha sido aplicado en la Región de Ñuble, Chile (específicamente en San Carlos), para medir al "consumidor sustentable socialmente responsable" mediante 14 variables que capturan la ética, la territorialidad y el respeto animal. Asimismo, estudios comparativos como el de Larios-Gómez (2018) han utilizado escalas de conocimiento y preocupación ecológica aplicadas simultáneamente en áreas urbanas de Brasil (Ribeirão Preto), México (Puebla) y Colombia (Bogotá). Finalmente, desde una perspectiva psicopolítica, autores como Boccia y Sarnacchiaro (2017) han operacionalizado las intenciones de compra en Italia, empleando modelos de ecuaciones estructurales para evaluar cómo la actitud y el conocimiento sobre la responsabilidad social empresarial determinan las preferencias en el mercado.
 
-- Generación de tabla o figura a reproducir.
+Las mediciones comparten en su gran mayoría el uso de escalas tipo Likert y la validación de la educación y el género como variables explicativas fundamentales del compromiso. El Instituto Akatu funciona como el núcleo común de la mayoría de las herramientas en Latinoamérica, validando la segmentación por niveles. No obstante, las diferencias radican en su alcance: mientras los modelos de Akatu y Ariztía se enfocan en el comportamiento declarado en el hogar y la gestión de recursos, los enfoques de Han y Stoel (2016) y Boccia (2017) priorizan las raíces psicológicas y las intenciones, buscando explicar la brecha entre los valores éticos y el acto de compra real a través de teorías como el Comportamiento Planificado.
 
-# Conclusiones
+#####
 
-Basándose en el análisis realizado, escriban una conclusión sobre el nivel de reproducibilidad del artículo seleccionado.
+La base teórica propuesta por Silva (revisar bien que año) sostiene que el consumo verde, el consumo consciente y el consumo sustentable no deben ser tratados como conceptos aislados o sinónimos, sino como etapas de un mismo fenómeno general estructurado en una "jerarquización de las prácticas responsables de consumo". Según este autor, estos tipos de consumo forman parte de una "escala de ampliação de complexidade" (escala de ampliación de complejidad), en la que cada nivel es interdependiente y acumulativo: el consumo verde se centra en la dimensión técnica y ambiental del producto; el consumo consciente evoluciona hacia una práctica individual que equilibra la satisfacción personal con los efectos sociales y ambientales; y, finalmente, el consumo sustentable se consolida como el nivel superior de carácter político y colectivo, resultante de las inter-relaciones entre ciudadanos, empresas y gobierno. El argumento central de Silva es que una práctica de consumo está directamente identificada con la otra, de modo que para la efectivización del consumo sustentable; entendido como el patrón macro que engloba a los demás, es imprescindible la parcela de contribución técnica y la toma de conciencia ética aportada por los niveles previo.
 
-# Recomendaciones
+### Analisis factorial.
 
-Recomendaciones para mejorar la reproducibilidad del artículo, si es necesario.
+El análisis factorial (AF) se define como un procedimiento estadístico diseñado para identificar variables latentes con el fin de confirmar, proponer o refutar las dimensiones cuantitativas de un modelo (Garrido et al., 2023). Su función primordial es reducir un grupo homogéneo de variables que guardan correlación entre sí, buscando el número mínimo de factores capaces de explicar la máxima cantidad de información contenida en los datos recolectados (Garrido et al., 2023). Desde una perspectiva causal, este análisis parte de la premisa de que los conceptos medidos (variables latentes) existen y son los que causan la variación en las medidas observables o ítems (Martínez & Martínez, 2009).
 
-# Referencias
+### Metodología
 
-::: {#refs}
-:::
+Se aplico la prueba de esfericidad de Bartlett para evaluar la adecuación de los datos para el análisis factorial, obteniendo un valor de 6661.319, lo que indica que las variables están correlacionadas y son aptas para este tipo de análisis. Además, se calculó el índice Kaiser-Meyer-Olkin (KMO) para medir la adecuación muestral, obteniendo un valor de 0.82 lo que sugiere que la muestra es adecuada para realizar un análisis factorial.
 
-# Apéndice
-
-## Material suplementario
-
-- Incluyan aquí detalles metodológicos adicionales, en caso de ser necesario
-
-## Código
-
-- Incluir acá el código original, en caso de estar disponible.
-
-
+Posteriormente, se determino la estructura optima del cosntructo mediante analisis factorial exploratorio sobre la primera mitad de la muestra; luego se confirmo la estructura para la segunda mitad de la muestra mediante analisis factorial confirmatorio. 
