@@ -13,16 +13,25 @@ Este proyecto se organiza de la siguiente manera:
 <!-- WORKING_TREE_START -->
 ```text
 Validacion-consumo/
+ |- .quarto/
+ |  |- typst/
+ |  |  |- packages/
+ |  |  |  |- preview/
  |- .vscode/
  |  |- settings.json
  |- README.md
+ |- Redaccion
+ |- index.docx
  |- index.html
  |- index.pdf
  |- index.qmd
  |- input/
  |  |- bib/
+ |  |  |- Akatu.bib
+ |  |  |- apa.csl
  |  |- data/
  |  |  |- original/
+ |  |  |  |- Encuesta Sociedad de Consumo 2023.sav
  |  |  |- proc/
  |  |  |  |- proc_casen22.rds
  |  |- images/
@@ -32,8 +41,10 @@ Validacion-consumo/
  |- output/
  |  |- graphs/
  |  |- tables/
+ |- plantilla.docx
  |- processing/
  |  |- README-prod.md
+ |  |- library(dplyr).r
  |  |- prod_analysis.Rmd
  |  |- prod_analysis.html
  |  |- prod_prep.Rmd
