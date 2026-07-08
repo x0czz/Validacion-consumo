@@ -129,23 +129,39 @@ Por otro lado, el consumo sustentable es descrito como aquel patrón de consumo 
 
 El consumo ético explora cómo los consumidores consideran los estándares de producción y si estos cumplen con aspectos morales, aunque a menudo se enfrentan al fenómeno de las "excusas baratas" o licencias morales para optar por productos menos éticos (Engel y Szech, 2020). Finalmente, el consumidor verde es analizado desde el constructo del comportamiento de compra basado específicamente en el conocimiento ambiental, el afecto ambiental y la preocupación ecológica, especialmente en sectores como el de cosméticos (Larios-Gómez, 2018).
 
-## Instrumentos de medición.
+## Instrumentos de medición
 
 La operacionalización y medición de los diversos tipos de consumo ha evolucionado desde el conteo de hábitos individuales hacia modelos integrados que evalúan la conciencia política y psicológica del sujeto en diversos contextos geográficos. El enfoque precursor es el Índice Akatu, aplicado sistemáticamente en Brasil a nivel nacional y en sus principales capitales regionales desde 2003; instrumento operacionaliza el consumo consciente a través de 13 comportamientos segmentantes. Bajo este esquema, autores como Ariztía et al. (2009) han adaptado estas variables al contexto chileno a través de la Encuesta Nacional UDP, clasificando a los ciudadanos según la cantidad de prácticas declaradas en una escala que va desde el "indiferente" hasta el "consciente". Por su parte, Silva et al. (2013) implementaron una medición más robusta en la ciudad de Recife, Brasil, mediante un instrumento integrado de 40 indicadores que combina la escala Akatu con métricas de impacto global como el Greendex y el Ecological Footprint Method.
 En una línea convergente de refinamiento técnico, el modelo de Acuña-Moraga y Severino-González (2018) ha sido aplicado en la Región de Ñuble, Chile (específicamente en San Carlos), para medir al "consumidor sustentable socialmente responsable" mediante 14 variables que capturan la ética, la territorialidad y el respeto animal. Asimismo, estudios comparativos como el de Larios-Gómez (2018) han utilizado escalas de conocimiento y preocupación ecológica aplicadas simultáneamente en áreas urbanas de Brasil (Ribeirão Preto), México (Puebla) y Colombia (Bogotá). Finalmente, desde una perspectiva psicopolítica, autores como Boccia y Sarnacchiaro (2017) han operacionalizado las intenciones de compra en Italia, empleando modelos de ecuaciones estructurales para evaluar cómo la actitud y el conocimiento sobre la responsabilidad social empresarial determinan las preferencias en el mercado.
 
 Las mediciones comparten en su gran mayoría el uso de escalas tipo Likert y la validación de la educación y el género como variables explicativas fundamentales del compromiso. El Instituto Akatu funciona como el núcleo común de la mayoría de las herramientas en Latinoamérica, validando la segmentación por niveles. No obstante, las diferencias radican en su alcance: mientras los modelos de Akatu y Ariztía se enfocan en el comportamiento declarado en el hogar y la gestión de recursos, los enfoques de Han y Stoel (2016) y Boccia (2017) priorizan las raíces psicológicas y las intenciones, buscando explicar la brecha entre los valores éticos y el acto de compra real a través de teorías como el Comportamiento Planificado.
 
-#####
-
 La base teórica propuesta por Silva (revisar bien que año) sostiene que el consumo verde, el consumo consciente y el consumo sustentable no deben ser tratados como conceptos aislados o sinónimos, sino como etapas de un mismo fenómeno general estructurado en una "jerarquización de las prácticas responsables de consumo". Según este autor, estos tipos de consumo forman parte de una "escala de ampliação de complexidade" (escala de ampliación de complejidad), en la que cada nivel es interdependiente y acumulativo: el consumo verde se centra en la dimensión técnica y ambiental del producto; el consumo consciente evoluciona hacia una práctica individual que equilibra la satisfacción personal con los efectos sociales y ambientales; y, finalmente, el consumo sustentable se consolida como el nivel superior de carácter político y colectivo, resultante de las inter-relaciones entre ciudadanos, empresas y gobierno. El argumento central de Silva es que una práctica de consumo está directamente identificada con la otra, de modo que para la efectivización del consumo sustentable; entendido como el patrón macro que engloba a los demás, es imprescindible la parcela de contribución técnica y la toma de conciencia ética aportada por los niveles previo.
 
-### Analisis factorial.
+### Analisis factorial
 
 El análisis factorial (AF) se define como un procedimiento estadístico diseñado para identificar variables latentes con el fin de confirmar, proponer o refutar las dimensiones cuantitativas de un modelo (Garrido et al., 2023). Su función primordial es reducir un grupo homogéneo de variables que guardan correlación entre sí, buscando el número mínimo de factores capaces de explicar la máxima cantidad de información contenida en los datos recolectados (Garrido et al., 2023). Desde una perspectiva causal, este análisis parte de la premisa de que los conceptos medidos (variables latentes) existen y son los que causan la variación en las medidas observables o ítems (Martínez & Martínez, 2009).
 
-### Metodología
+Para identificar con precisión la estructura del constructo del consumo en sus diversas manifestaciones, se empleará el análisis factorial como técnica analítica. Esta metodología se utilizara para poner a prueba un set de 45 preguntas con escala tipo Likert relacionadas con las prácticas y actitudes de los consumidores. El propósito fundamental de este análisis es validar o delimitar un instrumento mediante el descubrimiento de un número reducido de dimensiones latentes (factores) que, perdiendo el mínimo de información, expliquen satisfactoriamente las relaciones entre las variables observadas. Siguiendo este enfoque, se podrá determinar si los ítems referidos al consumo consciente, sustentable y responsable se agrupan en factores con coherencia teórica, permitiendo contrastar si la estructura empírica resultante se ajusta a los modelos conceptuales descritos previamente en la literatura.
+
+## Datos
+
+Los datos que se utilizarán en esta investigación provienen de la Encuesta Sociedad de Consumo 2023, la cual forma parte de un esfuerzo por caracterizar las complejas relaciones de consumo en el Chile contemporáneo.
+
+El propósito fundamental de esta encuesta es mapear el comportamiento y las percepciones de los consumidores chilenos a través de diversas dimensiones que van más allá del simple acto de compra. Busca identificar cómo se entrelazan los factores económicos con las identidades sociales, las preocupaciones ambientales y las formas de participación ciudadana en el mercado. La base de datos cuenta con un total de 1.623 casos válidos. A continuación se presentan los descriptivos sociodemográficos.
+
+### Metodología - EFA
 
 Se aplico la prueba de esfericidad de Bartlett para evaluar la adecuación de los datos para el análisis factorial, obteniendo un valor de 6661.319, lo que indica que las variables están correlacionadas y son aptas para este tipo de análisis. Además, se calculó el índice Kaiser-Meyer-Olkin (KMO) para medir la adecuación muestral, obteniendo un valor de 0.82 lo que sugiere que la muestra es adecuada para realizar un análisis factorial.
 
-Posteriormente, se determino la estructura optima del cosntructo mediante analisis factorial exploratorio sobre la primera mitad de la muestra; luego se confirmo la estructura para la segunda mitad de la muestra mediante analisis factorial confirmatorio. 
+Posteriormente, se determino la estructura optima del cosntructo mediante analisis factorial exploratorio sobre la primera mitad de la muestra; luego se confirmo la estructura para la segunda mitad de la muestra mediante analisis factorial confirmatorio.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+# Leer el archivo HTML y mostrarlo textualmente
+htmltools::includeHTML(here::here("output", "tables", "tabla_efa_psych.html"))
+```
+
+

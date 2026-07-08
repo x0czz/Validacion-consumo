@@ -1,0 +1,546 @@
+---
+title: "Análisis Factorial Exploratorio y Confirmatorio de las Baterías"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(lavaan)
+library(here)
+library(gt)
+```
+
+```{r}
+generar_tabla_cfa <- function(fit, archivo_salida, titulo = "Variables") {
+  cargas <- standardizedSolution(fit) %>%
+    filter(op == "=~") %>%
+    select(factor = lhs, item = rhs, loading = est.std)
+
+  factores <- unique(cargas$factor)
+
+  tabla_cargas <- cargas %>%
+    pivot_wider(names_from = factor, values_from = loading) %>%
+    select(item, all_of(factores))
+
+  r2 <- lavInspect(fit, "rsquare")
+
+  comunalidad <- tibble(
+    item = names(r2),
+    Communality = as.numeric(r2),
+    Uniqueness = 1 - as.numeric(r2)
+  )
+
+  tabla_cargas <- tabla_cargas %>%
+    left_join(comunalidad, by = "item")
+
+  n_items_total <- n_distinct(cargas$item)
+
+  varianza <- cargas %>%
+    group_by(factor) %>%
+    summarise(pct_varianza = 100 * sum(loading^2) / n_items_total, .groups = "drop") %>%
+    mutate(pct_acumulada = cumsum(pct_varianza))
+
+  fila_varianza <- varianza %>%
+    select(factor, pct_varianza) %>%
+    pivot_wider(names_from = factor, values_from = pct_varianza) %>%
+    mutate(item = "% de varianza explicada", .before = 1)
+
+  fila_acumulada <- varianza %>%
+    select(factor, pct_acumulada) %>%
+    pivot_wider(names_from = factor, values_from = pct_acumulada) %>%
+    mutate(item = "% de varianza acumulada", .before = 1)
+
+  tabla_final <- bind_rows(tabla_cargas, fila_varianza, fila_acumulada)
+
+  tabla_final_gt <- tabla_final %>%
+    gt::gt(rowname_col = "item") %>%
+    gt::tab_header(title = titulo) %>%
+    gt::fmt_number(columns = everything(), decimals = 2) %>%
+    gt::sub_missing(columns = everything(), missing_text = "") %>%
+    gt::tab_footnote(
+      footnote = "Reactivos invertidos",
+      locations = gt::cells_stub(rows = item %in% c("O4_4", "O4_7", "O4_10"))
+    ) %>%
+    gt::cols_label(item = "-")
+
+  dir.create(dirname(archivo_salida), recursive = TRUE, showWarnings = FALSE)
+  gt::gtsave(tabla_final_gt, archivo_salida)
+
+  tabla_final_gt
+}
+```
+# Introducción
+
+En este notebook se desarrolla el proceso de construcción y validación de la estructura factorial de las baterías de consumo. El procedimiento considera tanto técnicas exploratorias como confirmatorias para identificar la dimensionalidad subyacente de los ítems y evaluar la calidad psicométrica del instrumento.
+
+Dado que los ítems corresponden a escalas ordinales tipo Likert, todas las estimaciones factoriales utilizan matrices de correlaciones policóricas y estimadores robustos apropiados para variables categóricas ordenadas.
+
+El flujo de trabajo es el siguiente:
+
+1. Limpieza y preparación de los datos.
+2. Evaluación de la adecuación muestral mediante KMO y Bartlett.
+3. Selección de indicadores utilizando el índice MSA.
+4. Determinación del número de factores mediante análisis paralelo.
+5. Exploración factorial utilizando matrices policóricas.
+6. Confirmación de la estructura mediante modelos CFA sucesivamente reespecificados.
+7. Comparación entre distintas soluciones factoriales con el objetivo de identificar el modelo más parsimonioso, interpretable y con mejores índices de ajuste.
+
+# 1. Carga de datos
+
+Se carga la base de datos previamente procesada que contiene únicamente las variables correspondientes a las baterías de interés.
+
+```{r}
+baterias <- readRDS(here::here("input", "data_procesada.rds"))
+```
+
+# 2. Preparación de los datos
+
+Antes de realizar los análisis factoriales se eliminan las observaciones con datos faltantes y todas las variables son convertidas explícitamente a variables ordinales.
+
+Posteriormente se calcula la matriz de correlaciones policóricas, la cual constituye la base para los análisis exploratorios posteriores.
+
+```{r}
+baterias_limpio <- baterias %>%
+  drop_na() %>%
+  mutate(across(everything(), ~ as.ordered(as.numeric(.))))
+
+matriz_poly_baterias <- psych::polychoric(baterias_limpio)$rho
+```
+
+## Evaluación de la adecuación muestral
+
+Como medida preliminar de la factibilidad del análisis factorial se calcula el índice Kaiser-Meyer-Olkin (KMO). Debido a que esta prueba se encuentra implementada sobre matrices de correlación convencionales, las variables se transforman temporalmente a formato numérico y se utiliza una matriz de correlaciones de Pearson.
+
+```{r}
+baterias_continuas <- baterias_limpio %>%
+  mutate(across(everything(), as.numeric))
+
+matriz_cor_continua <- cor(baterias_continuas)
+
+kmo_baterias <- psych::KMO(matriz_cor_continua)
+
+kmo_baterias
+```
+
+# 3. Selección de ítems mediante MSA
+
+Una vez obtenido el índice KMO, se revisa el valor individual de adecuación muestral (MSA) para cada ítem.
+
+Se conservan únicamente aquellas variables cuyo valor MSA es igual o superior a 0.75, siguiendo un criterio relativamente estricto para asegurar una adecuada comunalidad entre los indicadores.
+
+```{r}
+msa_por_item <- kmo_baterias$MSAi
+
+items_msa_075 <- sort(
+  msa_por_item[msa_por_item >= 0.75],
+  decreasing = TRUE
+)
+
+baterias_msa_075 <- baterias %>%
+  select(any_of(names(items_msa_075)))
+
+items_msa_075
+
+baterias_msa_075
+```
+
+Posteriormente se genera una versión limpia del subconjunto seleccionado y se almacena para garantizar la reproducibilidad del análisis.
+
+```{r}
+baterias_msa_075_limpio <- baterias_msa_075 %>%
+  drop_na() %>%
+  mutate(across(everything(), ~ as.ordered(as.numeric(.))))
+
+archivo_baterias_msa_075_limpio <- here::here(
+  "input",
+  "data",
+  "baterias_msa_075_limpio.rds"
+)
+
+# Crear la carpeta si no existe
+dir.create(
+  dirname(archivo_baterias_msa_075_limpio),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+# Guardar únicamente si el archivo no existe
+if (!file.exists(archivo_baterias_msa_075_limpio)) {
+  saveRDS(
+    baterias_msa_075_limpio,
+    file = archivo_baterias_msa_075_limpio
+  )
+}
+
+variables_msa_075 <- colnames(baterias_msa_075_limpio)
+```
+
+# 4. Diagnósticos del subconjunto seleccionado
+
+## Matriz de correlaciones policóricas
+
+Se calcula nuevamente la matriz policórica utilizando únicamente los ítems retenidos.
+
+```{r}
+matriz_poly_baterias_075 <-
+  psych::polychoric(
+    baterias_msa_075_limpio
+  )$rho
+
+dimnames(matriz_poly_baterias_075) <-
+  list(
+    variables_msa_075,
+    variables_msa_075
+  )
+```
+
+## Prueba de esfericidad de Bartlett
+
+La prueba de Bartlett evalúa la hipótesis nula de que la matriz de correlaciones corresponde a una matriz identidad.
+
+Un resultado significativo indica que existe suficiente asociación entre las variables para justificar un análisis factorial.
+
+```{r}
+bartlett_baterias_075 <-
+  psych::cortest.bartlett(
+    matriz_poly_baterias_075,
+    n = nrow(baterias_msa_075_limpio)
+  )
+
+bartlett_baterias_075
+```
+
+## Valores propios
+
+Se inspeccionan los valores propios de la matriz policórica como una primera aproximación al número de dimensiones latentes.
+
+```{r}
+eigenvalues_poly_baterias_075 <-
+  eigen(
+    matriz_poly_baterias_075,
+    only.values = TRUE
+  )$values
+
+eigenvalues_poly_baterias_075
+```
+
+## Análisis paralelo de Horn
+
+Finalmente se utiliza el análisis paralelo de Horn para estimar empíricamente el número óptimo de factores a retener.
+
+Este procedimiento compara los valores propios observados con aquellos obtenidos a partir de matrices aleatorias del mismo tamaño.
+
+```{r}
+archivo_horn <- here::here(
+  "output",
+  "graphs",
+  "analisis_paralelo_horn_baterias_075.png"
+)
+
+# Crear la carpeta de salida si no existe
+dir.create(
+  dirname(archivo_horn),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+# Exportar el gráfico solo si aún no existe
+if (!file.exists(archivo_horn)) {
+
+  png(
+    filename = archivo_horn,
+    width = 1800,
+    height = 1400,
+    res = 300
+  )
+
+  psych::fa.parallel(
+    matriz_poly_baterias_075,
+    n.obs = nrow(baterias_msa_075_limpio),
+    fa = "fa",
+    fm = "minres",
+    main = "Análisis paralelo de Horn"
+  )
+
+  dev.off()
+}
+
+# Mostrar el gráfico en el documento Quarto
+horn_baterias_075 <-
+  psych::fa.parallel(
+    matriz_poly_baterias_075,
+    n.obs = nrow(baterias_msa_075_limpio),
+    fa = "fa",
+    fm = "minres",
+    main = "Análisis paralelo de Horn"
+  )
+```
+
+# 5. Análisis Factorial Exploratorio mediante lavaan
+
+Como complemento al análisis exploratorio clásico se estima un modelo EFA utilizando el enfoque ESEM implementado en lavaan.
+
+Se especifican tres factores, utilizando el estimador WLSMV y rotación Varimax.
+
+```{r}
+items_baterias_075 <- variables_msa_075
+
+factores_efa_lavaan <-
+  paste0(
+    'efa("efa1")*F',
+    1:3,
+    collapse = " + "
+  )
+
+modelo_efa_lavaan_075 <-
+  paste0(
+    factores_efa_lavaan,
+    " =~ ",
+    paste(items_baterias_075, collapse = " + ")
+  )
+
+fit_efa_lavaan_075 <-
+  lavaan::sem(
+    modelo_efa_lavaan_075,
+    data = baterias_msa_075_limpio,
+    ordered = TRUE,
+    estimator = "WLSMV",
+    rotation = "varimax",
+    std.lv = TRUE
+  )
+
+summary(
+  fit_efa_lavaan_075,
+  fit.measures = TRUE,
+  standardized = TRUE
+)
+```
+
+Tabla EFA. 
+```{r}
+library(psych)
+fa_model <- psych::fa(
+  r        = matriz_poly_baterias_075,
+  nfactors = 3,
+  n.obs    = nrow(baterias_msa_075_limpio),
+  fm       = "minres",     # estimación robusta, estándar para polichóricas
+  rotate   = "oblimin"     # rotación oblicua; cambia a "varimax" si prefieres ortogonal
+)
+
+fa_sorted <- psych::fa.sort(fa_model)
+
+umbral <- 0.4   # cargas cruzadas por debajo de esto se ocultan
+
+tabla_cargas <- unclass(fa_sorted$loadings) %>%
+  as.data.frame() %>%
+  rownames_to_column("item") %>%
+  mutate(across(starts_with("MR") | starts_with("F"), ~ ifelse(abs(.) < umbral, NA, .))) %>%
+  mutate(
+    Communality = fa_sorted$communality[item],
+    Uniqueness  = fa_sorted$uniquenesses[item]
+  )
+
+# --- Varianza explicada y acumulada (ya calculada por psych, no hay que recalcular) ---
+varianza <- as.data.frame(fa_sorted$Vaccounted)
+
+fila_varianza  <- varianza["Proportion Var", ]  * 100
+fila_acumulada <- varianza["Cumulative Var", ] * 100
+
+fila_varianza  <- fila_varianza  %>% mutate(item = "% de varianza explicada", .before = 1)
+fila_acumulada <- fila_acumulada %>% mutate(item = "% de varianza acumulada", .before = 1)
+
+tabla_final <- bind_rows(tabla_cargas, fila_varianza, fila_acumulada)
+
+tabla_final_gt <- tabla_final %>%
+  gt(rowname_col = "item") %>%
+  tab_header(title = "Variables") %>%
+  fmt_number(columns = everything(), decimals = 2) %>%
+  sub_missing(columns = everything(), missing_text = "") %>%
+  tab_footnote(
+    footnote = "Reactivos invertidos",
+    locations = cells_stub(rows = item %in% c("O4_4", "O4_7", "O4_10"))
+  ) %>%
+  cols_label(item = "REACTIVOS")
+
+archivo_tabla_final <- here::here("output", "tables", "tabla_efa_psych.html")
+dir.create(dirname(archivo_tabla_final), recursive = TRUE, showWarnings = FALSE)
+gt::gtsave(tabla_final_gt, archivo_tabla_final)
+
+tabla_final_gt
+```
+# 6. Primer análisis factorial confirmatorio
+
+A partir de la evidencia obtenida en el análisis exploratorio se especifica un modelo teórico compuesto por cuatro factores latentes.
+
+Cada factor agrupa los ítems de acuerdo con su interpretación conceptual.
+
+```{r}
+modelo_cfa <- '
+F1 =~ O3_8 + O3_3 + O3_4 + O3_2 + O3_9 + O3_5 + O3_1 + O3_7
+
+F2 =~ O2_8 + O1_10 + O2_9 + O2_5 + O2_3
+
+F3 =~ O4_6 + O2_6 + O4_1 + O4_4
+
+F4 =~ O2_2 + O1_5 + O3_10 + O1_7 + O4_7 + O4_10
+'
+
+fit_cfa <-
+  lavaan::cfa(
+    model = modelo_cfa,
+    data = baterias_msa_075_limpio,
+    estimator = "DWLS",
+    ordered = TRUE,
+    std.lv = TRUE
+  )
+
+summary(
+  fit_cfa,
+  fit.measures = TRUE,
+  standardized = TRUE
+)
+
+fitMeasures(
+  fit_cfa,
+  c(
+    "cfi",
+    "tli",
+    "rmsea",
+    "rmsea.ci.lower",
+    "rmsea.ci.upper",
+    "srmr",
+    "cfi.robust",
+    "tli.robust",
+    "rmsea.robust"
+  )
+)
+
+modindices(
+  fit_cfa,
+  sort = TRUE,
+  maximum.number = 15
+)
+```
+
+Tabla CFA inicial
+
+```{r}
+generar_tabla_cfa(
+  fit_cfa,
+  here::here("output", "tables", "tabla_cfa_inicial.html")
+)
+```
+
+# 7. Reespecificación del modelo
+
+Considerando los resultados del modelo inicial, se eliminan algunos indicadores con bajo desempeño factorial para obtener una estructura más parsimoniosa.
+
+```{r}
+modelo_cfa_v2 <- '
+F1 =~ O3_3 + O3_4 + O3_2 + O3_9 + O3_5 + O3_1 + O3_7
+
+F2 =~ O2_8 + O1_10 + O2_9 + O2_5 + O2_3 + O2_2
+
+F3 =~ O4_6 + O2_6 + O4_1 + O4_4
+
+F4 =~ O1_5 + O1_7 + O4_10
+'
+
+fit_cfa_v2 <-
+  cfa(
+    model = modelo_cfa_v2,
+    data = baterias_msa_075_limpio,
+    estimator = "DWLS",
+    ordered = TRUE,
+    std.lv = TRUE
+  )
+
+summary(
+  fit_cfa_v2,
+  fit.measures = TRUE,
+  standardized = TRUE
+)
+
+fitMeasures(
+  fit_cfa_v2,
+  c(
+    "cfi",
+    "tli",
+    "rmsea",
+    "rmsea.ci.lower",
+    "rmsea.ci.upper",
+    "srmr",
+    "cfi.robust",
+    "tli.robust",
+    "rmsea.robust"
+  )
+)
+
+modindices(
+  fit_cfa_v2,
+  sort = TRUE,
+  maximum.number = 15
+)
+```
+
+Tabla CFA reespecificado
+
+```{r}
+generar_tabla_cfa(
+  fit_cfa_v2,
+  here::here("output", "tables", "tabla_cfa_v2.html")
+)
+```
+
+# 8. Modelo confirmatorio final
+
+Luego de sucesivas reespecificaciones se propone un modelo final de tres factores, el cual representa la solución más estable y conceptualmente interpretable.
+
+```{r}
+modelo_cfa <- '
+F1 =~ O2_12 + O2_11 + O2_13 + O3_7 + O1_8 +
+      O3_3 + O3_2 + O3_4 + O3_1 + O3_5
+
+F2 =~ O2_3 + O2_4 + O2_5 + O2_9 + O1_10 +
+      O2_2 + O2_14 + O2_1 + O2_8
+
+F3 =~ O4_4 + O2_6 + O4_6
+'
+
+fit_cfa <-
+  lavaan::cfa(
+    model = modelo_cfa,
+    data = baterias_msa_075_limpio,
+    ordered = TRUE,
+    estimator = "WLSMV",
+    std.lv = TRUE
+  )
+
+summary(
+  fit_cfa,
+  fit.measures = TRUE,
+  standardized = TRUE
+)
+
+modindices(
+  fit_cfa,
+  sort = TRUE,
+  maximum.number = 20
+)
+```
+
+Tabla CFA final
+
+```{r}
+generar_tabla_cfa(
+  fit_cfa,
+  here::here("output", "tables", "tabla_cfa_final.html")
+)
+```
