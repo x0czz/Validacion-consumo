@@ -1,0 +1,122 @@
+---
+title: "DEscriptivos de la bateria."
+date: "`r format(Sys.time(), '%A %d %B %Y %X')`"
+output: 
+  html_document: 
+    toc: yes
+    code_folding: hide
+    toc_float: 
+      collapsed: true
+      smooth_scroll: false
+      number_sections: true
+editor_options: 
+  chunk_output_type: console
+---
+Este script contiene el anlaisis descritivo de las baterias a inclur en el instrumento de medicion del consumo.
+
+Las variables contempladas para el analisis factorial son todas ordinales de 1 a 5; el objetivo es determinar si las variables requieren de algun tratamiento.
+
+```{r setup}
+library(tidyverse)
+library(haven)
+library(skimr)
+library(knitr)
+library(kableExtra)
+library(sjmisc)
+data <- read_sav("input/data/original/Encuesta Sociedad de Consumo 2023.sav")
+
+data <- data %>% select(starts_with("O1"),
+		starts_with("O2"),
+		starts_with("O3"),
+		starts_with("O4"),
+		-ends_with("RECOD")
+	)
+
+sjmisc::frq(data)
+```
+
+Hay bastantes variables que poseen menos de 5% en por lo menos alguna categoria de respuesta; se procede a colapsar aquellas categorias con la mas proxima.
+
+```{r}
+library(forcats)
+colapsar_extremos <- function(x, umbral = 0.05) {
+  
+  labs <- labelled::val_labels(x)          # extrae las etiquetas (Nunca=1, etc.)
+  x_factor <- factor(as.numeric(x), levels = labs, labels = names(labs), ordered = TRUE)
+  
+  niveles <- levels(x_factor)
+  tab <- prop.table(table(x_factor))
+  
+  # Colapsa el PRIMER nivel si está bajo el umbral
+  if (tab[niveles[1]] < umbral) {
+    x_factor <- fct_collapse(x_factor, !!niveles[2] := c(niveles[1], niveles[2]))
+    niveles <- levels(x_factor)
+  }
+  
+  # Recalcula y colapsa el ÚLTIMO nivel si está bajo el umbral
+  tab <- prop.table(table(x_factor))
+  n <- length(niveles)
+  if (tab[niveles[n]] < umbral) {
+    x_factor <- fct_collapse(x_factor, !!niveles[n - 1] := c(niveles[n - 1], niveles[n]))
+  }
+  
+  factor(x_factor, levels = unique(levels(x_factor)), ordered = TRUE)
+}
+
+vars_likert <- data %>%
+  select(starts_with("O1"), starts_with("O2"), starts_with("O3"), starts_with("O4")) %>%
+  names()
+
+data <- data %>%
+  mutate(across(all_of(vars_likert), colapsar_extremos))
+
+frq(data)
+```
+
+Matriz de correlacion para identificar itemps invertidos.
+
+```{r, echo=FALSE}
+data %>%
+  select(starts_with("O1"), starts_with("O2"), starts_with("O3"), starts_with("O4")) %>%
+  mutate(across(where(haven::is.labelled), as.numeric)) %>%
+  mutate(across(where(is.factor), as.numeric)) %>%
+  cor(use = "pairwise.complete.obs", method = "spearman") %>%
+  round(2) # la matriz y los fraseos suguieren que de la bateria OR, 4, 7 y 10 estna invertidos.
+
+data <- data %>%
+  mutate(across(c(O4_4, O4_7, O4_10), ~ 6 - as.numeric(.)))
+
+sjmisc::frq(data)
+
+```
+
+Tabla final de descriptivos y guardado.
+```{r}
+library(psych)
+
+resumen <- data %>%
+  select(starts_with("O1"), starts_with("O2"), starts_with("O3"), starts_with("O4")) %>%
+  mutate(across(where(haven::is.labelled), as.numeric)) %>%
+  mutate(across(where(is.factor), as.numeric)) %>%
+  psych::describe() %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("variable")
+
+# --- Versión LaTeX ---
+resumen %>%
+  kable(format = "latex", booktabs = TRUE, digits = 2) %>%
+  save_kable(file = "output/tables/descriptivos.tex")
+
+# --- Versión HTML ---
+resumen %>%
+  kable(format = "html", digits = 2) %>%
+  kable_styling() %>%
+  save_kable(file = "output/tables/descriptivos.html", self_contained = FALSE)
+```
+
+Guardar base de datos
+
+```{r}
+saveRDS(data, "input/data_procesada.rds")
+
+```
