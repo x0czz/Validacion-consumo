@@ -1,0 +1,62 @@
+library(psych)
+library(tidyverse)
+options(scipen = 999)
+library(haven)
+
+data <- readRDS("input/data/proc/baterias_msa_075_limpio.rds")
+colnames(data)
+matriz <- polychoric(data)$rho
+
+fa.parallel(matriz, n.obs = nrow(data), fm = "minres", fa = "fa", main = "Parallel Analysis")
+modelo_afe <- fa(matriz, 
+                 nfactors = 4,          # Número de factores a extraer
+                 rotate = "varimax",
+                 cor = "poly",    # Rotación ("oblimin" si los factores se relacionan, "varimax" si son independientes)
+                 fm = "minres")
+
+print(modelo_afe, cut = 0.3, sort = TRUE)
+
+library(lavaan)
+colnames(data)
+
+
+modelo_cfa_4f <- '
+  MR2 =~ O3_8 + O3_3 + O3_2 + O3_4 + O3_5 + O3_9 + O3_1 + O3_7 + O2_13 + O2_11
+  MR1 =~ O2_8 + O2_1 + O1_10 + O2_9 + O2_4 + O2_3 + O2_5 + O2_2 + O2_10 + O1_8
+  MR3 =~ O4_6 + O2_6 + O4_4 + O1_6 + O3_6
+  MR4 =~ O1_5 + O1_7
+'
+
+# Ajustar el CFA para variables ordinales
+# Reemplaza 'data' por el nombre de tu dataframe si es distinto
+ajuste_cfa <- cfa(
+  model = modelo_cfa_4f, 
+  data = data, 
+  ordered = TRUE, 
+  estimator = "WLSMV",
+)
+
+# Ver resultados
+summary(ajuste_cfa, fit.measures = TRUE, standardized = TRUE)
+
+
+
+modelo_cfa_limpio <- '
+  MR1 =~ O3_3 + O3_2 + O3_4 + O3_5 + O3_7 + O3_1 + O3_6 + O2_11 + O1_8 + O2_13
+  MR2 =~ O2_8 + O2_1 + O1_10 + O2_9 + O2_4 + O2_3 + O2_14 + O2_5 + O2_2
+  MR3 =~ O4_6 + O4_4 + O1_6
+  MR4 =~ O1_5 + O1_7
+
+'
+
+# 2. Ajuste del modelo tratando los ítems como ordinales (Estimador WLSMV)
+ajuste_cfa_limpio <- cfa(
+  model = modelo_cfa_limpio, 
+  data = data, 
+  estimator = "WLSMV",
+  ordered = colnames(data) # Aplica automáticamente el tratamiento categórico ordinal
+)
+
+# 3. Resumen de resultados (Estadísticos de ajuste y cargas estandarizadas)
+summary(ajuste_cfa_limpio, fit.measures = TRUE, standardized = TRUE)
+modindices(ajuste_cfa_limpio, sort = TRUE, minimum.value = 10)
