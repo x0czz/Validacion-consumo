@@ -54,6 +54,7 @@ Validacion-consumo/
  |- plantilla.docx
  |- processing/
  |  |- README-prod.md
+ |  |- exploratory
  |  |- factorial.html
  |  |- factorial.qmd
  |  |- factorial_files/
