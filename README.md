@@ -1,4 +1,4 @@
-# Template reporte reproducibilidad
+# Documentacion de trabajo sobre consumo sustentable - Escuela de Trabajo Social UChile
 
 Este repositorio contiene el material de trabajo para la validacion del intrumento de medicion de consumo sustentable.
 
