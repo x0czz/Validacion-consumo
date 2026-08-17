@@ -3,6 +3,8 @@
 Este repositorio contiene el material de trabajo para la validacion del intrumento de medicion de consumo sustentable.
 
 [Borrador CFA/EFA](https://x0czz.github.io/Validacion-consumo/)
+
+
 [Presentación clases latentes](https://x0czz.github.io/Validacion-consumo/propuesta_presentacion.html)
 
 Proyecto por documentar:
