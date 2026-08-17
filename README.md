@@ -11,6 +11,8 @@ Validacion-consumo/
  |  |- typst/
  |  |  |- packages/
  |  |  |  |- preview/
+ |  |- vdoc/
+ |  |  |- .vdoc.563782c6-b7cc-4d99-ab86-2beca86cc5a5.r
  |- .vscode/
  |  |- settings.json
  |- README.md
@@ -29,6 +31,7 @@ Validacion-consumo/
  |  |  |  |- Encuesta Sociedad de Consumo 2023.sav
  |  |  |- proc/
  |  |  |  |- baterias_msa_075_limpio.rds
+ |  |  |  |- lca_data.rds
  |  |  |  |- proc_casen22.rds
  |  |- data_procesada.rds
  |  |- images/
@@ -38,6 +41,8 @@ Validacion-consumo/
  |- output/
  |  |- graphs/
  |  |  |- analisis_paralelo_horn_baterias_075.png
+ |  |  |- perfiles_clases.png
+ |  |  |- perfiles_clases_depurado.png
  |  |- tables/
  |  |  |- descriptivos.html
  |  |  |- descriptivos.tex
@@ -66,9 +71,26 @@ Validacion-consumo/
  |  |  |  |- bootstrap/
  |  |  |  |- clipboard/
  |  |  |  |- quarto-html/
+ |  |- lca.qmd
  |  |- prod_analysis.html
  |  |- prod_analysis.qmd
  |  |- prod_prep.html
+ |- propuesta_presentacion.html
+ |- propuesta_presentacion.qmd
+ |- propuesta_presentacion_files/
+ |  |- libs/
+ |  |  |- clipboard/
+ |  |  |  |- clipboard.min.js
+ |  |  |- quarto-html/
+ |  |  |  |- light-border.css
+ |  |  |  |- popper.min.js
+ |  |  |  |- quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css
+ |  |  |  |- tabby.min.js
+ |  |  |  |- tippy.css
+ |  |  |  |- tippy.umd.min.js
+ |  |  |- revealjs/
+ |  |  |  |- dist/
+ |  |  |  |- plugin/
  |- scripts/
  |  |- update-working-tree.sh
 ```
