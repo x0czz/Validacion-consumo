@@ -543,4 +543,27 @@ generar_tabla_cfa(
   fit_cfa,
   here::here("output", "tables", "tabla_cfa_final.html")
 )
+
+```
+
+Extraccion de factor scores para juntar con la base original.
+```{r}
+
+factor_scores <- lavaan::lavPredict(
+  fit_cfa,
+  type = "lv",       # latent variables (factor scores)
+  method = "EBM"     # Empirical Bayes Modal
+)
+
+# Convertir a data.frame para trabajar más cómodo
+factor_scores <- as.data.frame(factor_scores)
+
+base_og <- haven:: read_sav("input/data/original/Encuesta Sociedad de Consumo 2023.sav")
+
+lca_data <- dplyr::bind_cols(base_og, factor_scores)
+
+saveRDS(
+  lca_data,
+  file = "input/data/proc/lca_data.rds"
+)
 ```
