@@ -1,0 +1,418 @@
+==========================================================================================
+Invarianza (Wu y Estabrook, WLSMV, theta): Consumo sustentable y político por Edad
+==========================================================================================
+
+Índices de ajuste por nivel:
+                chisq.scaled  df pvalue.scaled cfi.scaled tli.scaled
+Configural          228.5166  78             0     0.9732     0.9628
+Umbrales            237.1992  84             0     0.9727     0.9649
+Métrica             241.4738  98             0     0.9744     0.9718
+Escalar             372.1150 112             0     0.9536     0.9553
+Escalar parcial     296.0749 110             0     0.9668     0.9674
+                rmsea.scaled rmsea.ci.lower.scaled rmsea.ci.upper.scaled   srmr
+Configural            0.0598                0.0509                0.0689 0.0509
+Umbrales              0.0581                0.0495                0.0669 0.0509
+Métrica               0.0521                0.0438                0.0604 0.0511
+Escalar               0.0656                0.0583                0.0730 0.0528
+Escalar parcial       0.0560                0.0483                0.0637 0.0513
+
+Pruebas de diferencia de chi-cuadrado escaladas entre niveles sucesivos:
+
+Scaled Chi-Squared Difference Test (method = “satorra.2000”)
+
+lavaan NOTE:
+    The “Chisq” column contains standard test statistics, not the
+    robust test that should be reported per model. A robust difference
+    test is a function of two standard (not robust) statistics.
+ 
+              Df AIC BIC  Chisq Chisq diff Df diff Pr(>Chisq)
+fits[[k - 1]] 78         149.51                              
+fits[[k]]     84         151.37     4.8211       6      0.567
+
+Scaled Chi-Squared Difference Test (method = “satorra.2000”)
+
+lavaan NOTE:
+    The “Chisq” column contains standard test statistics, not the
+    robust test that should be reported per model. A robust difference
+    test is a function of two standard (not robust) statistics.
+ 
+              Df AIC BIC  Chisq Chisq diff Df diff Pr(>Chisq)
+fits[[k - 1]] 84         151.37                              
+fits[[k]]     98         162.20      13.24      14     0.5077
+
+Scaled Chi-Squared Difference Test (method = “satorra.2000”)
+
+lavaan NOTE:
+    The “Chisq” column contains standard test statistics, not the
+    robust test that should be reported per model. A robust difference
+    test is a function of two standard (not robust) statistics.
+ 
+               Df AIC BIC  Chisq Chisq diff Df diff Pr(>Chisq)    
+fits[[k - 1]]  98         162.20                                  
+fits[[k]]     112         274.71     109.71      14  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Escalar parcial frente a métrico:
+
+Scaled Chi-Squared Difference Test (method = “satorra.2000”)
+
+lavaan NOTE:
+    The “Chisq” column contains standard test statistics, not the
+    robust test that should be reported per model. A robust difference
+    test is a function of two standard (not robust) statistics.
+ 
+                           Df AIC BIC  Chisq Chisq diff Df diff Pr(>Chisq)    
+fits[["Métrica"]]          98         162.20                                  
+fits[["Escalar parcial"]] 110         212.93     51.187      12  8.633e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Modelo final (escalar parcial ), estimaciones completas:
+lavaan 0.6.17 ended normally after 126 iterations
+
+  Estimator                                       DWLS
+  Optimization method                           NLMINB
+  Number of model parameters                       121
+  Number of equality constraints                    60
+
+  Number of observations per group:                   
+    18-34                                          665
+    35-54                                          549
+    55 o más                                       409
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                               212.935     296.075
+  Degrees of freedom                               110         110
+  P-value (Chi-square)                           0.000       0.000
+  Scaling correction factor                                  0.750
+  Shift parameter                                           12.106
+    simple second-order correction                                
+  Test statistic for each group:
+    18-34                                       89.696     124.579
+    35-54                                       75.067     104.205
+    55 o más                                    48.171      67.292
+
+Model Test Baseline Model:
+
+  Test statistic                              8525.005    5715.985
+  Degrees of freedom                               108         108
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.501
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.988       0.967
+  Tucker-Lewis Index (TLI)                       0.988       0.967
+                                                                  
+  Robust Comparative Fit Index (CFI)                            NA
+  Robust Tucker-Lewis Index (TLI)                               NA
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.042       0.056
+  90 Percent confidence interval - lower         0.033       0.048
+  90 Percent confidence interval - upper         0.050       0.064
+  P-value H_0: RMSEA <= 0.050                    0.951       0.097
+  P-value H_0: RMSEA >= 0.080                    0.000       0.000
+                                                                  
+  Robust RMSEA                                                  NA
+  90 Percent confidence interval - lower                        NA
+  90 Percent confidence interval - upper                        NA
+  P-value H_0: Robust RMSEA <= 0.050                            NA
+  P-value H_0: Robust RMSEA >= 0.080                            NA
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.051       0.051
+
+Parameter Estimates:
+
+  Parameterization                               Theta
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model        Unstructured
+
+
+Group 1 [18-34]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust =~                                                        
+    O2_11   (l.1_)    0.784    0.061   12.892    0.000    0.784    0.617
+    O2_12   (l.2_)    0.771    0.061   12.698    0.000    0.771    0.611
+    O3_4    (l.3_)    1.177    0.094   12.483    0.000    1.177    0.762
+    O3_7    (l.4_)    0.973    0.070   13.913    0.000    0.973    0.697
+  consumo_pol =~                                                        
+    O3_2    (l.5_)    0.962    0.078   12.356    0.000    0.962    0.693
+    O3_3    (l.6_)    1.338    0.111   12.016    0.000    1.338    0.801
+    O3_5    (l.7_)    0.844    0.074   11.382    0.000    0.844    0.645
+    O3_8    (l.8_)    0.960    0.084   11.463    0.000    0.960    0.692
+    O3_9    (l.9_)    0.928    0.084   11.079    0.000    0.928    0.680
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust ~~                                                        
+    cnsm_pl (p.2_)    0.800    0.026   30.366    0.000    0.800    0.800
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (nu.1)    0.000                               0.000    0.000
+   .O2_12   (nu.2)    0.000                               0.000    0.000
+   .O3_4    (nu.3)    0.000                               0.000    0.000
+   .O3_7    (nu.4)    0.000                               0.000    0.000
+   .O3_2    (nu.5)    0.000                               0.000    0.000
+   .O3_3    (nu.6)    0.000                               0.000    0.000
+   .O3_5    (nu.7)    0.000                               0.000    0.000
+   .O3_8    (nu.8)    0.000                               0.000    0.000
+   .O3_9              0.000                               0.000    0.000
+    cmpr_ss (a.1.)    0.000                               0.000    0.000
+    cnsm_pl (a.2.)    0.000                               0.000    0.000
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_1 (O2_11.1)   -0.490    0.054   -9.052    0.000   -0.490   -0.385
+    O2_1 (O2_11.2)    0.959    0.068   14.178    0.000    0.959    0.755
+    O2_1 (O2_12.1)   -0.596    0.057  -10.491    0.000   -0.596   -0.472
+    O2_1 (O2_12.2)    1.055    0.071   14.956    0.000    1.055    0.836
+    O3_4  (O3_4.1)   -1.322    0.094  -13.991    0.000   -1.322   -0.856
+    O3_4  (O3_4.2)   -0.141    0.063   -2.240    0.025   -0.141   -0.091
+    O3_4  (O3_4.3)    1.419    0.104   13.640    0.000    1.419    0.919
+    O3_7  (O3_7.1)   -1.089    0.075  -14.552    0.000   -1.089   -0.781
+    O3_7  (O3_7.2)   -0.178    0.057   -3.133    0.002   -0.178   -0.128
+    O3_7  (O3_7.3)    1.054    0.072   14.586    0.000    1.054    0.756
+    O3_2  (O3_2.1)   -0.512    0.066   -7.801    0.000   -0.512   -0.369
+    O3_2  (O3_2.2)    0.449    0.062    7.247    0.000    0.449    0.323
+    O3_3  (O3_3.1)   -0.280    0.075   -3.747    0.000   -0.280   -0.167
+    O3_3  (O3_3.2)    0.716    0.081    8.813    0.000    0.716    0.429
+    O3_3  (O3_3.3)    1.875    0.127   14.725    0.000    1.875    1.122
+    O3_5  (O3_5.1)   -0.036    0.052   -0.690    0.490   -0.036   -0.028
+    O3_5  (O3_5.2)    0.883    0.074   11.918    0.000    0.883    0.675
+    O3_8  (O3_8.1)    0.728    0.068   10.702    0.000    0.728    0.525
+    O3_8  (O3_8.2)    1.312    0.095   13.833    0.000    1.312    0.946
+    O3_9  (O3_9.1)   -0.081    0.065   -1.240    0.215   -0.081   -0.059
+    O3_9  (O3_9.2)    0.703    0.076    9.240    0.000    0.703    0.515
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (t.1_)    1.000                               1.000    0.620
+   .O2_12   (t.2_)    1.000                               1.000    0.627
+   .O3_4    (t.3_)    1.000                               1.000    0.419
+   .O3_7    (t.4_)    1.000                               1.000    0.514
+   .O3_2    (t.5_)    1.000                               1.000    0.519
+   .O3_3    (t.6_)    1.000                               1.000    0.358
+   .O3_5    (t.7_)    1.000                               1.000    0.584
+   .O3_8    (t.8_)    1.000                               1.000    0.521
+   .O3_9    (t.9_)    1.000                               1.000    0.538
+    cmpr_ss (p.1_)    1.000                               1.000    1.000
+    cnsm_pl (p.2_)    1.000                               1.000    1.000
+
+Scales y*:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_11             0.787                               0.787    1.000
+    O2_12             0.792                               0.792    1.000
+    O3_4              0.647                               0.647    1.000
+    O3_7              0.717                               0.717    1.000
+    O3_2              0.721                               0.721    1.000
+    O3_3              0.599                               0.599    1.000
+    O3_5              0.764                               0.764    1.000
+    O3_8              0.721                               0.721    1.000
+    O3_9              0.733                               0.733    1.000
+
+
+Group 2 [35-54]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust =~                                                        
+    O2_11   (l.1_)    0.784    0.061   12.892    0.000    0.706    0.661
+    O2_12   (l.2_)    0.771    0.061   12.698    0.000    0.695    0.610
+    O3_4    (l.3_)    1.177    0.094   12.483    0.000    1.060    0.758
+    O3_7    (l.4_)    0.973    0.070   13.913    0.000    0.876    0.649
+  consumo_pol =~                                                        
+    O3_2    (l.5_)    0.962    0.078   12.356    0.000    0.787    0.588
+    O3_3    (l.6_)    1.338    0.111   12.016    0.000    1.095    0.730
+    O3_5    (l.7_)    0.844    0.074   11.382    0.000    0.690    0.541
+    O3_8    (l.8_)    0.960    0.084   11.463    0.000    0.785    0.766
+    O3_9    (l.9_)    0.928    0.084   11.079    0.000    0.759    0.556
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust ~~                                                        
+    cnsm_pl (p.2_)    0.524    0.068    7.672    0.000    0.711    0.711
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (nu.1)    0.000                               0.000    0.000
+   .O2_12   (nu.2)    0.000                               0.000    0.000
+   .O3_4    (nu.3)    0.000                               0.000    0.000
+   .O3_7    (nu.4)    0.000                               0.000    0.000
+   .O3_2    (nu.5)    0.000                               0.000    0.000
+   .O3_3    (nu.6)    0.000                               0.000    0.000
+   .O3_5    (nu.7)    0.000                               0.000    0.000
+   .O3_8    (nu.8)    0.000                               0.000    0.000
+   .O3_9             -0.621    0.118   -5.253    0.000   -0.621   -0.455
+    cmpr_ss (a.1.)    0.147    0.065    2.272    0.023    0.163    0.163
+    cnsm_pl (a.2.)    0.153    0.066    2.343    0.019    0.188    0.188
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_1 (O2_11.1)   -0.490    0.054   -9.052    0.000   -0.490   -0.459
+    O2_1 (O2_11.2)    0.959    0.068   14.178    0.000    0.959    0.898
+    O2_1 (O2_12.1)   -0.596    0.057  -10.491    0.000   -0.596   -0.523
+    O2_1 (O2_12.2)    1.055    0.071   14.956    0.000    1.055    0.926
+    O3_4  (O3_4.1)   -1.322    0.094  -13.991    0.000   -1.322   -0.945
+    O3_4  (O3_4.2)   -0.141    0.063   -2.240    0.025   -0.141   -0.101
+    O3_4  (O3_4.3)    1.419    0.104   13.640    0.000    1.419    1.015
+    O3_7  (O3_7.1)   -1.089    0.075  -14.552    0.000   -1.089   -0.807
+    O3_7  (O3_7.2)   -0.178    0.057   -3.133    0.002   -0.178   -0.132
+    O3_7  (O3_7.3)    1.054    0.072   14.586    0.000    1.054    0.781
+    O3_2  (O3_2.1)   -0.512    0.066   -7.801    0.000   -0.512   -0.383
+    O3_2  (O3_2.2)    0.449    0.062    7.247    0.000    0.449    0.335
+    O3_3  (O3_3.1)   -0.280    0.075   -3.747    0.000   -0.280   -0.186
+    O3_3  (O3_3.2)    0.716    0.081    8.813    0.000    0.716    0.478
+    O3_3  (O3_3.3)    1.875    0.127   14.725    0.000    1.875    1.251
+    O3_5  (O3_5.1)   -0.036    0.052   -0.690    0.490   -0.036   -0.028
+    O3_5  (O3_5.2)    0.883    0.074   11.918    0.000    0.883    0.692
+    O3_8  (O3_8.1)    0.728    0.068   10.702    0.000    0.728    0.710
+    O3_8  (O3_8.2)    1.312    0.095   13.833    0.000    1.312    1.279
+    O3_9  (O3_9.1)   -0.081    0.065   -1.240    0.215   -0.081   -0.059
+    O3_9  (O3_9.2)    0.703    0.076    9.240    0.000    0.703    0.515
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (t.1_)    0.641    0.110    5.838    0.000    0.641    0.563
+   .O2_12   (t.2_)    0.815    0.134    6.087    0.000    0.815    0.628
+   .O3_4    (t.3_)    0.831    0.139    5.996    0.000    0.831    0.425
+   .O3_7    (t.4_)    1.052    0.155    6.798    0.000    1.052    0.578
+   .O3_2    (t.5_)    1.170    0.257    4.553    0.000    1.170    0.654
+   .O3_3    (t.6_)    1.049    0.195    5.378    0.000    1.049    0.466
+   .O3_5    (t.7_)    1.152    0.259    4.444    0.000    1.152    0.707
+   .O3_8    (t.8_)    0.435    0.104    4.184    0.000    0.435    0.414
+   .O3_9    (t.9_)    1.288    0.342    3.763    0.000    1.288    0.691
+    cmpr_ss (p.1_)    0.811    0.107    7.575    0.000    1.000    1.000
+    cnsm_pl (p.2_)    0.670    0.097    6.874    0.000    1.000    1.000
+
+Scales y*:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_11             0.937                               0.937    1.000
+    O2_12             0.878                               0.878    1.000
+    O3_4              0.715                               0.715    1.000
+    O3_7              0.741                               0.741    1.000
+    O3_2              0.747                               0.747    1.000
+    O3_3              0.667                               0.667    1.000
+    O3_5              0.784                               0.784    1.000
+    O3_8              0.975                               0.975    1.000
+    O3_9              0.732                               0.732    1.000
+
+
+Group 3 [55 o más]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust =~                                                        
+    O2_11   (l.1_)    0.784    0.061   12.892    0.000    0.759    0.675
+    O2_12   (l.2_)    0.771    0.061   12.698    0.000    0.747    0.631
+    O3_4    (l.3_)    1.177    0.094   12.483    0.000    1.141    0.757
+    O3_7    (l.4_)    0.973    0.070   13.913    0.000    0.943    0.642
+  consumo_pol =~                                                        
+    O3_2    (l.5_)    0.962    0.078   12.356    0.000    0.856    0.635
+    O3_3    (l.6_)    1.338    0.111   12.016    0.000    1.190    0.762
+    O3_5    (l.7_)    0.844    0.074   11.382    0.000    0.751    0.551
+    O3_8    (l.8_)    0.960    0.084   11.463    0.000    0.854    0.814
+    O3_9    (l.9_)    0.928    0.084   11.079    0.000    0.825    0.605
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  compra_sust ~~                                                        
+    cnsm_pl (p.2_)    0.566    0.082    6.898    0.000    0.657    0.657
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (nu.1)    0.000                               0.000    0.000
+   .O2_12   (nu.2)    0.000                               0.000    0.000
+   .O3_4    (nu.3)    0.000                               0.000    0.000
+   .O3_7    (nu.4)    0.000                               0.000    0.000
+   .O3_2    (nu.5)    0.000                               0.000    0.000
+   .O3_3    (nu.6)    0.000                               0.000    0.000
+   .O3_5    (nu.7)    0.000                               0.000    0.000
+   .O3_8    (nu.8)    0.000                               0.000    0.000
+   .O3_9             -0.626    0.137   -4.582    0.000   -0.626   -0.459
+    cmpr_ss (a.1.)    0.358    0.075    4.797    0.000    0.369    0.369
+    cnsm_pl (a.2.)   -0.078    0.076   -1.030    0.303   -0.088   -0.088
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_1 (O2_11.1)   -0.490    0.054   -9.052    0.000   -0.490   -0.435
+    O2_1 (O2_11.2)    0.959    0.068   14.178    0.000    0.959    0.852
+    O2_1 (O2_12.1)   -0.596    0.057  -10.491    0.000   -0.596   -0.503
+    O2_1 (O2_12.2)    1.055    0.071   14.956    0.000    1.055    0.890
+    O3_4  (O3_4.1)   -1.322    0.094  -13.991    0.000   -1.322   -0.877
+    O3_4  (O3_4.2)   -0.141    0.063   -2.240    0.025   -0.141   -0.094
+    O3_4  (O3_4.3)    1.419    0.104   13.640    0.000    1.419    0.942
+    O3_7  (O3_7.1)   -1.089    0.075  -14.552    0.000   -1.089   -0.741
+    O3_7  (O3_7.2)   -0.178    0.057   -3.133    0.002   -0.178   -0.121
+    O3_7  (O3_7.3)    1.054    0.072   14.586    0.000    1.054    0.717
+    O3_2  (O3_2.1)   -0.512    0.066   -7.801    0.000   -0.512   -0.380
+    O3_2  (O3_2.2)    0.449    0.062    7.247    0.000    0.449    0.333
+    O3_3  (O3_3.1)   -0.280    0.075   -3.747    0.000   -0.280   -0.179
+    O3_3  (O3_3.2)    0.716    0.081    8.813    0.000    0.716    0.459
+    O3_3  (O3_3.3)    1.875    0.127   14.725    0.000    1.875    1.201
+    O3_5  (O3_5.1)   -0.036    0.052   -0.690    0.490   -0.036   -0.027
+    O3_5  (O3_5.2)    0.883    0.074   11.918    0.000    0.883    0.648
+    O3_8  (O3_8.1)    0.728    0.068   10.702    0.000    0.728    0.694
+    O3_8  (O3_8.2)    1.312    0.095   13.833    0.000    1.312    1.250
+    O3_9  (O3_9.1)   -0.081    0.065   -1.240    0.215   -0.081   -0.059
+    O3_9  (O3_9.2)    0.703    0.076    9.240    0.000    0.703    0.515
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_11   (t.1_)    0.689    0.128    5.378    0.000    0.689    0.544
+   .O2_12   (t.2_)    0.846    0.152    5.554    0.000    0.846    0.602
+   .O3_4    (t.3_)    0.971    0.184    5.274    0.000    0.971    0.427
+   .O3_7    (t.4_)    1.269    0.205    6.196    0.000    1.269    0.588
+   .O3_2    (t.5_)    1.081    0.272    3.971    0.000    1.081    0.596
+   .O3_3    (t.6_)    1.021    0.220    4.641    0.000    1.021    0.419
+   .O3_5    (t.7_)    1.294    0.318    4.064    0.000    1.294    0.697
+   .O3_8    (t.8_)    0.372    0.112    3.317    0.001    0.372    0.338
+   .O3_9    (t.9_)    1.179    0.346    3.405    0.001    1.179    0.634
+    cmpr_ss (p.1_)    0.939    0.133    7.041    0.000    1.000    1.000
+    cnsm_pl (p.2_)    0.791    0.126    6.281    0.000    1.000    1.000
+
+Scales y*:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_11             0.889                               0.889    1.000
+    O2_12             0.844                               0.844    1.000
+    O3_4              0.663                               0.663    1.000
+    O3_7              0.681                               0.681    1.000
+    O3_2              0.743                               0.743    1.000
+    O3_3              0.640                               0.640    1.000
+    O3_5              0.734                               0.734    1.000
+    O3_8              0.953                               0.953    1.000
+    O3_9              0.733                               0.733    1.000
+
+
+Índices de modificación de los interceptos en el modelo escalar completo:
+     lhs op rhs block group level     mi    epc sepc.lv sepc.all sepc.nox
+1   O3_9 ~1         1     1     1 61.675 -0.536  -0.536   -0.416   -0.416
+2   O3_3 ~1         1     1     1 24.908  0.429   0.429    0.249    0.249
+3   O3_9 ~1         2     2     1 22.847  0.320   0.320    0.313    0.313
+4   O3_5 ~1         1     1     1 20.468  0.312   0.312    0.237    0.237
+5   O3_3 ~1         2     2     1 16.832 -0.349  -0.349   -0.232   -0.232
+6  O2_11 ~1         1     1     1 14.140 -0.242  -0.242   -0.190   -0.190
+7   O3_2 ~1         1     1     1 11.384 -0.252  -0.252   -0.181   -0.181
+8   O3_9 ~1         3     3     1 11.299  0.259   0.259    0.255    0.255
+9   O3_4 ~1         1     1     1  7.956  0.217   0.217    0.141    0.141
+10  O3_2 ~1         2     2     1  7.112  0.199   0.199    0.158    0.158
+11  O3_5 ~1         3     3     1  6.379 -0.205  -0.205   -0.155   -0.155
+12  O3_5 ~1         2     2     1  5.726 -0.166  -0.166   -0.135   -0.135
+13 O2_11 ~1         2     2     1  5.246  0.144   0.144    0.135    0.135
+14  O3_4 ~1         2     2     1  3.496 -0.144  -0.144   -0.103   -0.103
+15 O2_11 ~1         3     3     1  2.375  0.108   0.108    0.096    0.096
+16  O3_4 ~1         3     3     1  1.175 -0.095  -0.095   -0.063   -0.063
+17  O3_3 ~1         3     3     1  0.931 -0.094  -0.094   -0.061   -0.061
+18  O3_2 ~1         3     3     1  0.594  0.063   0.063    0.050    0.050
+19 O2_12 ~1         2     2     1  0.563  0.049   0.049    0.043    0.043
+20  O3_7 ~1         1     1     1  0.524  0.048   0.048    0.035    0.035
+

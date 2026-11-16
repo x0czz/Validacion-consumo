@@ -1,0 +1,8 @@
+grupo,pares,mayores_010,medio_abs,max_abs,nivel,positivos_010
+Entre escalas,72,14,0.06472048365677335,0.2002969169591451,tipo,NA
+"Misma escala, distinto factor",35,4,0.048886651760269836,0.14793045476596825,tipo,NA
+Mismo factor,29,2,0.032166129706149287,0.13149429273971192,tipo,NA
+Ahorro doméstico – Compra sustentable,20,0,0.04746306963428867,0.09810262690101801,par_entre_escalas,0
+Ahorro doméstico – Consumo político,25,7,0.07810115381783068,0.19971009979852214,par_entre_escalas,3
+Compra sustentable – Planificación,12,1,0.04647038040848076,0.13392400981146307,par_entre_escalas,0
+Consumo político – Planificación,15,6,0.0800293346836248,0.2002969169591451,par_entre_escalas,4

@@ -1,0 +1,271 @@
+item,tipo,factor,valor,enunciado,h2
+O1_6,Patrón,Compra sustentable y consumo político,0.4223777537688062,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Patrón,Ahorro doméstico,0.056166247122479335,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Patrón,Planificación de compras,0.024235661277109154,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Patrón,Facilidad para reciclar,0.026737236708183326,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Patrón,Valoración del reciclaje,-0.03976255574746264,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_8,Patrón,Compra sustentable y consumo político,0.4396512472284469,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Patrón,Ahorro doméstico,0.06429594228977596,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Patrón,Planificación de compras,0.10682418086673379,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Patrón,Facilidad para reciclar,0.09032728819449513,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Patrón,Valoración del reciclaje,-0.02260687962805969,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_9,Patrón,Compra sustentable y consumo político,-0.015302109798732387,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Patrón,Ahorro doméstico,-0.08321835100376135,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Patrón,Planificación de compras,0.42153559371469307,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Patrón,Facilidad para reciclar,-0.0892371575545824,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Patrón,Valoración del reciclaje,0.10461898978014987,Compara precios en internet antes de comprar,0.1709861527761692
+O1_10,Patrón,Compra sustentable y consumo político,0.05899161585890539,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Patrón,Ahorro doméstico,-0.05741443594476009,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Patrón,Planificación de compras,0.6567432162328231,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Patrón,Facilidad para reciclar,0.04591228277264239,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Patrón,Valoración del reciclaje,0.028824258122091495,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O2_1,Patrón,Compra sustentable y consumo político,-0.11724715956175556,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Patrón,Ahorro doméstico,0.6649842855168264,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Patrón,Planificación de compras,0.07392134966469599,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Patrón,Facilidad para reciclar,-0.10242736694504787,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Patrón,Valoración del reciclaje,0.08525437975951784,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_2,Patrón,Compra sustentable y consumo político,-0.05242889225810923,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Patrón,Ahorro doméstico,0.5508620080744104,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Patrón,Planificación de compras,0.04236136481193012,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Patrón,Facilidad para reciclar,-0.03449346255705239,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Patrón,Valoración del reciclaje,0.10287402289614585,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_3,Patrón,Compra sustentable y consumo político,0.08485763257371426,Toma duchas cortas,0.3281592553154424
+O2_3,Patrón,Ahorro doméstico,0.5434279958266559,Toma duchas cortas,0.3281592553154424
+O2_3,Patrón,Planificación de compras,0.04328514158396682,Toma duchas cortas,0.3281592553154424
+O2_3,Patrón,Facilidad para reciclar,-0.056020055232087876,Toma duchas cortas,0.3281592553154424
+O2_3,Patrón,Valoración del reciclaje,-0.008550301461095505,Toma duchas cortas,0.3281592553154424
+O2_4,Patrón,Compra sustentable y consumo político,-0.01085889996125463,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Patrón,Ahorro doméstico,0.48502941540306266,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Patrón,Planificación de compras,0.09466871094087784,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Patrón,Facilidad para reciclar,-0.07874036734748326,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Patrón,Valoración del reciclaje,0.15339696410914183,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_5,Patrón,Compra sustentable y consumo político,0.10714023634532355,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Patrón,Ahorro doméstico,0.6010198837245568,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Patrón,Planificación de compras,0.09426111262238221,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Patrón,Facilidad para reciclar,0.08399734499135245,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Patrón,Valoración del reciclaje,-0.11104998422320571,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_8,Patrón,Compra sustentable y consumo político,-0.10512150652968652,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Patrón,Ahorro doméstico,0.14228903832697218,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Patrón,Planificación de compras,0.7467626649841252,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Patrón,Facilidad para reciclar,-0.009169737038434982,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Patrón,Valoración del reciclaje,-0.014199186793780141,Planifica compra de alimentos. ,0.6479033592933641
+O2_9,Patrón,Compra sustentable y consumo político,0.17676889634702497,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Patrón,Ahorro doméstico,-0.020835549531944914,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Patrón,Planificación de compras,0.6007984761670087,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Patrón,Facilidad para reciclar,-0.027725237209168755,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Patrón,Valoración del reciclaje,-0.08236827765704499,Planifica compras de vestuario. ,0.41700023368730565
+O2_11,Patrón,Compra sustentable y consumo político,0.505484402775808,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Patrón,Ahorro doméstico,0.19941464857649732,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Patrón,Planificación de compras,0.16467888363114824,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Patrón,Facilidad para reciclar,0.14803770061916272,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Patrón,Valoración del reciclaje,0.07102828219473364,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_12,Patrón,Compra sustentable y consumo político,0.4793961175798465,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Patrón,Ahorro doméstico,0.22691242865391859,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Patrón,Planificación de compras,0.12286781034524882,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Patrón,Facilidad para reciclar,0.10617910075029267,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Patrón,Valoración del reciclaje,0.12081189859255297,Compra productos hechos con material reciclado. ,0.4371276012742618
+O3_2,Patrón,Compra sustentable y consumo político,0.5654097500397841,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Patrón,Ahorro doméstico,-0.20419766996980324,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Patrón,Planificación de compras,0.06734639762242231,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Patrón,Facilidad para reciclar,-0.020139635420105256,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Patrón,Valoración del reciclaje,0.1964844468726027,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_3,Patrón,Compra sustentable y consumo político,0.6599148493194874,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Patrón,Ahorro doméstico,0.0015581494773935847,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Patrón,Planificación de compras,0.02446772242074386,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Patrón,Facilidad para reciclar,0.038733344394165425,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Patrón,Valoración del reciclaje,0.014630239645895389,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_4,Patrón,Compra sustentable y consumo político,0.6456479785464441,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Patrón,Ahorro doméstico,0.19812504907178924,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Patrón,Planificación de compras,-0.04563912679051288,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Patrón,Facilidad para reciclar,0.0575857045792591,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Patrón,Valoración del reciclaje,0.17590753431249673,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_5,Patrón,Compra sustentable y consumo político,0.5997177133905156,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Patrón,Ahorro doméstico,-0.023090448952828316,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Patrón,Planificación de compras,-0.007829647764252684,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Patrón,Facilidad para reciclar,-0.040214915588529264,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Patrón,Valoración del reciclaje,-0.12981561651984203,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_7,Patrón,Compra sustentable y consumo político,0.5549909769281659,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Patrón,Ahorro doméstico,0.08465895494823172,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Patrón,Planificación de compras,0.19829421042263384,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Patrón,Facilidad para reciclar,0.023344416373571,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Patrón,Valoración del reciclaje,0.12249192946524319,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_8,Patrón,Compra sustentable y consumo político,0.7851735412331639,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Patrón,Ahorro doméstico,-0.07893192057671794,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Patrón,Planificación de compras,-0.038137570173198146,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Patrón,Facilidad para reciclar,-0.031274275975968685,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Patrón,Valoración del reciclaje,-0.2372586037998418,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_9,Patrón,Compra sustentable y consumo político,0.6411271118427528,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Patrón,Ahorro doméstico,-0.18205416402113178,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Patrón,Planificación de compras,-0.049950387860537036,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Patrón,Facilidad para reciclar,-0.0977175167655153,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Patrón,Valoración del reciclaje,0.036653109135519016,Participa en marchas o movilizaciones,0.4204277012310458
+O4_1,Patrón,Compra sustentable y consumo político,-0.046774691835798334,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Patrón,Ahorro doméstico,0.06783939363035477,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Patrón,Planificación de compras,-0.04677659408088647,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Patrón,Facilidad para reciclar,0.012945481598380822,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Patrón,Valoración del reciclaje,0.6669081456696644,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_2,Patrón,Compra sustentable y consumo político,-0.09238943362255841,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Patrón,Ahorro doméstico,-0.09898069041614008,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Patrón,Planificación de compras,0.11987983327043464,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Patrón,Facilidad para reciclar,0.40533365132851124,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Patrón,Valoración del reciclaje,0.1370840532237911,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_3,Patrón,Compra sustentable y consumo político,-0.0034632670540165333,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Patrón,Ahorro doméstico,0.0028775789917236533,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Patrón,Planificación de compras,-0.05286161854767888,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Patrón,Facilidad para reciclar,0.9133730565650713,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Patrón,Valoración del reciclaje,-0.0353912534104891,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_5,Patrón,Compra sustentable y consumo político,-0.030652733358003528,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Patrón,Ahorro doméstico,-0.11193018943529306,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Patrón,Planificación de compras,0.07811854581830258,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Patrón,Facilidad para reciclar,0.74012091153396,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Patrón,Valoración del reciclaje,0.008348485153827464,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_6,Patrón,Compra sustentable y consumo político,0.15337916715047356,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Patrón,Ahorro doméstico,0.1922963505801395,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Patrón,Planificación de compras,-0.0359519995281143,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Patrón,Facilidad para reciclar,0.4386669947724004,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Patrón,Valoración del reciclaje,0.156145918886735,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_7,Patrón,Compra sustentable y consumo político,-0.03687984200918855,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Patrón,Ahorro doméstico,0.07672580086295913,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Patrón,Planificación de compras,-0.09648330953813772,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Patrón,Facilidad para reciclar,0.13207700892215646,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Patrón,Valoración del reciclaje,-0.41941193888197137,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_8,Patrón,Compra sustentable y consumo político,0.03078380160644504,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Patrón,Ahorro doméstico,0.023504634121428336,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Patrón,Planificación de compras,0.038236469468667406,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Patrón,Facilidad para reciclar,0.03332155393194828,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Patrón,Valoración del reciclaje,0.5500513844994542,Reciclar es bueno para la economía,0.3322450160384576
+O1_6,Estructura,Compra sustentable y consumo político,0.4341643801849848,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Estructura,Ahorro doméstico,0.06355713318527569,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Estructura,Planificación de compras,0.15720878900299043,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Estructura,Facilidad para reciclar,0.09301607042396012,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_6,Estructura,Valoración del reciclaje,-0.009321833652100504,Cultiva y cosecha sus propios alimentos,0.19361885290075223
+O1_8,Estructura,Compra sustentable y consumo político,0.48336960534899337,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Estructura,Ahorro doméstico,0.12266097497280143,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Estructura,Planificación de compras,0.2583931080073212,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Estructura,Facilidad para reciclar,0.16880141064527024,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_8,Estructura,Valoración del reciclaje,0.03661439181660713,Adquiere productos con la etiqueta “comercio justo”,0.2624229214550976
+O1_9,Estructura,Compra sustentable y consumo político,0.08005466701216718,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Estructura,Ahorro doméstico,0.16871776171940042,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Estructura,Planificación de compras,0.39162299409903917,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Estructura,Facilidad para reciclar,-0.045319222615263485,Compara precios en internet antes de comprar,0.1709861527761692
+O1_9,Estructura,Valoración del reciclaje,0.16368330542453596,Compara precios en internet antes de comprar,0.1709861527761692
+O1_10,Estructura,Compra sustentable y consumo político,0.2379801739356751,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Estructura,Ahorro doméstico,0.29099479428050745,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Estructura,Planificación de compras,0.6540675345195891,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Estructura,Facilidad para reciclar,0.11658792582552073,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O1_10,Estructura,Valoración del reciclaje,0.1664873552110622,Elabora un presupuesto mensual para monitorear mis gastos,0.43703764159928504
+O2_1,Estructura,Compra sustentable y consumo político,-0.09873140905120029,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Estructura,Ahorro doméstico,0.7296717086972148,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Estructura,Planificación de compras,0.3925848491666092,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Estructura,Facilidad para reciclar,-0.08578070569924129,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_1,Estructura,Valoración del reciclaje,0.34814319353653395,Evita dejar luces prendidas en ambiente desocupados ,0.5642836229008655
+O2_2,Estructura,Compra sustentable y consumo político,-0.03413030058099678,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Estructura,Ahorro doméstico,0.6097415955584372,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Estructura,Planificación de compras,0.3303671422043764,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Estructura,Facilidad para reciclar,-0.012334389402191323,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_2,Estructura,Valoración del reciclaje,0.3210881537682132,Corta el agua mientras se lava los dientes. ,0.38512478250194904
+O2_3,Estructura,Compra sustentable y consumo político,0.099709454169271,Toma duchas cortas,0.3281592553154424
+O2_3,Estructura,Ahorro doméstico,0.5624224810678333,Toma duchas cortas,0.3281592553154424
+O2_3,Estructura,Planificación de compras,0.335362696012142,Toma duchas cortas,0.3281592553154424
+O2_3,Estructura,Facilidad para reciclar,-0.023202823865939422,Toma duchas cortas,0.3281592553154424
+O2_3,Estructura,Valoración del reciclaje,0.20514128846622837,Toma duchas cortas,0.3281592553154424
+O2_4,Estructura,Compra sustentable y consumo político,0.012874978834906785,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Estructura,Ahorro doméstico,0.589570740098576,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Estructura,Planificación de compras,0.36795717492855917,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Estructura,Facilidad para reciclar,-0.04238187512111655,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_4,Estructura,Valoración del reciclaje,0.35448846381218035,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.37836799330993937
+O2_5,Estructura,Compra sustentable y consumo político,0.15852232758368834,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Estructura,Ahorro doméstico,0.611334860311214,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Estructura,Planificación de compras,0.4102035500011281,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Estructura,Facilidad para reciclar,0.11687126894958291,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_5,Estructura,Valoración del reciclaje,0.15030511854852247,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.4162002645831531
+O2_8,Estructura,Compra sustentable y consumo político,0.0933945340263468,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Estructura,Ahorro doméstico,0.514686177417523,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Estructura,Planificación de compras,0.7873643009542166,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Estructura,Facilidad para reciclar,0.04594450032613947,Planifica compra de alimentos. ,0.6479033592933641
+O2_8,Estructura,Valoración del reciclaje,0.21593014904182156,Planifica compra de alimentos. ,0.6479033592933641
+O2_9,Estructura,Compra sustentable y consumo político,0.3301521202045925,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Estructura,Ahorro doméstico,0.2567933399532117,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Estructura,Planificación de compras,0.6147426960543622,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Estructura,Facilidad para reciclar,0.04666997324140183,Planifica compras de vestuario. ,0.41700023368730565
+O2_9,Estructura,Valoración del reciclaje,0.049199776111515825,Planifica compras de vestuario. ,0.41700023368730565
+O2_11,Estructura,Compra sustentable y consumo político,0.5766580396054881,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Estructura,Ahorro doméstico,0.32644387063688995,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Estructura,Planificación de compras,0.42987827166409803,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Estructura,Facilidad para reciclar,0.25521950373181906,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_11,Estructura,Valoración del reciclaje,0.20146134620307468,Compra productos orgánicos o naturales. ,0.4794727702088519
+O2_12,Estructura,Compra sustentable y consumo político,0.5336799532231298,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Estructura,Ahorro doméstico,0.34991226854180424,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Estructura,Planificación de compras,0.40312128479147447,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Estructura,Facilidad para reciclar,0.21104359062271125,Compra productos hechos con material reciclado. ,0.4371276012742618
+O2_12,Estructura,Valoración del reciclaje,0.24786476423107756,Compra productos hechos con material reciclado. ,0.4371276012742618
+O3_2,Estructura,Compra sustentable y consumo político,0.5756659427056161,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Estructura,Ahorro doméstico,-0.08228794616949865,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Estructura,Planificación de compras,0.15687269183432773,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Estructura,Facilidad para reciclar,0.08739274443721529,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_2,Estructura,Valoración del reciclaje,0.1327917884330216,Intenta influir en lo que consumen otras personas,0.3771864174145436
+O3_3,Estructura,Compra sustentable y consumo político,0.672485872855794,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Estructura,Ahorro doméstico,0.035669411870814995,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Estructura,Planificación de compras,0.2061653752664749,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Estructura,Facilidad para reciclar,0.14583944485083103,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_3,Estructura,Valoración del reciclaje,0.025623365414396887,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.4549071143255773
+O3_4,Estructura,Compra sustentable y consumo político,0.6473428487822209,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Estructura,Ahorro doméstico,0.25870909966778477,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Estructura,Planificación de compras,0.2723066239327574,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Estructura,Facilidad para reciclar,0.17743679374660876,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_4,Estructura,Valoración del reciclaje,0.24762694959500997,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.5105617871929383
+O3_5,Estructura,Compra sustentable y consumo político,0.590658935096948,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Estructura,Ahorro doméstico,-0.06465054422819139,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Estructura,Planificación de compras,0.10404781982422118,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Estructura,Facilidad para reciclar,0.03985707157294709,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_5,Estructura,Valoración del reciclaje,-0.14359619775991567,Realiza un reclamo o demanda colectiva en el Sernac,0.3719449584346269
+O3_7,Estructura,Compra sustentable y consumo político,0.6129691749279579,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Estructura,Ahorro doméstico,0.24594362161571734,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Estructura,Planificación de compras,0.4187650797317586,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Estructura,Facilidad para reciclar,0.14286780900283813,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_7,Estructura,Valoración del reciclaje,0.20486785145895953,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.47248220607061847
+O3_8,Estructura,Compra sustentable y consumo político,0.7681279472952905,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Estructura,Ahorro doméstico,-0.17275923850993197,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Estructura,Planificación de compras,0.06958177576448918,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Estructura,Facilidad para reciclar,0.06305698463599158,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_8,Estructura,Valoración del reciclaje,-0.278542514502813,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.678210825685087
+O3_9,Estructura,Compra sustentable y consumo político,0.6086041917506563,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Estructura,Ahorro doméstico,-0.18193327779717716,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Estructura,Planificación de compras,0.025899874734990606,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Estructura,Facilidad para reciclar,-0.0038091640108916785,Participa en marchas o movilizaciones,0.4204277012310458
+O3_9,Estructura,Valoración del reciclaje,-0.05361538446066583,Participa en marchas o movilizaciones,0.4204277012310458
+O4_1,Estructura,Compra sustentable y consumo político,-0.054647702221756585,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Estructura,Ahorro doméstico,0.2995054798636081,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Estructura,Planificación de compras,0.1342793676583227,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Estructura,Facilidad para reciclar,0.06748702622149061,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_1,Estructura,Valoración del reciclaje,0.6830918895463952,Es necesario hacerse cargo de las tareas de reciclaje,0.47302646553493466
+O4_2,Estructura,Compra sustentable y consumo político,6.659326981447148e-4,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Estructura,Ahorro doméstico,0.024880385850845704,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Estructura,Planificación de compras,0.11477405875373795,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Estructura,Facilidad para reciclar,0.41208188208834917,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_2,Estructura,Valoración del reciclaje,0.16625106072737592,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.20105591528347913
+O4_3,Estructura,Compra sustentable y consumo político,0.1257421918859815,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Estructura,Ahorro doméstico,-0.01022665489911254,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Estructura,Planificación de compras,0.023314313064926324,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Estructura,Facilidad para reciclar,0.9046530854870558,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_3,Estructura,Valoración del reciclaje,0.04104456605140533,Es fácil llevar mi reciclaje hasta los centros de acopio,0.8231357960623948
+O4_5,Estructura,Compra sustentable y consumo político,0.103392154823517,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Estructura,Ahorro doméstico,-0.04732497371985807,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Estructura,Planificación de compras,0.08303973509771317,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Estructura,Facilidad para reciclar,0.7399336393703514,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_5,Estructura,Valoración del reciclaje,0.054946996451514865,En mi comuna o barrio es fácil reciclar,0.5567138683008876
+O4_6,Estructura,Compra sustentable y consumo político,0.2171806166411846,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Estructura,Ahorro doméstico,0.25061636846800894,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Estructura,Planificación de compras,0.17968428445306867,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Estructura,Facilidad para reciclar,0.4801991611181103,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_6,Estructura,Valoración del reciclaje,0.26389874860174584,"En mi hogar, todos/as reciclamos",0.3268978213372188
+O4_7,Estructura,Compra sustentable y consumo político,-0.040443726475790684,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Estructura,Ahorro doméstico,-0.1303868943211583,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Estructura,Planificación de compras,-0.1540910020789758,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Estructura,Facilidad para reciclar,0.07940637628189662,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_7,Estructura,Valoración del reciclaje,-0.4000942459549489,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.18464678930463835
+O4_8,Estructura,Compra sustentable y consumo político,0.047348726213032315,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Estructura,Ahorro doméstico,0.25596144998758924,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Estructura,Planificación de compras,0.19139342310221266,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Estructura,Facilidad para reciclar,0.09526118967337385,Reciclar es bueno para la economía,0.3322450160384576
+O4_8,Estructura,Valoración del reciclaje,0.5713624421670492,Reciclar es bueno para la economía,0.3322450160384576

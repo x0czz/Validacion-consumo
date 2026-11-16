@@ -1,0 +1,335 @@
+---
+title: "Invarianza de medida de las escalas de consumo responsable"
+subtitle: "Documento metodológico: comparación por sexo, edad y nivel socioeconómico, Encuesta Sociedad de Consumo 2023"
+author: "Nicolás Outerbridge"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    number-sections: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "", OutDec = ",")
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+secuencia  <- leer("invarianza_secuencia.csv")
+parcial    <- leer("invarianza_parcial_edad.csv")
+libres     <- leer("invarianza_interceptos_libres.csv")
+medias     <- leer("invarianza_medias_latentes.csv")
+grupos     <- leer("invarianza_grupos.csv")
+
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+tabla <- function(df, ...) {
+  kable(df, ...) %>% kable_styling(bootstrap_options = c("striped", "condensed"),
+                                   full_width = FALSE)
+}
+
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+
+media_de <- function(fac, var, grp) {
+  medias %>% filter(factor == fac, variable == var, grupo == grp)
+}
+```
+
+# Resumen
+
+Este documento evalúa si los dos modelos de medida de consumo responsable, desarrollados en el [documento metodológico del análisis factorial](documento_metodologico.html), miden lo mismo en hombres y mujeres, en distintos tramos de edad y en distintos niveles socioeconómicos.
+
+Los resultados principales son:
+
+- **Ambos modelos son invariantes por sexo y por NSE** en el nivel más exigente (escalar). Las medias de los factores se pueden comparar directamente entre esos grupos.
+- **Por edad, la invarianza escalar es parcial.** Hay que liberar un ítem en el modelo de consumo sustentable y político (participar en marchas) y dos en el de prácticas domésticas (cortar el agua y desenchufar aparatos). Con esos ajustes, las medias también se pueden comparar.
+- **Diferencias sustantivas:**
+    - El nivel socioeconómico alto (ABC1) tiene más compra sustentable y más consumo político que los niveles medio y bajo.
+    - El ahorro doméstico es mayor en el nivel bajo (D-E) que en ABC1, y aumenta fuertemente con la edad.
+    - No hay diferencias entre hombres y mujeres en consumo sustentable ni político.
+
+# Qué es la invarianza de medida
+
+## El problema
+
+Para comparar grupos con una escala, por ejemplo si el consumo político es mayor en el NSE alto que en el bajo, primero hay que saber si la escala **mide lo mismo** en ambos grupos.
+
+Si un ítem se interpreta distinto en un grupo, una diferencia en el puntaje puede deberse a esa diferencia de interpretación y no a una diferencia real en lo que se quiere medir. Un ejemplo: el ítem "participa en marchas o movilizaciones" puede depender de la edad por razones que no tienen que ver con el consumo político, como la disponibilidad física o las redes de sociabilidad. Si es así, comparar puntajes entre jóvenes y mayores mezcla dos cosas distintas.
+
+La **invarianza de medida** es el conjunto de pruebas que verifica que el instrumento funciona igual en todos los grupos.
+
+## Los niveles
+
+La invarianza se prueba en niveles sucesivos. Cada uno agrega restricciones de igualdad entre grupos y permite un tipo de comparación más exigente.
+
+```{mermaid}
+flowchart LR
+  A["<b>Configural</b><br/>Misma estructura"] --> B["<b>Umbrales</b><br/>Mismos puntos de corte<br/>entre categorías"]
+  B --> C["<b>Métrica</b><br/>Mismas cargas"]
+  C --> D["<b>Escalar</b><br/>Mismos interceptos"]
+  D --> E["Comparación de<br/>medias latentes"]
+```
+
+```{r}
+#| label: tabla-niveles
+tribble(
+  ~Nivel, ~`Qué se iguala entre grupos`, ~`Pregunta que responde`, ~`Qué permite comparar`,
+  "Configural", "Nada; solo la estructura (qué ítems cargan en qué factores)", "¿El concepto tiene la misma forma en todos los grupos?", "Nada todavía; es la base",
+  "Umbrales", "Los puntos de la variable latente donde se pasa de una categoría de respuesta a la siguiente", "¿Las categorías de respuesta significan lo mismo?", "Paso previo propio de ítems ordinales",
+  "Métrica", "Además, las cargas factoriales", "¿Cada ítem pesa lo mismo en el factor?", "Correlaciones y relaciones entre factores",
+  "Escalar", "Además, los interceptos de los ítems", "¿Dos personas con el mismo nivel en el factor eligen la misma respuesta, sea cual sea su grupo?", "Medias de los factores"
+) %>%
+  tabla(caption = "Niveles de invarianza de medida") %>%
+  column_spec(2:4, width = "28%")
+```
+
+El paso de **umbrales** es propio de los ítems ordinales, como los de esta encuesta. Sigue la propuesta de Wu y Estabrook (2016), que muestra que en datos ordinales los umbrales deben igualarse antes que las cargas para que el modelo esté bien identificado.
+
+## Cómo se prueba cada nivel
+
+La invarianza no se evalúa mirando las cargas de cada grupo por separado. Se estima un **modelo multigrupo**: el mismo análisis factorial confirmatorio, estimado a la vez en todos los grupos. Luego se impone una restricción de igualdad entre grupos y se compara el ajuste del modelo restringido con el del modelo anterior. Si la restricción casi no empeora el ajuste, los parámetros son equivalentes entre grupos.
+
+### Los parámetros del modelo ordinal
+
+Con ítems ordinales se supone que detrás de cada respuesta hay una **respuesta latente continua** (y\*). La persona elige una categoría según el tramo de y\* en que se ubica. El modelo tiene, para cada ítem:
+
+- **Umbrales (τ):** los puntos de y\* donde se pasa de una categoría a la siguiente. Un ítem con k categorías tiene k − 1 umbrales.
+- **Carga (λ):** cuánto depende y\* del factor.
+- **Intercepto (ν):** el valor esperado de y\* cuando el factor vale 0.
+- **Varianza residual (θ):** la parte de y\* que el factor no explica.
+
+Y, para cada factor, una **media (α)** y una **varianza (ψ)**.
+
+No todos estos parámetros se pueden estimar a la vez. Para identificar el modelo, en el grupo de referencia se fijan la media del factor en 0, su varianza en 1, los interceptos en 0 y las varianzas residuales en 1. Cada vez que se iguala un parámetro entre grupos, se libera otro en los grupos que no son de referencia.
+
+### Qué se iguala y qué se libera en cada paso
+
+```{r}
+#| label: tabla-parametros
+tribble(
+  ~Nivel, ~`Se iguala entre grupos`, ~`Se libera en los grupos no de referencia`, ~`Se compara con`,
+  "Configural", "Nada (solo la estructura)", "Todos los parámetros, salvo los fijados para identificar", "Ajuste absoluto",
+  "Umbrales", "Umbrales (τ)", "Varianzas residuales (θ)", "Configural",
+  "Métrica", "Umbrales y cargas (λ)", "Varianzas de los factores (ψ)", "Umbrales",
+  "Escalar", "Umbrales, cargas e interceptos (ν)", "Medias de los factores (α)", "Métrica"
+) %>%
+  tabla(caption = "Parámetros en cada nivel de invarianza (Wu y Estabrook, 2016)") %>%
+  column_spec(2:3, width = "32%")
+```
+
+Por eso las medias de los factores solo se pueden comparar en el nivel escalar: es el primer modelo en que se estiman, y lo hace con los interceptos ya igualados entre grupos.
+
+### Criterios para comparar modelos
+
+Para cada paso se calculan tres indicadores:
+
+- **Diferencia de χ² escalada:** si es significativa, la restricción empeoró el ajuste. Con muestras grandes detecta diferencias minúsculas, por lo que se reporta pero no decide.
+- **ΔCFI:** la restricción se acepta si el CFI no baja más de 0,010. Es el criterio principal.
+- **ΔRMSEA:** la restricción se acepta si el RMSEA no sube más de 0,015.
+
+### Cómo se identifica un ítem no invariante
+
+Cuando un nivel no se sostiene, se usan los **índices de modificación**. Para cada parámetro restringido, el índice estima cuánto bajaría el χ² si se liberara. Se libera el parámetro con el índice más alto, se reestima el modelo y se vuelve a comparar con el nivel anterior, repitiendo hasta cumplir el criterio.
+
+## Invarianza parcial
+
+Si un nivel no se sostiene, no es necesario descartarlo por completo. Se puede buscar **invarianza parcial**: identificar los pocos ítems que funcionan distinto entre grupos, liberar sus parámetros y mantener iguales los demás. Las medias siguen siendo comparables siempre que cada factor conserve al menos dos ítems invariantes (Byrne, Shavelson y Muthén, 1989).
+
+# Procedimiento
+
+## Grupos de comparación
+
+```{r}
+#| label: tabla-grupos
+grupos %>%
+  group_by(variable) %>%
+  mutate(pct = paste0(f2(100 * n / sum(n)), "%")) %>%
+  ungroup() %>%
+  tabla(col.names = c("Variable", "Grupo", "N", "%"),
+        caption = "Grupos de comparación (N = 1.623)") %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+La edad se agrupó en tres tramos y el NSE en tres niveles (ABC1 reúne AB, C1a y C1b), para que cada grupo tuviera casos suficientes. Se verificó que todas las categorías de respuesta tuvieran casos en todos los grupos; la celda más pequeña tiene 12 casos.
+
+## Estimación y criterios
+
+- Se usó la **muestra completa** (N = 1.623).
+- Los modelos se estimaron con `lavaan`, tratando los ítems como ordinales, con estimador **WLSMV** y parametrización *theta*. La sintaxis de cada nivel se generó con `semTools::measEq.syntax()`, siguiendo a Wu y Estabrook (2016).
+- Cada nivel se comparó con el anterior. Se aceptó si el **CFI no bajó más de 0,010** y el **RMSEA no subió más de 0,015** (Chen, 2007).
+- También se reporta la prueba de diferencia de χ² escalada. Con muestras grandes rechaza incluso diferencias triviales, por lo que no se usó como criterio de decisión.
+- Cuando la invarianza escalar no se sostuvo, se liberó el intercepto con el mayor índice de modificación, se reestimó y se repitió hasta cumplir el criterio respecto del modelo métrico.
+
+# Resultados
+
+## Síntesis
+
+```{r}
+#| label: tabla-sintesis
+nivel_alcanzado <- secuencia %>%
+  group_by(modelo, variable) %>%
+  summarise(nivel = {
+    ok <- nivel[!is.na(cumple) & cumple]
+    orden <- c("Umbrales", "Métrica", "Escalar")
+    alcanzado <- "Configural"
+    for (n in orden) if (n %in% ok) alcanzado <- n else break
+    alcanzado
+  }, .groups = "drop") %>%
+  mutate(nivel = if_else(variable == "Edad" & nivel == "Métrica", "Escalar parcial", nivel),
+         detalle = case_when(
+           variable == "Edad" & modelo == "Consumo sustentable y político" ~ "Intercepto liberado: O3.9 (marchas)",
+           variable == "Edad" & modelo == "Prácticas domésticas" ~ "Interceptos liberados: O2.2 (agua) y O2.5 (desenchufar)",
+           TRUE ~ ""),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE"))) %>%
+  arrange(modelo, variable)
+
+nivel_alcanzado %>%
+  tabla(col.names = c("Modelo", "Variable", "Nivel alcanzado", "Detalle"),
+        caption = "Nivel de invarianza alcanzado por modelo y variable") %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+## Secuencia completa
+
+```{r}
+#| label: tabla-secuencia
+secuencia %>%
+  mutate(variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         across(c(cfi.scaled, rmsea.scaled), f3),
+         dCFI = if_else(is.na(dCFI), "", f3(dCFI)),
+         dRMSEA = if_else(is.na(dRMSEA), "", f3(dRMSEA)),
+         p_dif = case_when(is.na(p_dif) ~ "", p_dif < 0.001 ~ "< 0,001", TRUE ~ f3(p_dif)),
+         cumple = case_when(is.na(cumple) ~ "", cumple ~ "Sí", TRUE ~ "No")) %>%
+  arrange(modelo, variable) %>%
+  select(modelo, variable, nivel, cfi.scaled, rmsea.scaled, dCFI, dRMSEA, p_dif, cumple) %>%
+  tabla(col.names = c("Modelo", "Variable", "Nivel", "CFI", "RMSEA", "ΔCFI", "ΔRMSEA",
+                      "p (Δχ²)", "Se acepta"),
+        caption = "Ajuste de cada nivel de invarianza y cambio respecto del nivel anterior") %>%
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+Los niveles configural, de umbrales y métrico se sostienen en todos los casos: el ajuste prácticamente no cambia. La invarianza escalar se sostiene para sexo y NSE en ambos modelos. Para edad falla en los dos: el CFI baja `r f3(abs(secuencia$dCFI[secuencia$modelo == "Consumo sustentable y político" & secuencia$variable == "Edad" & secuencia$nivel == "Escalar"]))` en el modelo de consumo sustentable y político, y `r f3(abs(secuencia$dCFI[secuencia$modelo == "Prácticas domésticas" & secuencia$variable == "Edad" & secuencia$nivel == "Escalar"]))` en el de prácticas domésticas.
+
+## Invarianza parcial por edad
+
+```{r}
+#| label: tabla-parcial
+parcial %>%
+  mutate(across(c(CFI, RMSEA, dCFI, dRMSEA), f3), cumple = if_else(cumple, "Sí", "No")) %>%
+  tabla(col.names = c("Modelo", "Interceptos liberados", "CFI", "RMSEA",
+                      "ΔCFI vs. métrico", "ΔRMSEA vs. métrico", "Se acepta"),
+        caption = "Búsqueda de invarianza escalar parcial por edad") %>%
+  collapse_rows(columns = 1, valign = "top")
+
+libres %>%
+  mutate(intercepto = f2(intercepto)) %>%
+  select(item, enunciado, grupo, intercepto) %>%
+  tabla(col.names = c("Ítem", "Enunciado", "Tramo de edad", "Intercepto (vs. 18-34)"),
+        caption = "Interceptos liberados") %>%
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+Los tres interceptos liberados son negativos en los tramos mayores. Esto quiere decir que, **a igual nivel en el factor**, las personas de 35 años o más responden más bajo que las de 18 a 34 en esos ítems:
+
+- **Participar en marchas (O3.9).** A igual nivel de consumo político, los mayores marchan menos. Es plausible que la participación en movilizaciones dependa de la edad por razones ajenas al consumo, como la disponibilidad o la cercanía con redes de protesta.
+- **Cortar el agua al lavarse los dientes (O2.2) y desenchufar aparatos (O2.5).** A igual nivel de ahorro doméstico, los mayores declaran menos estas dos prácticas. Pueden ser hábitos más difundidos entre los jóvenes por la educación ambiental reciente.
+
+En ambos modelos, cada factor conserva al menos tres ítems invariantes, por lo que las medias siguen siendo comparables.
+
+## Diferencias de medias latentes
+
+Con la invarianza escalar (completa o parcial) establecida, se compararon las medias de los factores. En cada variable, el primer grupo es la referencia: su media es 0 y su desviación estándar 1. Las diferencias de los demás grupos se leen como un tamaño de efecto: 0,2 es pequeño, 0,5 mediano y 0,8 grande.
+
+```{r}
+#| label: fig-medias
+#| fig-cap: "Diferencia de medias latentes respecto del grupo de referencia (hombres, 18-34 años, ABC1), con intervalo de confianza de 95%"
+#| fig-height: 6.5
+#| fig-width: 9
+medias %>%
+  mutate(factor = factor(nombres_factor[factor], levels = nombres_factor),
+         comparacion = paste(grupo, "vs.", referencia),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         significativo = if_else(p < 0.05, "p < 0,05", "No significativo")) %>%
+  ggplot(aes(media, comparacion, colour = significativo)) +
+  geom_vline(xintercept = 0, colour = "grey60") +
+  geom_pointrange(aes(xmin = ic_inf, xmax = ic_sup), size = 0.4) +
+  facet_grid(variable ~ factor, scales = "free_y", space = "free_y") +
+  scale_colour_manual(values = c("p < 0,05" = "#1f4e79", "No significativo" = "#a6a6a6")) +
+  labs(x = "Diferencia de medias (desviaciones estándar del grupo de referencia)",
+       y = NULL, colour = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(strip.text = element_text(face = "bold"), legend.position = "top")
+```
+
+```{r}
+#| label: tabla-medias
+medias %>%
+  mutate(factor = nombres_factor[factor],
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         comparacion = paste(grupo, "vs.", referencia),
+         dif = f2(media),
+         ic = paste0("[", f2(ic_inf), "; ", f2(ic_sup), "]"),
+         p = if_else(p < 0.001, "< 0,001", f3(p))) %>%
+  arrange(factor(factor, levels = nombres_factor), variable) %>%
+  select(factor, variable, comparacion, dif, ic, p) %>%
+  tabla(col.names = c("Factor", "Variable", "Comparación", "Diferencia (DE)", "IC 95%", "p"),
+        caption = "Diferencias de medias latentes") %>%
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+### Nivel socioeconómico
+
+El NSE separa las dos esferas del consumo:
+
+- **Esfera pública.** ABC1 tiene más compra sustentable y más consumo político que C2-C3 y D-E. Por ejemplo, D-E está `r f2(abs(media_de("compra_sust", "NSE", "D-E")$media))` desviaciones estándar bajo ABC1 en compra sustentable y `r f2(abs(media_de("consumo_pol", "NSE", "D-E")$media))` en consumo político. Son efectos pequeños a medianos.
+- **Esfera doméstica.** El patrón se invierte en el ahorro: D-E está `r f2(media_de("ahorro", "NSE", "D-E")$media)` desviaciones estándar sobre ABC1 (p = `r f3(media_de("ahorro", "NSE", "D-E")$p)`). La planificación de compras no difiere significativamente.
+
+Este resultado es coherente con la hipótesis de que el ahorro doméstico responde en parte a la necesidad económica más que a una motivación ambiental, mientras el consumo sustentable y político requiere recursos económicos y culturales.
+
+### Edad
+
+- **Ahorro doméstico.** Es la diferencia más grande del análisis: aumenta con la edad, `r f2(media_de("ahorro", "Edad", "35-54")$media)` desviaciones estándar en el tramo de 35 a 54 años y `r f2(media_de("ahorro", "Edad", "55 o más")$media)` en el de 55 o más, respecto del de 18 a 34.
+- **Compra sustentable.** También es mayor en los tramos de más edad.
+- **Consumo político.** Es algo mayor en el tramo de 35 a 54 años y no difiere significativamente entre los de 55 o más y los jóvenes.
+
+Estas comparaciones descansan en invarianza escalar **parcial**, por lo que deben leerse con más cautela que las de sexo y NSE.
+
+### Sexo
+
+No hay diferencias entre hombres y mujeres en compra sustentable ni en consumo político. Las mujeres presentan algo más de planificación de compras (`r f2(media_de("planificacion", "Sexo", "Mujer")$media)` DE, p = `r f3(media_de("planificacion", "Sexo", "Mujer")$p)`), una diferencia pequeña. La diferencia en ahorro doméstico no es significativa.
+
+# Implicancias
+
+1. **Las escalas son comparables entre grupos.** Ambos modelos de medida permiten comparar medias por sexo y NSE, y por edad con los ajustes de invarianza parcial descritos.
+2. **Hipótesis H4 de la propuesta.** La propuesta anticipaba que el ahorro doméstico no sería invariante entre NSE, porque podría significar necesidad en los hogares de menos recursos y convicción en los de más recursos. Esa hipótesis **no se confirma**: el ahorro se mide igual en todos los niveles socioeconómicos. La diferencia está en el **nivel**: los hogares D-E ahorran más. La pregunta por el sentido de esa práctica (necesidad o convicción) queda abierta, pero no puede responderse con la estructura de medición.
+3. **Uso recomendado.** Para comparar grupos o incluir estos factores en modelos explicativos, conviene trabajar con las variables latentes (modelos de ecuaciones estructurales) y no con sumas simples de ítems, sobre todo en comparaciones por edad.
+
+# Limitaciones
+
+- **Los criterios de decisión vienen de la tradición con variables continuas.** Los puntos de corte de ΔCFI y ΔRMSEA de Chen (2007) se propusieron para estimación por máxima verosimilitud. Con WLSMV y datos ordinales se usan de forma habitual, pero su desempeño es menos conocido.
+- **La invarianza parcial por edad se buscó con índices de modificación**, un procedimiento guiado por los datos. Los ítems liberados tienen una interpretación sustantiva plausible, pero conviene replicarlo en otra muestra.
+- **Las agrupaciones de edad y NSE** se definieron para asegurar casos suficientes. Con otras agrupaciones los resultados podrían variar.
+- **Se hicieron muchas comparaciones** (dos modelos, tres variables y varias diferencias de medias). Algunas diferencias con p cercanos a 0,05 podrían no replicarse.
+- **La muestra no tiene ponderadores**, por lo que las diferencias describen la muestra y no necesariamente la población.
+
+# Reproducibilidad
+
+- **Script:** `processing/invarianza.qmd`, que lee `input/data/proc/db_proc.rds` y guarda los resultados en `output/tables/invarianza_*.csv` y `output/models/invarianza_modelos.rds`.
+- **Software:** R con `lavaan` y `semTools`.
+- **Nota técnica:** `lavaan` numera los grupos según el orden en que aparecen en la base. El script ordena la base por la variable de grupo antes de estimar, para que el grupo de referencia sea el primer nivel de cada variable (hombres, 18-34 años, ABC1).
+
+Para regenerar este documento, primero se renderizan `processing/prep_colapso_10.qmd` y `processing/invarianza.qmd`, y luego este archivo.

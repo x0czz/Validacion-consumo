@@ -1,0 +1,4 @@
+R version 4.5.2 (2025-10-31 ucrt)
+lavaan 0.6.21
+semTools 0.5.8
+psych 2.5.6

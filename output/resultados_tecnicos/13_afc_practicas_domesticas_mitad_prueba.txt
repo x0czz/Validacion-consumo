@@ -1,0 +1,149 @@
+==========================================================================================
+AFC (WLSMV, ítems ordinales): 13_afc_practicas_domesticas_mitad_prueba - mitad de prueba
+==========================================================================================
+
+lavaan 0.6.17 ended normally after 22 iterations
+
+  Estimator                                       DWLS
+  Optimization method                           NLMINB
+  Number of model parameters                        32
+
+  Number of observations                           812
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                                18.584      28.701
+  Degrees of freedom                                19          19
+  P-value (Chi-square)                           0.484       0.071
+  Scaling correction factor                                  0.676
+  Shift parameter                                            1.224
+    simple second-order correction                                
+
+Model Test Baseline Model:
+
+  Test statistic                              2441.733    1816.124
+  Degrees of freedom                                28          28
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.350
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000       0.995
+  Tucker-Lewis Index (TLI)                       1.000       0.992
+                                                                  
+  Robust Comparative Fit Index (CFI)                         0.992
+  Robust Tucker-Lewis Index (TLI)                            0.988
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000       0.025
+  90 Percent confidence interval - lower         0.000       0.000
+  90 Percent confidence interval - upper         0.030       0.043
+  P-value H_0: RMSEA <= 0.050                    1.000       0.992
+  P-value H_0: RMSEA >= 0.080                    0.000       0.000
+                                                                  
+  Robust RMSEA                                               0.028
+  90 Percent confidence interval - lower                     0.000
+  90 Percent confidence interval - upper                     0.054
+  P-value H_0: Robust RMSEA <= 0.050                         0.912
+  P-value H_0: Robust RMSEA >= 0.080                         0.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.027       0.027
+
+Parameter Estimates:
+
+  Parameterization                               Delta
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model        Unstructured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  ahorro =~                                                             
+    O2_1              1.000                               0.740    0.740
+    O2_2              0.877    0.061   14.475    0.000    0.649    0.649
+    O2_3              0.851    0.055   15.446    0.000    0.630    0.630
+    O2_4              0.773    0.061   12.665    0.000    0.571    0.571
+    O2_5              0.834    0.058   14.439    0.000    0.617    0.617
+  planificacion =~                                                      
+    O1_10             1.000                               0.594    0.594
+    O2_8              1.544    0.141   10.971    0.000    0.917    0.917
+    O2_9              0.714    0.069   10.407    0.000    0.424    0.424
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  ahorro ~~                                                             
+    planificacion     0.251    0.028    9.006    0.000    0.571    0.571
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+    O2_1|t1          -1.020    0.053  -19.087    0.000   -1.020   -1.020
+    O2_1|t2          -0.246    0.044   -5.536    0.000   -0.246   -0.246
+    O2_2|t1          -0.779    0.049  -15.826    0.000   -0.779   -0.779
+    O2_2|t2          -0.193    0.044   -4.346    0.000   -0.193   -0.193
+    O2_3|t1          -1.312    0.061  -21.519    0.000   -1.312   -1.312
+    O2_3|t2          -0.376    0.045   -8.327    0.000   -0.376   -0.376
+    O2_3|t3           0.498    0.046   10.821    0.000    0.498    0.498
+    O2_4|t1          -0.800    0.050  -16.153    0.000   -0.800   -0.800
+    O2_4|t2          -0.205    0.044   -4.626    0.000   -0.205   -0.205
+    O2_5|t1          -0.954    0.052  -18.308    0.000   -0.954   -0.954
+    O2_5|t2          -0.350    0.045   -7.770    0.000   -0.350   -0.350
+    O2_5|t3           0.262    0.045    5.885    0.000    0.262    0.262
+    O1_10|t1         -1.084    0.055  -19.772    0.000   -1.084   -1.084
+    O1_10|t2         -0.566    0.047  -12.127    0.000   -0.566   -0.566
+    O1_10|t3          0.149    0.044    3.366    0.001    0.149    0.149
+    O1_10|t4          0.804    0.050   16.218    0.000    0.804    0.804
+    O2_8|t1          -1.209    0.058  -20.865    0.000   -1.209   -1.209
+    O2_8|t2          -0.443    0.046   -9.715    0.000   -0.443   -0.443
+    O2_8|t3           0.419    0.045    9.230    0.000    0.419    0.419
+    O2_9|t1          -1.095    0.055  -19.883    0.000   -1.095   -1.095
+    O2_9|t2          -0.298    0.045   -6.654    0.000   -0.298   -0.298
+    O2_9|t3           0.457    0.046    9.992    0.000    0.457    0.457
+    O2_9|t4           1.190    0.057   20.719    0.000    1.190    1.190
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .O2_1              0.453                               0.453    0.453
+   .O2_2              0.579                               0.579    0.579
+   .O2_3              0.603                               0.603    0.603
+   .O2_4              0.674                               0.674    0.674
+   .O2_5              0.620                               0.620    0.620
+   .O1_10             0.647                               0.647    0.647
+   .O2_8              0.159                               0.159    0.159
+   .O2_9              0.820                               0.820    0.820
+    ahorro            0.547    0.049   11.056    0.000    1.000    1.000
+    planificacion     0.353    0.042    8.481    0.000    1.000    1.000
+
+R-Square:
+                   Estimate
+    O2_1              0.547
+    O2_2              0.421
+    O2_3              0.397
+    O2_4              0.326
+    O2_5              0.380
+    O1_10             0.353
+    O2_8              0.841
+    O2_9              0.180
+
+
+Correlaciones residuales (|r| > ,10 marcadas con *):
+        O2_1   O2_2   O2_3   O2_4   O2_5  O1_10   O2_8   O2_9
+O2_1   0.000                                                 
+O2_2  -0.016  0.000                                          
+O2_3  -0.002  0.016  0.000                                   
+O2_4   0.001 -0.001  0.002  0.000                            
+O2_5   0.036  0.015 -0.035 -0.026  0.000                     
+O1_10  0.018 -0.034 -0.005 -0.033  0.025  0.000              
+O2_8  -0.015  0.015  0.018  0.059  0.004 -0.020  0.000       
+O2_9  -0.071 -0.035  0.022 -0.031 -0.049  0.069 -0.006  0.000
+
+Número de correlaciones residuales mayores que |,10|: 0 
+
+Confiabilidad (semTools::compRelSEM y AVE):
+       ahorro planificacion 
+        0.704         0.613 
+       ahorro planificacion 
+        0.414         0.458 
+

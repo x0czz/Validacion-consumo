@@ -1,0 +1,4 @@
+R version 4.3.3 (2024-02-29)
+lavaan 0.6.17
+semTools 0.5.6
+psych 2.4.1

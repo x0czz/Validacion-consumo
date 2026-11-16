@@ -1,0 +1,86 @@
+item,clase,media01,dim,enunciado
+O2.11,Bajo,0.18835473538623856,Compra sustentable,Compra productos orgánicos o naturales. 
+O2.11,Amplio,0.7868977272349755,Compra sustentable,Compra productos orgánicos o naturales. 
+O2.11,Doméstico,0.4257873344986023,Compra sustentable,Compra productos orgánicos o naturales. 
+O2.11,Intermedio,0.42464455678430535,Compra sustentable,Compra productos orgánicos o naturales. 
+O2.11,Político,0.4764346612783156,Compra sustentable,Compra productos orgánicos o naturales. 
+O2.12,Bajo,0.15808299748000243,Compra sustentable,Compra productos hechos con material reciclado. 
+O2.12,Amplio,0.7772849045626169,Compra sustentable,Compra productos hechos con material reciclado. 
+O2.12,Doméstico,0.4601504420380498,Compra sustentable,Compra productos hechos con material reciclado. 
+O2.12,Intermedio,0.41553554604312887,Compra sustentable,Compra productos hechos con material reciclado. 
+O2.12,Político,0.5036063998300127,Compra sustentable,Compra productos hechos con material reciclado. 
+O3.4,Bajo,0.2229397628991443,Compra sustentable,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro."
+O3.4,Amplio,0.8064170794699775,Compra sustentable,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro."
+O3.4,Doméstico,0.4758079023828892,Compra sustentable,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro."
+O3.4,Intermedio,0.5507702170785316,Compra sustentable,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro."
+O3.4,Político,0.6439918047042644,Compra sustentable,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro."
+O3.7,Bajo,0.21843876496952128,Compra sustentable,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume"
+O3.7,Amplio,0.8352492072906688,Compra sustentable,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume"
+O3.7,Doméstico,0.5178447728400041,Compra sustentable,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume"
+O3.7,Intermedio,0.5183338190955257,Compra sustentable,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume"
+O3.7,Político,0.6906616322200647,Compra sustentable,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume"
+O3.2,Bajo,0.24828154563787586,Consumo político,Intenta influir en lo que consumen otras personas
+O3.2,Amplio,0.759074873777208,Consumo político,Intenta influir en lo que consumen otras personas
+O3.2,Doméstico,0.30232633647490836,Consumo político,Intenta influir en lo que consumen otras personas
+O3.2,Intermedio,0.5685199459042098,Consumo político,Intenta influir en lo que consumen otras personas
+O3.2,Político,0.8922243397502303,Consumo político,Intenta influir en lo que consumen otras personas
+O3.3,Bajo,0.0826276550941747,Consumo político,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles
+O3.3,Amplio,0.6214634793603468,Consumo político,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles
+O3.3,Doméstico,0.17958192975702011,Consumo político,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles
+O3.3,Intermedio,0.3427903924134163,Consumo político,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles
+O3.3,Político,0.6650414913293942,Consumo político,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles
+O3.5,Bajo,0.16391763349928373,Consumo político,Realiza un reclamo o demanda colectiva en el Sernac
+O3.5,Amplio,0.5979502176846052,Consumo político,Realiza un reclamo o demanda colectiva en el Sernac
+O3.5,Doméstico,0.23919887098899745,Consumo político,Realiza un reclamo o demanda colectiva en el Sernac
+O3.5,Intermedio,0.3630553719137112,Consumo político,Realiza un reclamo o demanda colectiva en el Sernac
+O3.5,Político,0.8178106836291904,Consumo político,Realiza un reclamo o demanda colectiva en el Sernac
+O3.8,Bajo,0.031575603424314244,Consumo político,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"
+O3.8,Amplio,0.3659875950713096,Consumo político,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"
+O3.8,Doméstico,0.06412631675810038,Consumo político,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"
+O3.8,Intermedio,0.1421902721200045,Consumo político,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"
+O3.8,Político,0.7820452291796943,Consumo político,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"
+O3.9,Bajo,0.1317358110442927,Consumo político,Participa en marchas o movilizaciones
+O3.9,Amplio,0.5144273657838232,Consumo político,Participa en marchas o movilizaciones
+O3.9,Doméstico,0.12034873413049768,Consumo político,Participa en marchas o movilizaciones
+O3.9,Intermedio,0.3471905712644612,Consumo político,Participa en marchas o movilizaciones
+O3.9,Político,0.7668587528968638,Consumo político,Participa en marchas o movilizaciones
+O2.1,Bajo,0.5615927480006195,Ahorro doméstico,Evita dejar luces prendidas en ambiente desocupados 
+O2.1,Amplio,0.8732278830162022,Ahorro doméstico,Evita dejar luces prendidas en ambiente desocupados 
+O2.1,Doméstico,0.9353608559215135,Ahorro doméstico,Evita dejar luces prendidas en ambiente desocupados 
+O2.1,Intermedio,0.6690543424735281,Ahorro doméstico,Evita dejar luces prendidas en ambiente desocupados 
+O2.1,Político,0.2350940101639381,Ahorro doméstico,Evita dejar luces prendidas en ambiente desocupados 
+O2.2,Bajo,0.503704723794278,Ahorro doméstico,Corta el agua mientras se lava los dientes. 
+O2.2,Amplio,0.8513058987702953,Ahorro doméstico,Corta el agua mientras se lava los dientes. 
+O2.2,Doméstico,0.8657713112987805,Ahorro doméstico,Corta el agua mientras se lava los dientes. 
+O2.2,Intermedio,0.6251743206213556,Ahorro doméstico,Corta el agua mientras se lava los dientes. 
+O2.2,Político,0.2672963763996165,Ahorro doméstico,Corta el agua mientras se lava los dientes. 
+O2.3,Bajo,0.4146743736977756,Ahorro doméstico,Toma duchas cortas
+O2.3,Amplio,0.7678403457761638,Ahorro doméstico,Toma duchas cortas
+O2.3,Doméstico,0.7600516635145843,Ahorro doméstico,Toma duchas cortas
+O2.3,Intermedio,0.5719447019900482,Ahorro doméstico,Toma duchas cortas
+O2.3,Político,0.3860599282763384,Ahorro doméstico,Toma duchas cortas
+O2.4,Bajo,0.49681191634333177,Ahorro doméstico,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. 
+O2.4,Amplio,0.8240386006764201,Ahorro doméstico,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. 
+O2.4,Doméstico,0.8574304400213666,Ahorro doméstico,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. 
+O2.4,Intermedio,0.6175480590640681,Ahorro doméstico,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. 
+O2.4,Político,0.2481499549931492,Ahorro doméstico,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. 
+O2.5,Bajo,0.3579633820464356,Ahorro doméstico,Desenchufa aparatos eléctricos cuando no los está ocupando. 
+O2.5,Amplio,0.8230948697590178,Ahorro doméstico,Desenchufa aparatos eléctricos cuando no los está ocupando. 
+O2.5,Doméstico,0.7555169727984601,Ahorro doméstico,Desenchufa aparatos eléctricos cuando no los está ocupando. 
+O2.5,Intermedio,0.5607139757245009,Ahorro doméstico,Desenchufa aparatos eléctricos cuando no los está ocupando. 
+O2.5,Político,0.37470306989906094,Ahorro doméstico,Desenchufa aparatos eléctricos cuando no los está ocupando. 
+O1.10,Bajo,0.31341265264745893,Planificación,Elabora un presupuesto mensual para monitorear mis gastos
+O1.10,Amplio,0.7549799888896396,Planificación,Elabora un presupuesto mensual para monitorear mis gastos
+O1.10,Doméstico,0.6282247030015873,Planificación,Elabora un presupuesto mensual para monitorear mis gastos
+O1.10,Intermedio,0.5002437770196005,Planificación,Elabora un presupuesto mensual para monitorear mis gastos
+O1.10,Político,0.4885081596115479,Planificación,Elabora un presupuesto mensual para monitorear mis gastos
+O2.8,Bajo,0.4107322035180278,Planificación,Planifica compra de alimentos. 
+O2.8,Amplio,0.8616543735620782,Planificación,Planifica compra de alimentos. 
+O2.8,Doméstico,0.8143479076501156,Planificación,Planifica compra de alimentos. 
+O2.8,Intermedio,0.5279155882837504,Planificación,Planifica compra de alimentos. 
+O2.8,Político,0.4131923782615838,Planificación,Planifica compra de alimentos. 
+O2.9,Bajo,0.28265199228849935,Planificación,Planifica compras de vestuario. 
+O2.9,Amplio,0.6938878260559809,Planificación,Planifica compras de vestuario. 
+O2.9,Doméstico,0.5245441288895212,Planificación,Planifica compras de vestuario. 
+O2.9,Intermedio,0.45438668708192337,Planificación,Planifica compras de vestuario. 
+O2.9,Político,0.5120392310966693,Planificación,Planifica compras de vestuario. 

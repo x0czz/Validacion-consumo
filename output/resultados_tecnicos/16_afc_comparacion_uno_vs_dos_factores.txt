@@ -1,0 +1,18 @@
+==========================================================================================
+Prueba de diferencia de chi-cuadrado escalada: uno vs. dos factores (mitad de prueba)
+==========================================================================================
+
+
+Scaled Chi-Squared Difference Test (method = “satorra.2000”)
+
+lavaan NOTE:
+    The “Chisq” column contains standard test statistics, not the
+    robust test that should be reported per model. A robust difference
+    test is a function of two standard (not robust) statistics.
+ 
+                    Df AIC BIC   Chisq Chisq diff Df diff Pr(>Chisq)    
+afc(m_pub, mitad2)  26          73.679                                  
+afc(m_uni9, mitad2) 27         228.266     98.841       1  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+

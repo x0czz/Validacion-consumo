@@ -1,0 +1,208 @@
+---
+title: "Material suplementario"
+subtitle: "Perfiles de prácticas de consumo socioambientales en Chile: un análisis de clases latentes"
+lang: es
+date: ""
+format:
+  typst:
+    citeproc: true
+    papersize: a4
+    margin:
+      x: 3cm
+      y: 3cm
+    fontsize: 12pt
+    mainfont: "Times New Roman"
+    fig-format: png
+    fig-dpi: 300
+  docx:
+    reference-doc: input/templates/psicothema.docx
+    toc: false
+    number-sections: false
+  html:
+    toc: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+options(knitr.kable.NA = "", OutDec = ",", warn = -1)
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+apa <- function(x) sub("^-", "−", sub("^(-?)0,", "\\1,", trimws(x)))
+a2 <- function(x) apa(f2(x))
+a3 <- function(x) apa(f3(x))
+miles <- function(x, d = 1) trimws(format(round(x, d), big.mark = ".", decimal.mark = ",", nsmall = d))
+tabla_md <- function(df, anchos, alinea) {
+  sep <- map2_chr(anchos, alinea, function(w, a) {
+    d <- strrep("-", w)
+    switch(a, l = paste0(":", d), r = paste0(d, ":"), c = paste0(":", d, ":"))
+  })
+  cuerpo <- apply(df, 1, function(f) paste0("| ", paste(f, collapse = " | "), " |"))
+  cat(paste0("| ", paste(names(df), collapse = " | "), " |"), "\n",
+      paste0("|", paste(sep, collapse = "|"), "|"), "\n",
+      paste(cuerpo, collapse = "\n"), "\n", sep = "")
+}
+cod <- function(x) str_replace(x, "_", ".")
+orden_clases <- c("Amplio", "Intermedio", "Doméstico", "Político", "Bajo")
+cond <- leer("revision_lca_condicionales.csv")
+alto <- leer("revision_lca_prob_alto.csv")
+orden_items <- c("O2_11", "O2_12", "O3_4", "O3_7", "O3_2", "O3_3", "O3_5", "O3_8", "O3_9",
+                 "O2_1", "O2_2", "O2_3", "O2_4", "O2_5", "O1_10", "O2_8", "O2_9")
+dim_item <- c(rep("Compra sustentable", 4), rep("Consumo político", 5),
+              rep("Ahorro doméstico", 5), rep("Planificación", 3))
+names(dim_item) <- orden_items
+```
+
+::: {custom-style="Titulo tabla"}
+**Tabla S1**
+
+*Probabilidad de Responder "La Mayoría de las Veces" o "Siempre" en Cada Ítem, según Clase*
+:::
+
+```{r}
+#| label: s1
+#| results: asis
+alto %>%
+  mutate(clase = factor(clase, levels = orden_clases), item = factor(item, levels = orden_items)) %>%
+  arrange(item) %>%
+  mutate(p_alto = a2(p_alto)) %>%
+  pivot_wider(names_from = clase, values_from = p_alto) %>%
+  transmute(`Dimensión` = dim_item[as.character(item)],
+            `Ítem` = paste0(cod(as.character(item)), if_else(umbral == 3, "ᵃ", "")),
+            Enunciado = str_trim(enunciado), across(all_of(orden_clases))) %>%
+  mutate(`Dimensión` = if_else(duplicated(`Dimensión`), "", `Dimensión`)) %>%
+  tabla_md(c(14, 6, 40, 7, 8, 8, 7, 6), c("l", "l", "l", rep("r", 5)))
+```
+
+*Nota.* Suma de las probabilidades condicionales de las categorías 4 (*La mayoría de las veces*) y 5 (*Siempre*), estimadas con el modelo de cinco clases. ᵃ En estos ítems el colapso de extremos fusionó *A veces* con las categorías superiores, por lo que la probabilidad corresponde a responder *A veces* o más. Valores ≥ ,70 indican que la clase se caracteriza por esa práctica, y valores ≤ ,30, por su ausencia (Masyn, 2013).
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S2**
+
+*Probabilidades Condicionales de Respuesta y Errores Estándar del Modelo de Cinco Clases*
+:::
+
+```{r}
+#| label: s2
+#| results: asis
+cond %>%
+  mutate(clase = factor(clase, levels = orden_clases), item = factor(item, levels = orden_items)) %>%
+  arrange(item, k) %>%
+  mutate(valor = paste0(a2(prob), " (", a2(se), ")")) %>%
+  select(item, k, categoria, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  transmute(`Ítem` = cod(as.character(item)), `Categoría` = categoria, across(all_of(orden_clases))) %>%
+  mutate(`Ítem` = if_else(duplicated(`Ítem`), "", `Ítem`)) %>%
+  tabla_md(c(7, 9, 11, 11, 11, 11, 11), c("l", "c", rep("r", 5)))
+```
+
+*Nota.* Probabilidad de cada categoría de respuesta dada la clase (error estándar). Categorías en la escala original (1 = *Nunca*; 5 = *Siempre*); un rango indica categorías fusionadas por tener menos del 10% de las respuestas. Enunciados en la Tabla S1.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S3**
+
+*Diagnóstico del Modelo de Cinco Clases*
+:::
+
+```{r}
+#| label: s3
+#| results: asis
+d <- leer("revision_lca_diagnostico.csv")
+tibble(Indicador = c("G² (gl)", "Patrones de respuesta observados / posibles",
+                     "Número de parámetros", "Probabilidades condicionales < ,001 / > ,999",
+                     "Errores estándar no finitos", "Iteraciones del algoritmo EM",
+                     "Inicios aleatorios que replican el máximo"),
+       Valor = c(paste0(miles(d$G2), " (", miles(d$gl_residuales, 0), ")"),
+                 paste0(miles(d$patrones_observados, 0), " / ", miles(d$patrones_posibles, 0)),
+                 as.character(d$npar),
+                 paste0(d$prob_menor_001, " / ", d$prob_mayor_999),
+                 as.character(d$ee_no_finitos), as.character(d$iteraciones),
+                 paste0(d$replicas, " de ", d$inicios))) %>%
+  tabla_md(c(50, 30), c("l", "r"))
+```
+
+*Nota.* Con casi tantos patrones de respuesta distintos como personas, la tabla de contingencia es extremadamente dispersa y G² no sigue una distribución χ²; se informa solo con fines descriptivos.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S4**
+
+*Análisis de Sensibilidad con Ítems Dicotomizados: Índices de Ajuste de Una a Siete Clases*
+:::
+
+```{r}
+#| label: s4
+#| results: asis
+leer("revision_lca_dicotomico_enumeracion.csv") %>%
+  transmute(Clases = clases, LL = miles(LL), npar, BIC = miles(BIC), CAIC = miles(CAIC),
+            `Entropía` = if_else(is.na(entropia), "", a3(entropia)), `Clase mín.` = a3(clase_min),
+            `Réplicas` = paste0(replicas, "/50")) %>%
+  tabla_md(c(7, 11, 6, 11, 11, 9, 9, 9), c("c", rep("r", 7)))
+```
+
+*Nota.* Cada ítem se codificó 1 = *La mayoría de las veces* o *Siempre* (o *A veces* o más en los ítems marcados en la Tabla S1) y 0 = otras respuestas. Estimación con 50 inicios aleatorios por modelo.
+
+::: {custom-style="Titulo tabla"}
+**Tabla S5**
+
+*Perfiles de las Soluciones Dicotómicas de Cinco y Seis Clases y su Correspondencia con el Modelo Principal*
+:::
+
+```{r}
+#| label: s5
+#| results: asis
+ari_d <- leer("revision_lca_dicotomico_ari.csv")
+leer("revision_lca_dicotomico_perfiles.csv") %>%
+  arrange(clases, desc(proporcion)) %>%
+  transmute(`Solución` = paste(clases, "clases"), `%` = f1(100 * proporcion),
+            `Compra sustentable` = a2(`Compra sustentable`), `Consumo político` = a2(`Consumo político`),
+            `Ahorro doméstico` = a2(`Ahorro doméstico`), `Planificación` = a2(`Planificación`),
+            `Clase principal (% de la clase)` = paste0(clase_principal, " (", round(pct_clase_principal), "%)")) %>%
+  mutate(`Solución` = if_else(duplicated(`Solución`), "", `Solución`)) %>%
+  tabla_md(c(9, 6, 11, 11, 11, 11, 20), c("l", rep("r", 5), "l"))
+```
+
+*Nota.* Probabilidad media de respuesta alta en los ítems de cada dimensión. La última columna indica la clase del modelo principal a la que pertenece la mayoría de las personas de cada clase dicotómica y qué porcentaje representa. Concordancia con la clasificación principal (índice de Rand ajustado): `r a2(ari_d$ARI[1])` para cinco clases y `r a2(ari_d$ARI[2])` para seis.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S6**
+
+*Asociación de la Pertenencia a Clases con la Posición Política y la Lectura Política del Consumo (Modelo de Tres Pasos)*
+:::
+
+```{r}
+#| label: s6
+#| results: asis
+leer("revision_lca_validez_externa.csv") %>%
+  mutate(termino = recode(termino, Derecha = "Posición política (derecha, +1 DE)",
+                          ConsumoPolitico = "Consumo como postura política (+1 DE)"),
+         clase = factor(clase, levels = c("Amplio", "Doméstico", "Político", "Bajo")),
+         valor = paste0(f2(OR), " [", f2(OR_inf), ", ", f2(OR_sup), "]", if_else(p < .05, "\\*", ""))) %>%
+  select(termino, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  rename(Variable = termino) %>%
+  tabla_md(c(26, 15, 15, 15, 15), c("l", rep("r", 4)))
+```
+
+*Nota.* Razones de odds [IC 95%] de pertenecer a cada clase frente a la clase Intermedio, en un modelo de tres pasos corregido por error de clasificación que incluye además sexo, edad y nivel socioeconómico. Ambas variables están estandarizadas. Consumo como postura política: acuerdo con "La forma en que uno consume algunos bienes tiene que ver con la postura política de uno". \* *p* < ,05.
+
+**Referencia citada en el material suplementario**
+
+Masyn, K. E. (2013). Latent class analysis and finite mixture modeling. En T. D. Little (Ed.), *The Oxford handbook of quantitative methods* (Vol. 2, pp. 551-611). Oxford University Press.

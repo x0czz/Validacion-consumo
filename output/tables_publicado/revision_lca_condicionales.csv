@@ -1,0 +1,306 @@
+clase_num,k,item,enunciado,clase,categoria,alto,desde,prob,se
+1,1,O2_11,Compra productos orgánicos o naturales. ,Bajo,1-2,FALSE,1,0.6837358620244672,0.03476024735631425
+1,2,O2_11,Compra productos orgánicos o naturales. ,Bajo,3,FALSE,3,0.2558188051785849,0.03295167658036191
+1,3,O2_11,Compra productos orgánicos o naturales. ,Bajo,4-5,TRUE,4,0.06044533279694611,0.018521299939659817
+2,1,O2_11,Compra productos orgánicos o naturales. ,Amplio,1-2,FALSE,1,0.031203486122722512,0.012921745873672636
+2,2,O2_11,Compra productos orgánicos o naturales. ,Amplio,3,FALSE,3,0.363797573284606,0.03132883470855375
+2,3,O2_11,Compra productos orgánicos o naturales. ,Amplio,4-5,TRUE,4,0.6049989405926726,0.03209454872517077
+3,1,O2_11,Compra productos orgánicos o naturales. ,Doméstico,1-2,FALSE,1,0.3371268578703254,0.030307966094328127
+3,2,O2_11,Compra productos orgánicos o naturales. ,Doméstico,3,FALSE,3,0.4741716152621418,0.030822176504051106
+3,3,O2_11,Compra productos orgánicos o naturales. ,Doméstico,4-5,TRUE,4,0.18870152686753142,0.025143276497564426
+4,1,O2_11,Compra productos orgánicos o naturales. ,Intermedio,1-2,FALSE,1,0.24672169527349383,0.025135117405821736
+4,2,O2_11,Compra productos orgánicos o naturales. ,Intermedio,3,FALSE,3,0.657267495884399,0.027618338105689245
+4,3,O2_11,Compra productos orgánicos o naturales. ,Intermedio,4-5,TRUE,4,0.0960108088421058,0.01809629246055158
+5,1,O2_11,Compra productos orgánicos o naturales. ,Político,1-2,FALSE,1,0.2745489737254508,0.0547322995927586
+5,2,O2_11,Compra productos orgánicos o naturales. ,Político,3,FALSE,3,0.49803272999247034,0.05673846952342587
+5,3,O2_11,Compra productos orgánicos o naturales. ,Político,4-5,TRUE,4,0.22741829628208043,0.04690464655940568
+1,1,O2_12,Compra productos hechos con material reciclado. ,Bajo,1-2,FALSE,1,0.712151503382627,0.03513560988133046
+1,2,O2_12,Compra productos hechos con material reciclado. ,Bajo,3,FALSE,3,0.25953099827473897,0.03388898038223854
+1,3,O2_12,Compra productos hechos con material reciclado. ,Bajo,4-5,TRUE,4,0.028317498342632957,0.013554886894997982
+2,1,O2_12,Compra productos hechos con material reciclado. ,Amplio,1-2,FALSE,1,0.043973822223881985,0.014450015928521659
+2,2,O2_12,Compra productos hechos con material reciclado. ,Amplio,3,FALSE,3,0.3574825464270022,0.03028461719427568
+2,3,O2_12,Compra productos hechos con material reciclado. ,Amplio,4-5,TRUE,4,0.5985436313491158,0.03138035275242357
+3,1,O2_12,Compra productos hechos con material reciclado. ,Doméstico,1-2,FALSE,1,0.26013586275262635,0.02778356546911429
+3,2,O2_12,Compra productos hechos con material reciclado. ,Doméstico,3,FALSE,3,0.5594273904186459,0.03145738141099791
+3,3,O2_12,Compra productos hechos con material reciclado. ,Doméstico,4-5,TRUE,4,0.18043674682872685,0.02423511912934407
+4,1,O2_12,Compra productos hechos con material reciclado. ,Intermedio,1-2,FALSE,1,0.23895572490699213,0.024797347723130803
+4,2,O2_12,Compra productos hechos con material reciclado. ,Intermedio,3,FALSE,3,0.6910174580997563,0.026640940552854334
+4,3,O2_12,Compra productos hechos con material reciclado. ,Intermedio,4-5,TRUE,4,0.07002681699325071,0.01588582208934546
+5,1,O2_12,Compra productos hechos con material reciclado. ,Político,1-2,FALSE,1,0.19366754818702775,0.04468020854429902
+5,2,O2_12,Compra productos hechos con material reciclado. ,Político,3,FALSE,3,0.6054521039659208,0.05773886657624083
+5,3,O2_12,Compra productos hechos con material reciclado. ,Político,4-5,TRUE,4,0.20088034784705233,0.04612953383945996
+1,1,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Bajo,1,FALSE,1,0.541305720489313,0.038524584077491444
+1,2,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Bajo,2,FALSE,2,0.28655587244203984,0.034532604439020904
+1,3,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Bajo,3,FALSE,3,0.13415180495054493,0.029689581581022088
+1,4,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Bajo,4-5,TRUE,4,0.03798660211810107,0.014716218690772689
+2,1,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Amplio,1,FALSE,1,0.02019350994628018,0.009130254355122129
+2,2,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Amplio,2,FALSE,2,0.06711081913014474,0.016640792847601248
+2,3,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Amplio,3,FALSE,3,0.38594659349093946,0.03203552006288148
+2,4,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Amplio,4-5,TRUE,4,0.5267490774326364,0.03285133138470787
+3,1,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Doméstico,1,FALSE,1,0.2018172363454063,0.024827824691238717
+3,2,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Doméstico,2,FALSE,2,0.2946927289317962,0.02848683622029895
+3,3,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Doméstico,3,FALSE,3,0.37773912595151926,0.030324021048725062
+3,4,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Doméstico,4-5,TRUE,4,0.1257509087712777,0.02150536644192424
+4,1,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Intermedio,1,FALSE,1,0.03751823005019402,0.012232960822036561
+4,2,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Intermedio,2,FALSE,2,0.36796927559147413,0.027407307478004007
+4,3,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Intermedio,3,FALSE,3,0.49919610743086945,0.028687692981583576
+4,4,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Intermedio,4-5,TRUE,4,0.09531638692746051,0.01716485568488645
+5,1,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Político,1,FALSE,1,0.040919722556722986,0.026489365573968606
+5,2,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Político,2,FALSE,2,0.2296473051707296,0.05027670274461257
+5,3,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Político,3,FALSE,3,0.48597080787558217,0.059771845489640554
+5,4,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Político,4-5,TRUE,4,0.2434621643969664,0.05104181992658893
+1,1,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Bajo,1,FALSE,1,0.5628064036562969,0.038988502677192095
+1,2,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Bajo,2,FALSE,2,0.2651704004271027,0.034032114874307184
+1,3,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Bajo,3,FALSE,3,0.1259236932683377,0.025428414834290456
+1,4,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Bajo,4-5,TRUE,4,0.04609950264826192,0.01649282455786974
+2,1,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Amplio,1,FALSE,1,0.014764732221885414,0.00806753638143939
+2,2,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Amplio,2,FALSE,2,0.06443399461795517,0.01659649887516246
+2,3,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Amplio,3,FALSE,3,0.32109019222642937,0.0297360094346296
+2,4,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Amplio,4-5,TRUE,4,0.5997110809337308,0.03196200374695882
+3,1,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Doméstico,1,FALSE,1,0.24035957535150493,0.025987470707015823
+3,2,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Doméstico,2,FALSE,2,0.21361228829453005,0.025548046390549403
+3,3,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Doméstico,3,FALSE,3,0.29816237883640934,0.028415684256600474
+3,4,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Doméstico,4-5,TRUE,4,0.24786575751755455,0.027174272790450177
+4,1,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Intermedio,1,FALSE,1,0.10731008768822145,0.018575043344985574
+4,2,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Intermedio,2,FALSE,2,0.34630645503963614,0.026427491894974366
+4,3,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Intermedio,3,FALSE,3,0.4304553695694807,0.028159616400559428
+4,4,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Intermedio,4-5,TRUE,4,0.1159280877026598,0.018619957639451356
+5,1,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Político,1,FALSE,1,0.039420349924788815,0.02432566025411553
+5,2,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Político,2,FALSE,2,0.1358772735899307,0.03828954031960626
+5,3,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Político,3,FALSE,3,0.537999506385582,0.05897664705265649
+5,4,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Político,4-5,TRUE,4,0.2867028700996998,0.05703827441704983
+1,1,O3_2,Intenta influir en lo que consumen otras personas,Bajo,1,FALSE,1,0.6313673587670766,0.036875260895180006
+1,2,O3_2,Intenta influir en lo que consumen otras personas,Bajo,2,FALSE,2,0.24070219119009437,0.032699578690135206
+1,3,O3_2,Intenta influir en lo que consumen otras personas,Bajo,3-5,TRUE,3,0.12793045004282866,0.024843664535563165
+2,1,O3_2,Intenta influir en lo que consumen otras personas,Amplio,1,FALSE,1,0.1499319704821492,0.023250044953391412
+2,2,O3_2,Intenta influir en lo que consumen otras personas,Amplio,2,FALSE,2,0.18198631148128683,0.024690818259194395
+2,3,O3_2,Intenta influir en lo que consumen otras personas,Amplio,3-5,TRUE,3,0.6680817180365646,0.030396223639286336
+3,1,O3_2,Intenta influir en lo que consumen otras personas,Doméstico,1,FALSE,1,0.5764576212123086,0.03095843440680148
+3,2,O3_2,Intenta influir en lo que consumen otras personas,Doméstico,2,FALSE,2,0.2424320846255654,0.02660112670840156
+3,3,O3_2,Intenta influir en lo que consumen otras personas,Doméstico,3-5,TRUE,3,0.18111029416212568,0.02487195400485331
+4,1,O3_2,Intenta influir en lo que consumen otras personas,Intermedio,1,FALSE,1,0.21026162421930855,0.024362864210223625
+4,2,O3_2,Intenta influir en lo que consumen otras personas,Intermedio,2,FALSE,2,0.44243685975295843,0.027977447651935855
+4,3,O3_2,Intenta influir en lo que consumen otras personas,Intermedio,3-5,TRUE,3,0.34730151602773063,0.026903464701533968
+5,1,O3_2,Intenta influir en lo que consumen otras personas,Político,1,FALSE,1,0.04385310830365788,0.02444204590408328
+5,2,O3_2,Intenta influir en lo que consumen otras personas,Político,2,FALSE,2,0.1278451038922256,0.03894470006107046
+5,3,O3_2,Intenta influir en lo que consumen otras personas,Político,3-5,TRUE,3,0.8283017878041175,0.047031839768982904
+1,1,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Bajo,1,FALSE,1,0.839180139835498,0.030984405764119476
+1,2,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Bajo,2,FALSE,2,0.0993000097349179,0.024886178317682684
+1,3,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Bajo,3,FALSE,3,0.035976595741144216,0.01521635038048873
+1,4,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Bajo,4-5,TRUE,4,0.02554325468843926,0.013130900221587737
+2,1,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Amplio,1,FALSE,1,0.12191168834045113,0.022200672711821953
+2,2,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Amplio,2,FALSE,2,0.22304258849845457,0.026612745256534325
+2,3,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Amplio,3,FALSE,3,0.3237893199007003,0.02982599368179349
+2,4,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Amplio,4-5,TRUE,4,0.3312564032603951,0.030084699592971813
+3,1,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Doméstico,1,FALSE,1,0.6728099184964081,0.03038601943819614
+3,2,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Doméstico,2,FALSE,2,0.1662619462388859,0.024192790306775045
+3,3,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Doméstico,3,FALSE,3,0.11030056276194088,0.0210107826558681
+3,4,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Doméstico,4-5,TRUE,4,0.05062757250276422,0.014202236586621963
+4,1,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Intermedio,1,FALSE,1,0.29399616147258384,0.02731210263584295
+4,2,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Intermedio,2,FALSE,2,0.4333914482583408,0.028981984873401527
+4,3,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Intermedio,3,FALSE,3,0.22285744182531156,0.023854915559791325
+4,4,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Intermedio,4-5,TRUE,4,0.049754948443761667,0.012850596403350683
+5,1,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Político,1,FALSE,1,0.028454687476045713,0.02132054350580538
+5,2,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Político,2,FALSE,2,0.19298670229101508,0.054585515012073295
+5,3,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Político,3,FALSE,3,0.5335380590016536,0.06418040016139677
+5,4,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Político,4-5,TRUE,4,0.24502055123128672,0.05365299399545192
+1,1,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Bajo,1,FALSE,1,0.7552382835867066,0.03265338887172275
+1,2,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Bajo,2,FALSE,2,0.16168816582801754,0.028024877154152264
+1,3,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Bajo,3-5,TRUE,3,0.08307355058527495,0.020291745250249883
+2,1,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Amplio,1,FALSE,1,0.24876342737750518,0.028380561146074294
+2,2,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Amplio,2,FALSE,2,0.30657270987578095,0.02866484545783911
+2,3,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Amplio,3-5,TRUE,3,0.4446638627467147,0.03054324120369017
+3,1,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Doméstico,1,FALSE,1,0.6726915436994593,0.029641752437347183
+3,2,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Doméstico,2,FALSE,2,0.17621917062308554,0.02398956366105431
+3,3,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Doméstico,3-5,TRUE,3,0.1510892856774547,0.023325740718162097
+4,1,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Intermedio,1,FALSE,1,0.4484038883507998,0.02909255624801611
+4,2,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Intermedio,2,FALSE,2,0.377081479470974,0.027563532708607473
+4,3,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Intermedio,3-5,TRUE,3,0.1745146321782242,0.022310792667376525
+5,1,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Político,1,FALSE,1,0.07148267295581626,0.03600887381076888
+5,2,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Político,2,FALSE,2,0.22141328682998956,0.049700613822362176
+5,3,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Político,3-5,TRUE,3,0.7071040402141956,0.058306458230838604
+1,1,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Bajo,1,FALSE,1,0.9518524319050036,0.017747736045167443
+1,2,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Bajo,2,FALSE,2,0.03314392934136482,0.014381343967852846
+1,3,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Bajo,3-5,TRUE,3,0.01500363875363183,0.01070310023522865
+2,1,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Amplio,1,FALSE,1,0.5179326008989769,0.033951580276500394
+2,2,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Amplio,2,FALSE,2,0.23215960805943003,0.02656328974042177
+2,3,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Amplio,3-5,TRUE,3,0.24990779104159458,0.02818820257440147
+3,1,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Doméstico,1,FALSE,1,0.9119214421752748,0.018568836596514603
+3,2,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Doméstico,2,FALSE,2,0.04790448213324679,0.014756098139389013
+3,3,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Doméstico,3-5,TRUE,3,0.04017407569147698,0.011969260132343736
+4,1,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Intermedio,1,FALSE,1,0.7685128104494174,0.025039594307272324
+4,2,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Intermedio,2,FALSE,2,0.17859383486115435,0.02233398660228575
+4,3,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Intermedio,3-5,TRUE,3,0.05289335468942733,0.013863060575026313
+5,1,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Político,1,FALSE,1,0.09467844863524535,0.04503490200176034
+5,2,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Político,2,FALSE,2,0.2465526443701232,0.048984170524011404
+5,3,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Político,3-5,TRUE,3,0.6587689069946328,0.06256839584882506
+1,1,O3_9,Participa en marchas o movilizaciones,Bajo,1,FALSE,1,0.8138974579466572,0.02959367228268309
+1,2,O3_9,Participa en marchas o movilizaciones,Bajo,2,FALSE,2,0.1087334620180988,0.024439510688695206
+1,3,O3_9,Participa en marchas o movilizaciones,Bajo,3-5,TRUE,3,0.07736908003524329,0.020714161097443534
+2,1,O3_9,Participa en marchas o movilizaciones,Amplio,1,FALSE,1,0.3709364222003854,0.032596323531218725
+2,2,O3_9,Participa en marchas o movilizaciones,Amplio,2,FALSE,2,0.229272424031584,0.026626821928554367
+2,3,O3_9,Participa en marchas o movilizaciones,Amplio,3-5,TRUE,3,0.39979115376803126,0.031414598585636055
+3,1,O3_9,Participa en marchas o movilizaciones,Doméstico,1,FALSE,1,0.8272682922691176,0.025792411928621993
+3,2,O3_9,Participa en marchas o movilizaciones,Doméstico,2,FALSE,2,0.10476594720076647,0.020839786897305052
+3,3,O3_9,Participa en marchas o movilizaciones,Doméstico,3-5,TRUE,3,0.06796576053011445,0.01680479805605347
+4,1,O3_9,Participa en marchas o movilizaciones,Intermedio,1,FALSE,1,0.49873583060655047,0.02884476391987716
+4,2,O3_9,Participa en marchas o movilizaciones,Intermedio,2,FALSE,2,0.30814719625797204,0.025744272927288134
+4,3,O3_9,Participa en marchas o movilizaciones,Intermedio,3-5,TRUE,3,0.19311697313547516,0.022422237631811816
+5,1,O3_9,Participa en marchas o movilizaciones,Político,1,FALSE,1,0.12296193126980952,0.038068456915158956
+5,2,O3_9,Participa en marchas o movilizaciones,Político,2,FALSE,2,0.2203586316666556,0.05110094407561316
+5,3,O3_9,Participa en marchas o movilizaciones,Político,3-5,TRUE,3,0.6566794370635359,0.05654569781599718
+1,1,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Bajo,1-3,FALSE,1,0.2793696105302467,0.0342734137624823
+1,2,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Bajo,4,TRUE,4,0.3180752829382648,0.03653181638551985
+1,3,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Bajo,5,TRUE,5,0.4025551065314872,0.038674434426962494
+2,1,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Amplio,1-3,FALSE,1,0.032919461925887426,0.011577083139247992
+2,2,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Amplio,4,TRUE,4,0.18770531011582328,0.02641311517741491
+2,3,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Amplio,5,TRUE,5,0.7793752279582906,0.027566740368457802
+3,1,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Doméstico,1-3,FALSE,1,0.034819724009077256,0.012368684128620014
+3,2,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Doméstico,4,TRUE,4,0.05963884013881575,0.017850311153977713
+3,3,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Doméstico,5,TRUE,5,0.9055414358521057,0.021448777543535354
+4,1,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Intermedio,1-3,FALSE,1,0.10225025838538118,0.018338081937892922
+4,2,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Intermedio,4,TRUE,4,0.4573907982821771,0.028071467386373297
+4,3,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Intermedio,5,TRUE,5,0.4403589433324396,0.029095964337957407
+5,1,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Político,1-3,FALSE,1,0.609350271502444,0.06676296632215423
+5,2,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Político,4,TRUE,4,0.3111114366672385,0.06333306474112131
+5,3,O2_1,Evita dejar luces prendidas en ambiente desocupados ,Político,5,TRUE,5,0.07953829183031884,0.034616145524012064
+1,1,O2_2,Corta el agua mientras se lava los dientes. ,Bajo,1-3,FALSE,1,0.4227085963630026,0.037522948763520886
+1,2,O2_2,Corta el agua mientras se lava los dientes. ,Bajo,4,TRUE,4,0.14717335968543743,0.025952881533622352
+1,3,O2_2,Corta el agua mientras se lava los dientes. ,Bajo,5,TRUE,5,0.4301180439515593,0.03747968049711611
+2,1,O2_2,Corta el agua mientras se lava los dientes. ,Amplio,1-3,FALSE,1,0.057807060217693856,0.014675874220254464
+2,2,O2_2,Corta el agua mientras se lava los dientes. ,Amplio,4,TRUE,4,0.18177408202402495,0.024359727355441767
+2,3,O2_2,Corta el agua mientras se lava los dientes. ,Amplio,5,TRUE,5,0.7604188577582828,0.027153439218921157
+3,1,O2_2,Corta el agua mientras se lava los dientes. ,Doméstico,1-3,FALSE,1,0.085635061928319,0.018913260439663744
+3,2,O2_2,Corta el agua mientras se lava los dientes. ,Doméstico,4,TRUE,4,0.09718725354580048,0.019356258092929863
+3,3,O2_2,Corta el agua mientras se lava los dientes. ,Doméstico,5,TRUE,5,0.8171776845258802,0.02577298887443369
+4,1,O2_2,Corta el agua mientras se lava los dientes. ,Intermedio,1-3,FALSE,1,0.21422341328438013,0.023548116095048036
+4,2,O2_2,Corta el agua mientras se lava los dientes. ,Intermedio,4,TRUE,4,0.32120453218852413,0.02635455863851599
+4,3,O2_2,Corta el agua mientras se lava los dientes. ,Intermedio,5,TRUE,5,0.46457205452709355,0.0287821651930999
+5,1,O2_2,Corta el agua mientras se lava los dientes. ,Político,1-3,FALSE,1,0.5749247692477513,0.07024832412866866
+5,2,O2_2,Corta el agua mientras se lava los dientes. ,Político,4,TRUE,4,0.31555770870526567,0.05905926161142756
+5,3,O2_2,Corta el agua mientras se lava los dientes. ,Político,5,TRUE,5,0.10951752204698369,0.04178573834425989
+1,1,O2_3,Toma duchas cortas,Bajo,1-2,FALSE,1,0.31191470036535834,0.032977869637639774
+1,2,O2_3,Toma duchas cortas,Bajo,3,FALSE,3,0.29411233532833875,0.03316255660899832
+1,3,O2_3,Toma duchas cortas,Bajo,4,TRUE,4,0.23200810715391754,0.0313258307202907
+1,4,O2_3,Toma duchas cortas,Bajo,5,TRUE,5,0.16196485715238432,0.02827526213845516
+2,1,O2_3,Toma duchas cortas,Amplio,1-2,FALSE,1,0.03454800119389392,0.011235827745430648
+2,2,O2_3,Toma duchas cortas,Amplio,3,FALSE,3,0.10884218751971632,0.02010913510937919
+2,3,O2_3,Toma duchas cortas,Amplio,4,TRUE,4,0.3751505840503965,0.030490712574001922
+2,4,O2_3,Toma duchas cortas,Amplio,5,TRUE,5,0.481459227235994,0.03197881492993117
+3,1,O2_3,Toma duchas cortas,Doméstico,1-2,FALSE,1,0.03534014958149937,0.01219567167058602
+3,2,O2_3,Toma duchas cortas,Doméstico,3,FALSE,3,0.1584912515010187,0.023215467054073558
+3,3,O2_3,Toma duchas cortas,Doméstico,4,TRUE,4,0.2968420577097098,0.029070515197857732
+3,4,O2_3,Toma duchas cortas,Doméstico,5,TRUE,5,0.5093265412077715,0.031551050091839145
+4,1,O2_3,Toma duchas cortas,Intermedio,1-2,FALSE,1,0.0560532484509824,0.013571677646486549
+4,2,O2_3,Toma duchas cortas,Intermedio,3,FALSE,3,0.3151185855703264,0.026602377345675433
+4,3,O2_3,Toma duchas cortas,Intermedio,4,TRUE,4,0.485768977536249,0.02892439231753822
+4,4,O2_3,Toma duchas cortas,Intermedio,5,TRUE,5,0.14305918844244006,0.021156288348863513
+5,1,O2_3,Toma duchas cortas,Político,1-2,FALSE,1,0.2005873656197985,0.04627543004123264
+5,2,O2_3,Toma duchas cortas,Político,3,FALSE,3,0.5211076538153104,0.05683869980267075
+5,3,O2_3,Toma duchas cortas,Político,4,TRUE,4,0.19784281068097143,0.0518970282867573
+5,4,O2_3,Toma duchas cortas,Político,5,TRUE,5,0.08046216988392063,0.03224951769479824
+1,1,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Bajo,1-3,FALSE,1,0.41505801143886334,0.03647693951353045
+1,2,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Bajo,4,TRUE,4,0.17626014443560756,0.02772509282915452
+1,3,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Bajo,5,TRUE,5,0.408681844125528,0.03693173882727866
+2,1,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Amplio,1-3,FALSE,1,0.08819042393711257,0.018027201910884798
+2,2,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Amplio,4,TRUE,4,0.17554195077293694,0.024272340369157357
+2,3,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Amplio,5,TRUE,5,0.7362676252899516,0.028283004833384667
+3,1,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Doméstico,1-3,FALSE,1,0.08709176782441169,0.018463935242433702
+3,2,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Doméstico,4,TRUE,4,0.11095558430844127,0.019885964379476102
+3,3,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Doméstico,5,TRUE,5,0.8019526478671459,0.02566644837336345
+4,1,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Intermedio,1-3,FALSE,1,0.22043682081778954,0.02412944460822069
+4,2,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Intermedio,4,TRUE,4,0.3240302402362806,0.025862750588273337
+4,3,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Intermedio,5,TRUE,5,0.45553293894592783,0.02865160576141467
+5,1,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Político,1-3,FALSE,1,0.5818579355325756,0.06180572995295153
+5,2,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Político,4,TRUE,4,0.3399842189485516,0.056586951827790416
+5,3,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Político,5,TRUE,5,0.07815784551887342,0.033918904988413524
+1,1,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Bajo,1-2,FALSE,1,0.42494530849960327,0.03838529139106203
+1,2,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Bajo,3,FALSE,3,0.25898831461478933,0.03134993075563098
+1,3,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Bajo,4,TRUE,4,0.13329729913230157,0.025990052992872294
+1,4,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Bajo,5,TRUE,5,0.18276907775330473,0.030886177420993203
+2,1,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Amplio,1-2,FALSE,1,0.03162606765222236,0.0126557308754747
+2,2,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Amplio,3,FALSE,3,0.08228981345929144,0.017309327555848096
+2,3,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Amplio,4,TRUE,4,0.2712575608476987,0.028839035363343025
+2,4,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Amplio,5,TRUE,5,0.6148265580407881,0.0317004033994519
+3,1,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Doméstico,1-2,FALSE,1,0.11017829086449382,0.02021798011535327
+3,2,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Doméstico,3,FALSE,3,0.12305069633047992,0.02112989329606937
+3,3,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Doméstico,4,TRUE,4,0.15681281635017744,0.02312750539282551
+3,4,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Doméstico,5,TRUE,5,0.6099581964548485,0.03156176134532329
+4,1,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Intermedio,1-2,FALSE,1,0.14322224490801178,0.020062740857353288
+4,2,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Intermedio,3,FALSE,3,0.2668045525597371,0.025017595523878642
+4,3,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Intermedio,4,TRUE,4,0.35458223298298064,0.026711851263851567
+4,4,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Intermedio,5,TRUE,5,0.235390969549268,0.025049767480269755
+5,1,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Político,1-2,FALSE,1,0.2381493825231803,0.052665504865906675
+5,2,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Político,3,FALSE,3,0.4508179879617435,0.059778644842346886
+5,3,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Político,4,TRUE,4,0.2598066668097932,0.05323505761153053
+5,4,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Político,5,TRUE,5,0.05122596270528428,0.027239624296307195
+1,1,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,1,FALSE,1,0.3962795862478447,0.03795993820377218
+1,2,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,2,FALSE,2,0.2077954532972235,0.02918754336674704
+1,3,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,3,FALSE,3,0.20025820820876125,0.029140283120942412
+1,4,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,4,TRUE,4,0.13732826810958915,0.026272655426950453
+1,5,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,5,TRUE,5,0.05833848413658054,0.018377730657294748
+2,1,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,1,FALSE,1,0.02275368862010105,0.009021962766056452
+2,2,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,2,FALSE,2,0.0613907030593606,0.015132375356295922
+2,3,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,3,FALSE,3,0.17941601697261408,0.023547448065479176
+2,4,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,4,TRUE,4,0.3460611468377316,0.030600676998014914
+2,5,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,5,TRUE,5,0.3903784445101937,0.03215519622002892
+3,1,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,1,FALSE,1,0.12400598279411644,0.021361676440965975
+3,2,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,2,FALSE,2,0.13206560221434138,0.02169460787654731
+3,3,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,3,FALSE,3,0.1934748990794014,0.02475003905456754
+3,4,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,4,TRUE,4,0.20793065201535535,0.025483062966347936
+3,5,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,5,TRUE,5,0.34252286389678477,0.030520995493370714
+4,1,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,1,FALSE,1,0.10588284607632335,0.018188980387349236
+4,2,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,2,FALSE,2,0.2055714432066284,0.022651264167705198
+4,3,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,3,FALSE,3,0.35955570806482534,0.026958941621839413
+4,4,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,4,TRUE,4,0.23966776186675878,0.02474166795068444
+4,5,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,5,TRUE,5,0.08932224078546169,0.01668675610797927
+5,1,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,1,FALSE,1,0.08397964317132116,0.030891158575981424
+5,2,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,2,FALSE,2,0.18350840027218462,0.040373303720231984
+5,3,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,3,FALSE,3,0.46226370547022794,0.05318575275835999
+5,4,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,4,TRUE,4,0.23499617711151657,0.04666580265967301
+5,5,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,5,TRUE,5,0.035252073974750386,0.02200931670097279
+1,1,O2_8,Planifica compra de alimentos. ,Bajo,1-2,FALSE,1,0.3345827016382651,0.03757509195933813
+1,2,O2_8,Planifica compra de alimentos. ,Bajo,3,FALSE,3,0.25956008368149774,0.03289023102414922
+1,3,O2_8,Planifica compra de alimentos. ,Bajo,4,TRUE,4,0.2449351171681232,0.033541997238507905
+1,4,O2_8,Planifica compra de alimentos. ,Bajo,5,TRUE,5,0.16092209751211306,0.02925085709760969
+2,1,O2_8,Planifica compra de alimentos. ,Amplio,1-2,FALSE,1,1.1648559592253071e-15,1.0967767684195078e-16
+2,2,O2_8,Planifica compra de alimentos. ,Amplio,3,FALSE,3,0.04612950399921068,0.014130588410013146
+2,3,O2_8,Planifica compra de alimentos. ,Amplio,4,TRUE,4,0.32277787131534075,0.030740130400090583
+2,4,O2_8,Planifica compra de alimentos. ,Amplio,5,TRUE,5,0.6310926246854475,0.03234393731221616
+3,1,O2_8,Planifica compra de alimentos. ,Doméstico,1-2,FALSE,1,0.036630419291080116,0.01304984306944732
+3,2,O2_8,Planifica compra de alimentos. ,Doméstico,3,FALSE,3,0.10304851977973199,0.02048630668375211
+3,3,O2_8,Planifica compra de alimentos. ,Doméstico,4,TRUE,4,0.24096797961694585,0.02750680125329393
+3,4,O2_8,Planifica compra de alimentos. ,Doméstico,5,TRUE,5,0.6193530813122409,0.03358380040845109
+4,1,O2_8,Planifica compra de alimentos. ,Intermedio,1-2,FALSE,1,0.08388512726610989,0.017400675478570476
+4,2,O2_8,Planifica compra de alimentos. ,Intermedio,3,FALSE,3,0.3512339751803384,0.027972036125564446
+4,3,O2_8,Planifica compra de alimentos. ,Intermedio,4,TRUE,4,0.46212990298973516,0.029284317990774276
+4,4,O2_8,Planifica compra de alimentos. ,Intermedio,5,TRUE,5,0.10275099456381413,0.019695210576630415
+5,1,O2_8,Planifica compra de alimentos. ,Político,1-2,FALSE,1,0.1769774528018607,0.04535289822859916
+5,2,O2_8,Planifica compra de alimentos. ,Político,3,FALSE,3,0.43674171621632446,0.057045686619297924
+5,3,O2_8,Planifica compra de alimentos. ,Político,4,TRUE,4,0.3560070743770212,0.05840270692870107
+5,4,O2_8,Planifica compra de alimentos. ,Político,5,TRUE,5,0.03027375660479479,0.020202562078375754
+1,1,O2_9,Planifica compras de vestuario. ,Bajo,1,FALSE,1,0.34298160777253317,0.0361165811255321
+1,2,O2_9,Planifica compras de vestuario. ,Bajo,2,FALSE,2,0.3377426718517593,0.03599126529314398
+1,3,O2_9,Planifica compras de vestuario. ,Bajo,3,FALSE,3,0.19801973187317692,0.030118830361179925
+1,4,O2_9,Planifica compras de vestuario. ,Bajo,4,TRUE,4,0.08819812045423463,0.021084034261429567
+1,5,O2_9,Planifica compras de vestuario. ,Bajo,5,TRUE,5,0.033057868048295115,0.01362894870303918
+2,1,O2_9,Planifica compras de vestuario. ,Amplio,1,FALSE,1,0.03222665970033668,0.011058070640142177
+2,2,O2_9,Planifica compras de vestuario. ,Amplio,2,FALSE,2,0.09978937438659968,0.01939565778337264
+2,3,O2_9,Planifica compras de vestuario. ,Amplio,3,FALSE,3,0.2344131832690173,0.026706449075033507
+2,4,O2_9,Planifica compras de vestuario. ,Amplio,4,TRUE,4,0.3273475672769002,0.030236912881629423
+2,5,O2_9,Planifica compras de vestuario. ,Amplio,5,TRUE,5,0.3062232153671471,0.030754818735068162
+3,1,O2_9,Planifica compras de vestuario. ,Doméstico,1,FALSE,1,0.15102655577056395,0.02234136712225455
+3,2,O2_9,Planifica compras de vestuario. ,Doméstico,2,FALSE,2,0.20567664266028512,0.02560719356537867
+3,3,O2_9,Planifica compras de vestuario. ,Doméstico,3,FALSE,3,0.26071879827942956,0.02722027154763295
+3,4,O2_9,Planifica compras de vestuario. ,Doméstico,4,TRUE,4,0.15924973681994078,0.022531604954034876
+3,5,O2_9,Planifica compras de vestuario. ,Doméstico,5,TRUE,5,0.22332826646977955,0.02571106373462679
+4,1,O2_9,Planifica compras de vestuario. ,Intermedio,1,FALSE,1,0.06084732133135783,0.01369856595156781
+4,2,O2_9,Planifica compras de vestuario. ,Intermedio,2,FALSE,2,0.2909365704041472,0.025748430189854773
+4,3,O2_9,Planifica compras de vestuario. ,Intermedio,3,FALSE,3,0.4308236719818819,0.027961128570573257
+4,4,O2_9,Planifica compras de vestuario. ,Intermedio,4,TRUE,4,0.20460691117066027,0.02293268929651426
+4,5,O2_9,Planifica compras de vestuario. ,Intermedio,5,TRUE,5,0.012785525111950432,0.007335194459539362
+5,1,O2_9,Planifica compras de vestuario. ,Político,1,FALSE,1,0.020623652816946607,0.017106923511948043
+5,2,O2_9,Planifica compras de vestuario. ,Político,2,FALSE,2,0.22123003926030727,0.049100375130197445
+5,3,O2_9,Planifica compras de vestuario. ,Político,3,FALSE,3,0.5048995690037807,0.06373807432821775
+5,4,O2_9,Planifica compras de vestuario. ,Político,4,TRUE,4,0.19585920855705663,0.04943806223978406
+5,5,O2_9,Planifica compras de vestuario. ,Político,5,TRUE,5,0.057387530361909626,0.026854467660105935

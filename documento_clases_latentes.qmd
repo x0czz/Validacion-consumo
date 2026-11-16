@@ -1,0 +1,422 @@
+---
+title: "Clases latentes de prácticas de consumo socioambientales"
+subtitle: "Documento metodológico: perfiles de prácticas y actitudes, Encuesta Sociedad de Consumo 2023"
+author: "Nicolás Outerbridge"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    number-sections: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "", OutDec = ",")
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+enum       <- leer("lca_enumeracion.csv") %>% mutate(modelo = str_extract(modelo, "^[ABC]"))
+clasif     <- leer("lca_clasificacion.csv")
+perfiles   <- leer("lca_perfiles_items.csv")
+dims       <- leer("lca_perfiles_dimensiones.csv")
+bvr        <- leer("lca_bvr.csv")
+ari        <- leer("lca_concordancia.csv")
+actitudes  <- leer("lca_actitudes_clase.csv")
+dist       <- leer("lca_distribucion_grupos.csv")
+asoc       <- leer("lca_asociacion_grupos.csv")
+coef3p     <- leer("lca_3p_coeficientes.csv")
+wald3p     <- leer("lca_3p_wald.csv")
+prob3p     <- leer("lca_3p_probabilidades.csv")
+err3p      <- leer("lca_3p_error_clasificacion.csv")
+ing3p      <- leer("lca_3p_vs_ingenuo.csv")
+comp_k     <- leer("lca_comparacion_k.csv")
+perf_k     <- leer("lca_perfiles_k.csv")
+trans_k    <- leer("lca_transiciones_k.csv")
+
+orden_clases <- c("Amplio", "Intermedio", "Doméstico", "Político", "Bajo")
+orden_dim <- c("Compra sustentable", "Consumo político", "Ahorro doméstico", "Planificación")
+
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+tabla <- function(df, ...) {
+  kable(df, ...) %>% kable_styling(bootstrap_options = c("striped", "condensed"),
+                                   full_width = FALSE, position = "left")
+}
+pc <- function(cl, mod = "A") 100 * clasif$proporcion[clasif$modelo == mod & clasif$clase == cl]
+dg <- function(v, g, cl) dist$porcentaje[dist$variable == v & dist$grupo == g & dist$clase == cl]
+dm <- function(cl, d) dims[[d]][dims$clase == cl]
+ac <- function(mod, it, cl) actitudes$media01[actitudes$modelo == mod & actitudes$item == it & actitudes$clase == cl]
+e  <- function(mod, k, col) enum[[col]][enum$modelo == mod & enum$clases == k]
+```
+
+# Propósito
+
+El análisis factorial mostró que las prácticas de consumo socioambientales se organizan en dimensiones distintas, con patrones socioeconómicos opuestos. Ese análisis describe **variables**: cómo se agrupan los ítems. El análisis de clases latentes (LCA) describe **personas**: qué combinaciones de prácticas aparecen en la población y qué tan frecuente es cada una.
+
+La pregunta que guía este documento es si la población se ordena en un único continuo, de menos a más prácticas, como suponen las tipologías sumativas del tipo Akatu, o si existen perfiles cualitativamente distintos. Una segunda pregunta es si incorporar actitudes hacia el reciclaje (batería O4) genera perfiles nuevos.
+
+El código está en `processing/clases_latentes.qmd` y `processing/lca_estimar.R`.
+
+# Datos y modelos
+
+Se usa la base `db_proc` (N = 1.623, sin valores perdidos en los ítems analizados), con las categorías extremas colapsadas al 10%. Los ítems entran directamente como indicadores categóricos, sin usar puntajes factoriales. Se compararon tres conjuntos de indicadores:
+
+```{r}
+#| label: tabla-modelos
+tibble(
+  Modelo = c("A", "B", "C"),
+  `Ítems` = c(17, 23, 19),
+  Contenido = c(
+    "Prácticas: los 17 ítems de las dos escalas validadas (compra sustentable, consumo político, ahorro doméstico y planificación de compras)",
+    "A + seis ítems de actitudes hacia el reciclaje: facilidad para reciclar (O4.2, O4.3, O4.5) y valoración del reciclaje (O4.1, O4.7, O4.8)",
+    "A + un ítem por dimensión de actitud (O4.3 y O4.1); controla la redundancia entre ítems de O4")
+) %>% tabla()
+```
+
+Los ítems de O4 se eligieron entre los que cargaron en sus factores en el análisis exploratorio. O4.6 ("En mi hogar, todos/as reciclamos") se excluyó porque describe una práctica, no una actitud, y porque empeoraba el ajuste del AFC.
+
+# Estimación y elección del número de clases
+
+Cada modelo se estimó con 1 a 8 clases en `poLCA`, con 100 inicios aleatorios por solución. Se retuvo la solución de mayor log-verosimilitud y se registró cuántos inicios llegan a ese máximo, porque si pocos lo replican la solución puede ser un máximo local.
+
+Para elegir el número de clases se priorizaron el BIC y el CAIC, que son los criterios con mejor desempeño en simulaciones para LCA. Se complementaron con la entropía (calidad de clasificación), el tamaño de la clase más pequeña (sobre 5%), la probabilidad posterior media de cada clase (AvePP, sobre ,70) y la interpretabilidad.
+
+```{r}
+#| label: tabla-enumeracion
+enum %>%
+  filter(modelo %in% c("A", "C")) %>%
+  transmute(Modelo = modelo, Clases = clases, BIC = format(round(BIC, 1), big.mark = "."),
+            CAIC = format(round(CAIC, 1), big.mark = "."), aBIC = format(round(aBIC, 1), big.mark = "."),
+            `Entropía` = f3(entropia), `Clase mín.` = f3(clase_min), `Réplicas` = paste0(replicas, "/", inicios)) %>%
+  tabla(caption = "Índices de ajuste por número de clases (modelos A y C; el modelo B está en el script)") %>%
+  row_spec(c(5, 13), bold = TRUE)
+```
+
+```{r}
+#| label: figura-enumeracion
+#| fig-width: 8
+#| fig-height: 3.2
+enum %>%
+  select(modelo, clases, BIC, CAIC) %>%
+  pivot_longer(c(BIC, CAIC), names_to = "criterio") %>%
+  ggplot(aes(clases, value, colour = criterio)) +
+  geom_line() + geom_point() +
+  geom_vline(xintercept = 5, linetype = "dashed", colour = "grey50") +
+  facet_wrap(~ paste("Modelo", modelo), scales = "free_y") +
+  scale_x_continuous(breaks = 1:8) +
+  labs(x = "Número de clases", y = NULL, colour = NULL) +
+  theme_bw()
+```
+
+En los tres modelos, el BIC y el CAIC alcanzan su mínimo con **cinco clases**. En el modelo A, el BIC de cinco y seis clases es casi idéntico (`r format(round(e("A", 5, "BIC"), 1), big.mark = ".")` y `r format(round(e("A", 6, "BIC"), 1), big.mark = ".")`), pero la solución de seis agrega una clase de menos del 5% y solo `r e("A", 6, "replicas")` de 100 inicios replican su máximo, frente a `r e("A", 5, "replicas")` de 100 en la de cinco. La solución de cinco clases tiene una entropía de `r f3(e("A", 5, "entropia"))`, ninguna clase bajo el 7% y AvePP entre `r f2(min(clasif$AvePP[clasif$modelo == "A"]))` y `r f2(max(clasif$AvePP[clasif$modelo == "A"]))`. El aBIC sigue bajando hasta ocho clases, lo que es habitual por su menor penalización.
+
+# Las cinco clases
+
+```{r}
+#| label: figura-perfiles
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-cap: "Respuesta media esperada por ítem en cada clase (modelo A). 0 = categoría más baja, 1 = más alta."
+perfiles %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         dim = factor(dim, levels = orden_dim)) %>%
+  ggplot(aes(item, media01, group = clase, colour = clase)) +
+  geom_line() + geom_point(size = 1.5) +
+  facet_grid(~ dim, scales = "free_x", space = "free_x",
+             labeller = labeller(dim = label_wrap_gen(12))) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(x = NULL, y = "Respuesta media esperada", colour = "Clase") +
+  theme_bw() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5), legend.position = "top")
+```
+
+```{r}
+#| label: tabla-clases
+dims %>%
+  mutate(clase = factor(clase, levels = orden_clases)) %>% arrange(clase) %>%
+  left_join(clasif %>% filter(modelo == "A") %>% select(clase, proporcion, AvePP), by = "clase") %>%
+  transmute(Clase = clase, `%` = f1(100 * proporcion),
+            `Compra sustentable` = f2(`Compra sustentable`), `Consumo político` = f2(`Consumo político`),
+            `Ahorro doméstico` = f2(`Ahorro doméstico`), `Planificación` = f2(`Planificación`),
+            AvePP = f2(AvePP)) %>%
+  tabla(caption = "Tamaño de cada clase y respuesta media esperada por dimensión (escala 0-1, modelo A)")
+```
+
+- **Amplio (`r f1(pc("Amplio"))`%).** Niveles altos en las cuatro dimensiones. Es la única clase con compra sustentable alta.
+- **Intermedio (`r f1(pc("Intermedio"))`%).** Niveles medios en todo. Es la clase más grande.
+- **Doméstico (`r f1(pc("Doméstico"))`%).** Ahorro y planificación tan altos como en la clase Amplio (`r f2(dm("Doméstico", "Ahorro doméstico"))` frente a `r f2(dm("Amplio", "Ahorro doméstico"))` en ahorro), pero consumo político bajo (`r f2(dm("Doméstico", "Consumo político"))`) y compra sustentable media.
+- **Político (`r f1(pc("Político"))`%).** El consumo político más alto de todas las clases (`r f2(dm("Político", "Consumo político"))`), compra sustentable media y el ahorro doméstico más bajo de todas (`r f2(dm("Político", "Ahorro doméstico"))`), menor incluso que en la clase Bajo.
+- **Bajo (`r f1(pc("Bajo"))`%).** Niveles bajos en todo, salvo un ahorro doméstico medio-bajo.
+
+## ¿Un continuo o perfiles distintos?
+
+Tres clases (Amplio, Intermedio y Bajo) forman una gradiente: tienen más o menos de todo, en el mismo orden en las cuatro dimensiones. Esa parte de la población se ordena como supone una tipología sumativa.
+
+Las otras dos clases rompen ese orden, y suman `r f1(pc("Doméstico") + pc("Político"))`% de la muestra:
+
+- La clase **Doméstico** practica tanto ahorro como la Amplio, pero casi nada de consumo político.
+- La clase **Político** es el reverso: el consumo político más alto y el ahorro doméstico más bajo.
+
+En un índice sumativo, una persona de la clase Político y una de la clase Doméstico pueden tener el mismo puntaje total, aunque hagan cosas opuestas. Este resultado es coherente con el análisis factorial: la esfera doméstica y la pública no son grados de un mismo compromiso, sino formas distintas de relacionarse con el consumo.
+
+## ¿Cinco clases o menos? Comparación con las soluciones de 3 y 4 clases
+
+La mayor parte de la mejora del BIC ocurre hasta las tres clases: de la reducción total entre una clase y el mínimo, el paso de 2 a 3 clases aporta `r f1(comp_k$mejora_pct[comp_k$clases == 3])`%, el de 3 a 4 aporta `r f1(comp_k$mejora_pct[comp_k$clases == 4])`% y el de 4 a 5, `r f1(comp_k$mejora_pct[comp_k$clases == 5])`%. Por eso conviene revisar si las soluciones más simples cuentan la misma historia.
+
+```{r}
+#| label: tabla-comparacion-k
+comp_k %>%
+  transmute(Clases = clases, BIC = format(round(BIC, 1), big.mark = "."),
+            `% de la mejora del BIC` = f1(mejora_pct), `Entropía` = f3(entropia),
+            `Clase mín.` = f3(clase_min), `AvePP mín.` = f3(avepp_min),
+            `Réplicas` = paste0(replicas, "/", inicios), `Pares con BVR > 3,84` = bvr_n) %>%
+  tabla(caption = "Soluciones de 3, 4 y 5 clases (modelo A)")
+```
+
+```{r}
+#| label: figura-perfiles-k
+#| fig-width: 9
+#| fig-height: 3.6
+#| fig-cap: "Perfiles por dimensión en las soluciones de 3, 4 y 5 clases (modelo A)"
+colores <- c(Amplio = "#E41A1C", Intermedio = "#377EB8", "Doméstico" = "#4DAF4A",
+             "Político" = "#984EA3", Bajo = "#FF7F00")
+perf_k %>%
+  mutate(dim = factor(dim, levels = orden_dim),
+         clase = factor(clase, levels = orden_clases),
+         k = paste(k, "clases")) %>%
+  ggplot(aes(dim, media01, group = clase, colour = clase)) +
+  geom_line() + geom_point() +
+  facet_wrap(~ k) +
+  scale_colour_manual(values = colores) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, 10)) +
+  labs(x = NULL, y = "Respuesta media esperada", colour = NULL) +
+  theme_bw() + theme(legend.position = "top")
+```
+
+```{r}
+#| label: tabla-transiciones
+tr <- function(paso_sel) trans_k %>% filter(paso == paso_sel) %>%
+  mutate(desde = factor(desde, levels = orden_clases), hacia = factor(hacia, levels = orden_clases)) %>%
+  select(-paso) %>% pivot_wider(names_from = hacia, values_from = Freq, values_fill = 0) %>%
+  arrange(desde) %>% select(desde, any_of(orden_clases))
+tr("3 a 4") %>% rename(`3 clases → 4 clases` = desde) %>%
+  tabla(caption = "Cómo se reparten las personas al pasar de 3 a 4 clases (asignación modal)")
+tr("4 a 5") %>% rename(`4 clases → 5 clases` = desde) %>%
+  tabla(caption = "Cómo se reparten las personas al pasar de 4 a 5 clases (asignación modal)")
+```
+
+Al agregar clases, las soluciones se refinan sin contradecirse:
+
+- **3 clases:** Amplio, Bajo y un grupo con el consumo político más alto y el ahorro doméstico más bajo. El perfil político ya existe, pero mezclado con personas de nivel medio. La clase "Bajo" de esta solución tiene un ahorro doméstico medio-alto, es decir, todavía agrupa a quienes ahorran pero no hacen nada más.
+- **4 clases:** el grupo político se separa en una clase Político más pequeña y nítida, y una clase Intermedia que también recibe parte de las clases Bajo y Amplio.
+- **5 clases:** la clase Bajo se divide. Una parte queda en una clase Bajo más pura y otra, junto con parte de la Amplio, forma la clase Doméstico.
+
+Dos resultados importan para el paper:
+
+1. **El perfil Político es robusto.** Aparece en las tres soluciones, siempre con el consumo político más alto y el ahorro doméstico más bajo. No es un artefacto de haber elegido cinco clases.
+2. **El perfil Doméstico depende de la solución.** Solo se separa con cinco clases. Con menos, sus integrantes se reparten entre Amplio y Bajo. Para afirmar que existe un perfil doméstico distinto hay que defender la solución de cinco clases.
+
+Criterios a favor de cada solución:
+
+| Solución | A favor | En contra |
+|---|---|---|
+| 3 clases | La más parsimoniosa; después de ella cada clase adicional mejora poco el BIC | Más dependencia local sin explicar (`r comp_k$bvr_n[comp_k$clases == 3]` pares con BVR > 3,84); mezcla el perfil político con personas de nivel medio |
+| 4 clases | Separa con nitidez el perfil político | Su máximo se replica solo en `r comp_k$replicas[comp_k$clases == 4]` de 100 inicios: solución menos estable |
+| 5 clases | BIC y CAIC mínimos; menor dependencia local (`r comp_k$bvr_n[comp_k$clases == 5]` pares); distingue el perfil doméstico; máximo replicado en `r comp_k$replicas[comp_k$clases == 5]` de 100 inicios | La clase Político queda bajo el 10% de la muestra |
+
+La solución de cinco clases sigue siendo la mejor respaldada. Que la mejora del BIC sea pequeña no la descalifica: el BIC ya penaliza la complejidad, y aun así prefiere cinco clases. Lo que sí sugiere la comparación es presentar en el paper la solución de tres clases como análisis de robustez, para mostrar que el perfil político no depende de esa elección.
+
+# Diagnóstico: independencia local
+
+El LCA supone que, dentro de cada clase, los ítems son independientes. Se revisó con los residuos bivariados (BVR) de cada par de ítems; valores sobre 3,84 indican dependencia no explicada por las clases.
+
+```{r}
+#| label: tabla-bvr
+bvr %>% group_by(Modelo = modelo) %>%
+  summarise(Pares = n(), `BVR > 3,84` = sum(BVR > 3.84),
+            `% de pares` = f1(100 * mean(BVR > 3.84)), `BVR máximo` = f1(max(BVR))) %>%
+  tabla()
+top_b <- bvr %>% filter(modelo == "B") %>% arrange(desc(BVR)) %>% slice(1)
+```
+
+- **Modelo A:** dependencia local moderada, concentrada en pares de ítems de la misma dimensión (por ejemplo, O3.8 y O3.9, participación en organizaciones y en marchas). Es esperable, porque dentro de cada clase esas dimensiones siguen variando de forma continua. Para el objetivo de describir perfiles no es un problema grave, pero conviene mencionarlo como limitación.
+- **Modelo B:** la dependencia se concentra en los ítems de O4. El par `r top_b$item1` y `r top_b$item2` ("es fácil llevar mi reciclaje a los centros de acopio" y "en mi comuna o barrio es fácil reciclar") tiene un BVR de `r f1(top_b$BVR)`. Son ítems casi redundantes, y el modelo B viola el supuesto de forma importante.
+- **Modelo C:** con un ítem por dimensión de actitud, la dependencia vuelve a niveles similares a los de A.
+
+Por esta razón, los resultados de B sobre actitudes se verifican con el modelo C.
+
+# ¿Las actitudes agregan clases?
+
+```{r}
+#| label: tabla-ari
+ari %>% mutate(ARI = f3(ARI)) %>%
+  tabla(caption = "Concordancia en la asignación de personas a clases (índice de Rand ajustado; 1 = idéntica)")
+```
+
+No. Los modelos B y C recuperan las mismas cinco clases que A, con tamaños prácticamente iguales y una concordancia alta en la asignación de personas (ARI = `r f3(ari$ARI[2])` entre A y C). Las clases se definen por las prácticas.
+
+Las actitudes, sin embargo, sí distinguen entre clases:
+
+```{r}
+#| label: tabla-actitudes
+etiq <- c(O4_1 = "Es necesario hacerse cargo de las tareas de reciclaje",
+          O4_2 = "Es fácil entender el etiquetado para separar el reciclaje",
+          O4_3 = "Es fácil llevar mi reciclaje hasta los centros de acopio",
+          O4_5 = "En mi comuna o barrio es fácil reciclar",
+          O4_7 = "Me cuesta creer que un envase reciclado sirva de algo (inverso)",
+          O4_8 = "Reciclar es bueno para la economía")
+actitudes %>% filter(modelo == "B") %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         Dimensión = if_else(item %in% c("O4_2", "O4_3", "O4_5"), "Facilidad", "Valoración"),
+         `Ítem` = paste0(str_replace(item, "_", "."), " ", etiq[item])) %>%
+  select(Dimensión, `Ítem`, clase, media01) %>%
+  pivot_wider(names_from = clase, values_from = media01) %>%
+  arrange(Dimensión) %>%
+  mutate(across(all_of(orden_clases), f2)) %>%
+  tabla(caption = "Respuesta media esperada en los ítems de actitud por clase (0-1; modelo B, con todos los ítems de O4)")
+```
+
+- **Valoración del reciclaje.** La clase Político tiene la valoración más baja de todas: `r f2(ac("B", "O4_1", "Político"))` en "es necesario hacerse cargo de las tareas de reciclaje", frente a `r f2(ac("B", "O4_1", "Amplio"))` en la clase Amplio. También es la más escéptica sobre la utilidad del reciclaje (`r f2(ac("B", "O4_7", "Político"))` en O4.7, ítem redactado en negativo). Las clases Amplio y Doméstico son las que más valoran el reciclaje.
+- **Facilidad para reciclar.** Varía menos entre clases. Es algo mayor en las clases Político y Amplio, y menor en Doméstico y Bajo.
+
+La tabla usa el modelo B porque es el único que incluye los seis ítems de O4. Como B viola la independencia local, se verificó el patrón en el modelo C, que no tiene ese problema: también ahí la clase Político tiene la valoración más baja de "es necesario hacerse cargo de las tareas de reciclaje" (`r f2(ac("C", "O4_1", "Político"))`, frente a `r f2(ac("C", "O4_1", "Amplio"))` en la clase Amplio).
+
+Las personas que más practican el consumo político son las que menos valoran el reciclaje y menos ahorran en el hogar. Una lectura posible, que este análisis no puede confirmar, es que este grupo desconfía de las formas individualizadas de acción ambiental y privilegia las colectivas. Esa lectura conecta con la crítica a la responsabilización del consumidor. Hay que tomarla con cautela, porque los ítems de O4 tienen confiabilidad baja y el resultado es descriptivo.
+
+# Distribución por sexo, edad y nivel socioeconómico
+
+Se usan los mismos grupos que en el análisis de invarianza. Las proporciones se ponderan por la probabilidad posterior de pertenencia a cada clase, para no ignorar la incertidumbre de clasificación.
+
+```{r}
+#| label: tabla-grupos
+dist %>%
+  mutate(porcentaje = f1(porcentaje), clase = factor(clase, levels = orden_clases)) %>%
+  pivot_wider(names_from = clase, values_from = porcentaje) %>%
+  select(Variable = variable, Grupo = grupo, n, all_of(orden_clases)) %>%
+  tabla(caption = "Distribución de las clases por grupo (%, ponderada por probabilidad posterior; modelo A)")
+```
+
+```{r}
+#| label: figura-grupos
+#| fig-width: 8
+#| fig-height: 3.8
+dist %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         grupo = factor(grupo, levels = unique(grupo)),
+         variable = factor(variable, levels = c("Total", "Sexo", "Edad", "NSE"))) %>%
+  ggplot(aes(grupo, porcentaje, fill = clase)) +
+  geom_col(width = 0.75) +
+  facet_grid(~ variable, scales = "free_x", space = "free_x") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(x = NULL, y = "%", fill = "Clase") +
+  theme_bw() + theme(legend.position = "top")
+```
+
+```{r}
+#| label: tabla-asociacion
+asoc %>% mutate(`χ²` = f2(`χ²`), p = if_else(p < .001, "< ,001", f3(p)), `V de Cramér` = f3(`V de Cramér`)) %>%
+  tabla(caption = "Asociación entre clase (asignación modal) y variables sociodemográficas")
+```
+
+- **Edad** es la variable más asociada a las clases (V = `r f3(asoc$"V de Cramér"[asoc$Variable == "Edad"])`). La clase Político se concentra en jóvenes: `r f1(dg("Edad", "18-34", "Político"))`% entre 18 y 34 años frente a `r f1(dg("Edad", "55 o más", "Político"))`% en 55 o más. La clase Doméstico crece con la edad (de `r f1(dg("Edad", "18-34", "Doméstico"))`% a `r f1(dg("Edad", "55 o más", "Doméstico"))`%), igual que la Amplio. La clase Bajo es más frecuente entre jóvenes.
+- **Sexo.** La clase Político es más frecuente en hombres (`r f1(dg("Sexo", "Hombre", "Político"))`% frente a `r f1(dg("Sexo", "Mujer", "Político"))`%). Las mujeres están algo más en las clases Amplio y Doméstico.
+- **NSE** es la variable con menor asociación (V = `r f3(asoc$"V de Cramér"[asoc$Variable == "NSE"])`). El grupo ABC1 tiene más personas en la clase Amplio (`r f1(dg("NSE", "ABC1", "Amplio"))`% frente a `r f1(dg("NSE", "D-E", "Amplio"))`% en D-E) y menos en la Doméstico (`r f1(dg("NSE", "ABC1", "Doméstico"))`% frente a `r f1(dg("NSE", "D-E", "Doméstico"))`%). La clase Político no se concentra en el NSE alto.
+
+El patrón por NSE es más débil que el que mostraron las medias latentes del análisis factorial. Es esperable: el LCA clasifica combinaciones de prácticas, y las diferencias por NSE operan dentro de cada dimensión más que en la combinación entre ellas. Que la clase Político no sea de clase alta, sino joven y masculina, es un resultado que el análisis factorial no permitía ver.
+
+Estas pruebas usan la asignación modal y no corrigen el error de clasificación. La estimación corregida está en la sección siguiente.
+
+# Enfoque de tres pasos: clases y variables sociodemográficas
+
+Para estimar la relación entre la pertenencia a las clases y las variables sociodemográficas se usó el enfoque de tres pasos corregido por máxima verosimilitud (Vermunt, 2010; Bakk et al., 2013):
+
+1. **Paso 1.** Se estima el modelo de medida sin covariables, la solución de cinco clases del modelo A. Así sexo, edad y NSE no alteran la definición de las clases.
+2. **Paso 2.** Cada persona se asigna a su clase más probable y se calcula la **matriz de error de clasificación**: la probabilidad de ser asignado a cada clase según la clase real, obtenida de las probabilidades posteriores.
+3. **Paso 3.** Se estima una regresión logística multinomial de la clase latente sobre sexo, edad y NSE simultáneamente. La clase asignada entra como un indicador imperfecto de la clase real, con los errores fijados en la matriz del paso 2.
+
+¿Por qué no basta con cruzar la clase asignada con las variables? Porque la asignación tiene error: algunas personas quedan en una clase que no es la suya. Ese error diluye las diferencias entre grupos y atenúa las asociaciones. El paso 3 lo corrige.
+
+La clase de referencia es Intermedio, la más grande y de perfil medio. Cada razón de odds compara entonces la probabilidad de pertenecer a una clase de perfil definido frente a la clase media. El procedimiento se programó directamente en R (función `tres_pasos_ml()` en `processing/lca_funciones.R`), porque `poLCA` no lo implementa.
+
+```{r}
+#| label: tabla-error-3p
+err3p %>% rename(`Clase real` = clase_real) %>%
+  mutate(across(-`Clase real`, f3)) %>%
+  tabla(caption = "Paso 2: matriz de error de clasificación, P(clase asignada | clase real)")
+```
+
+La diagonal indica qué proporción de cada clase real queda bien asignada: entre `r f2(min(diag(as.matrix(err3p[, -1]))))` y `r f2(max(diag(as.matrix(err3p[, -1]))))`. Los errores más frecuentes son entre clases vecinas, como Político e Intermedio.
+
+```{r}
+#| label: tabla-wald-3p
+wald3p %>% transmute(Variable = variable, Wald = f2(wald), gl, p = if_else(p < .001, "< ,001", f3(p))) %>%
+  tabla(caption = "Paso 3: pruebas de Wald conjuntas (cada variable, todas las clases)")
+```
+
+```{r}
+#| label: tabla-coef-3p
+coef3p %>%
+  mutate(clase = factor(clase, levels = c("Amplio", "Doméstico", "Político", "Bajo")),
+         valor = paste0(f2(OR), " [", f2(OR_inf), ", ", f2(OR_sup), "]", if_else(p < .05, " *", ""))) %>%
+  select(termino, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  rename(`Variable (referencia)` = termino) %>%
+  tabla(caption = "Razones de odds [IC 95%] frente a la clase Intermedio. * p < ,05")
+```
+
+```{r}
+#| label: figura-prob-3p
+#| fig-width: 9
+#| fig-height: 3.5
+#| fig-cap: "Probabilidad predicha de pertenecer a cada clase, corregida por error de clasificación (IC 95%)"
+prob3p %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         grupo = factor(grupo, levels = unique(grupo))) %>%
+  ggplot(aes(grupo, 100 * prob)) +
+  geom_pointrange(aes(ymin = 100 * inf, ymax = 100 * sup), size = 0.25) +
+  geom_vline(xintercept = c(2.5, 5.5), colour = "grey70", linetype = "dashed") +
+  facet_grid(~ clase) +
+  labs(x = NULL, y = "Probabilidad predicha (%)") +
+  theme_bw() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+```{r}
+#| label: tabla-ingenuo
+ing3p %>%
+  transmute(Clase = clase, `Variable (referencia)` = termino,
+            `Ingenuo (clase asignada)` = f2(b_ingenuo), `Tres pasos corregido` = f2(b_tres_pasos)) %>%
+  tabla(caption = "Coeficientes en log-odds: enfoque ingenuo frente a tres pasos corregido")
+```
+
+Resultados principales:
+
+- **Político:** menos probable a mayor edad (OR = `r f2(coef3p$OR[coef3p$termino == "55 o más (ref. 18-34)" & coef3p$clase == "Político"])` entre 55 o más y 18-34) y entre mujeres (OR = `r f2(coef3p$OR[coef3p$termino == "Mujer (ref. hombre)" & coef3p$clase == "Político"])`). No se asocia con el NSE.
+- **Doméstico:** más probable entre personas de 55 o más (OR = `r f2(coef3p$OR[coef3p$termino == "55 o más (ref. 18-34)" & coef3p$clase == "Doméstico"])`) y en el NSE D-E frente a ABC1 (OR = `r f2(coef3p$OR[coef3p$termino == "D-E (ref. ABC1)" & coef3p$clase == "Doméstico"])`).
+- **Amplio:** más probable entre mujeres y personas de 55 o más, y menos en el NSE C2-C3 que en ABC1.
+- **Bajo:** menos probable a partir de los 35 años.
+
+Frente al análisis descriptivo, el modelo corregido confirma lo mismo, con efectos algo más marcados. Además, deja ver con más claridad la asociación de la clase Doméstico con el NSE bajo, que en las tablas descriptivas aparecía débil. Como era de esperar, los coeficientes corregidos son en general mayores en valor absoluto que los del enfoque ingenuo.
+
+# Síntesis
+
+1. La solución de cinco clases es la mejor en los tres modelos según BIC y CAIC, con buena calidad de clasificación.
+2. Parte de la población se ordena en una gradiente (Amplio, Intermedio y Bajo), pero cerca de un tercio pertenece a perfiles que combinan prácticas de forma opuesta (Doméstico y Político). Las tipologías sumativas no pueden distinguirlos.
+3. Las actitudes hacia el reciclaje no crean clases nuevas, pero diferencian a la clase Político, que es la que menos valora el reciclaje.
+4. Con el enfoque de tres pasos, la clase Político es más probable entre jóvenes y hombres y no se asocia con el NSE; la Doméstico es más probable entre personas mayores y en el NSE bajo.
+
+**Limitaciones.** Hay dependencia local moderada entre ítems de una misma dimensión. Los ítems de O4 tienen confiabilidad baja. No se aplicó la prueba bootstrap de razón de verosimilitudes (BLRT), que `poLCA` no implementa. El modelo de tres pasos supone que sexo, edad y NSE no afectan las respuestas a los ítems dentro de cada clase (ausencia de funcionamiento diferencial), lo que no se evaluó. La base no tiene ponderadores.

@@ -1,0 +1,443 @@
+---
+title: "Anexo metodológico"
+subtitle: "Medición de prácticas de consumo socioambientales en Chile: evidencia psicométrica de dos escalas breves"
+
+
+lang: es
+date: ""
+
+bibliography:
+  - "input/bib/akatu.bib"
+  - "input/bib/metodologia.bib"
+csl: "input/bib/apa.csl"
+
+# Fuente y formato global (aplica a PDF)
+fontsize: 12pt
+mainfont: Times New Roman
+linestretch: 2          # doble espacio — Psicothema
+link-citations: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+
+format:
+
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-title: Contenidos
+    number-sections: false
+    theme: cosmo
+    code-fold: true
+    code-link: true
+    title-block-banner: true
+    include-in-header:
+      text: |
+        <style>
+          body {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            line-height: 2 !important;
+            text-align: left !important;
+          }
+          p { text-indent: 1.25cm; margin-bottom: 0; }
+          h1, h2, h3 {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            font-weight: bold;
+            text-indent: 0;
+          }
+          table, figure { line-height: 1.2 !important; }
+          h1.title, .subtitle { color: #ffffff !important; }
+        </style>
+
+  docx:
+    reference-doc: input/templates/psicothema.docx
+    toc: false
+    number-sections: false
+    highlight-style: none
+    fig-dpi: 300
+
+  typst:
+    citeproc: true
+    papersize: a4
+    margin:
+      x: 3cm
+      y: 3cm
+    fontsize: 12pt
+    mainfont: "Times New Roman"
+    fig-format: png
+    fig-dpi: 300
+
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+options(knitr.kable.NA = "", OutDec = ",", warn = -1)
+
+# Número de palabras del manuscrito sin referencias (incluye título, resúmenes,
+# texto, tablas y figuras). Se actualiza tras renderizar.
+n_palabras <- 8000
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+pruebas      <- leer("pruebas_previas_conjuntos.csv")
+n_factores   <- leer("afe_numero_factores.csv")
+eliminados   <- leer("afe_items_eliminados.csv")
+ajuste_m     <- leer("afc_ajuste_modelos.csv")
+ajuste_red   <- leer("afc_reducidos_ajuste.csv")
+estabilidad  <- leer("afc_reducidos_estabilidad.csv")
+confiab      <- leer("afc_reducidos_confiabilidad.csv")
+conj_ajuste  <- leer("afc_conjunto_ajuste.csv")
+conj_cor     <- leer("afc_conjunto_correlaciones.csv")
+inv_sec      <- leer("invarianza_secuencia.csv")
+inv_parcial  <- leer("invarianza_parcial_edad.csv")
+inv_medias   <- leer("invarianza_medias_latentes.csv")
+inv_grupos   <- leer("invarianza_grupos.csv")
+desc         <- leer("revision_descriptivos_items.csv")
+afe_v        <- leer("revision_afe_varianza.csv")
+afe_phi      <- leer("revision_afe_phi.csv")
+rev_aj       <- leer("revision_afc_ajuste.csv")
+rev_dif      <- leer("revision_afc_dif_chi.csv")
+conj_res     <- leer("revision_afc_conjunto_residuos.csv")
+conj_cor2    <- leer("revision_afc_conjunto_cor.csv")
+cr  <- function(g, col) conj_res[[col]][conj_res$grupo == g]
+cc2 <- function(a, b) a2(conj_cor2$r[conj_cor2$factor1 == a & conj_cor2$factor2 == b])
+n_entre  <- cr("Entre escalas", "mayores_010"); p_entre <- cr("Entre escalas", "pares")
+n_dentro <- sum(conj_res$mayores_010[conj_res$grupo %in% c("Mismo factor", "Misma escala, distinto factor")])
+p_dentro <- sum(conj_res$pares[conj_res$grupo %in% c("Mismo factor", "Misma escala, distinto factor")])
+pct2 <- function(a, b) round(100 * a / b)
+rev_par      <- leer("revision_afc_parametros.csv")
+rev_cor      <- leer("revision_afc_cor_factores.csv")
+val_ext      <- leer("revision_validez_externa.csv")
+comp_sol     <- leer("afe_comparacion_soluciones.csv")
+versiones    <- readLines(here("output", "tables", "revision_versiones.txt"))
+inf_dif   <- leer("informe_dif_interceptos.csv")
+inf_difm  <- leer("informe_dif_medias.csv")
+inf_holm  <- leer("informe_medias_holm.csv")
+inf_anc   <- leer("informe_edad_anclas.csv")
+inf_esem  <- leer("informe_esem_ajuste.csv")
+inf_esemc <- leer("informe_esem_cargas.csv")
+inf_esemr <- leer("informe_esem_cor.csv")
+inf_htmt  <- leer("informe_htmt.csv")
+inf_det   <- leer("informe_determinacion.csv")
+inf_cal   <- leer("informe_calidad.csv")
+inf_sens  <- leer("informe_sensibilidad.csv")
+inf_cuc   <- leer("informe_cargas_sin_colapsar.csv")
+inf_eco   <- leer("informe_validez_economica.csv")
+inf_celd  <- leer("informe_celdas_minimas.csv")
+inf_m9    <- leer("informe_m9_distribucion.csv")
+vb        <- leer("verificacion_bartlett.csv") %>% filter(muestra == "Mitad exploratoria")
+rob       <- leer("indices_robustos.csv")
+rb <- function(esc, mu, col) rob[[col]][rob$escala == esc & rob$muestra == mu]
+
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+# Formato APA: sin cero inicial para valores acotados en [-1, 1]; signo menos tipográfico
+apa <- function(x) sub("^-", "−", sub("^(-?)0,", "\\1,", trimws(x)))
+a2 <- function(x) apa(f2(x))
+a3 <- function(x) apa(f3(x))
+s2 <- function(x) sub("^-", "−", trimws(f2(x)))   # con cero inicial (no acotados)
+miles <- function(x, d = 2) trimws(format(round(x, d), big.mark = ".", decimal.mark = ",", nsmall = d))
+version_de <- function(p) str_extract(versiones[str_detect(versiones, paste0("^", p, " "))], "[0-9.]+$")
+version_r <- str_extract(versiones[1], "[0-9]+\\.[0-9]+\\.[0-9]+")
+
+# Tabla Markdown con anchos relativos de columna (controla el ancho en Word)
+tabla_md <- function(df, anchos, alinea) {
+  sep <- map2_chr(anchos, alinea, function(w, a) {
+    d <- strrep("-", w)
+    switch(a, l = paste0(":", d), r = paste0(d, ":"), c = paste0(":", d, ":"))
+  })
+  cuerpo <- apply(df, 1, function(f) paste0("| ", paste(f, collapse = " | "), " |"))
+  cat(paste0("| ", paste(names(df), collapse = " | "), " |"), "\n",
+      paste0("|", paste(sep, collapse = "|"), "|"), "\n",
+      paste(cuerpo, collapse = "\n"), "\n", sep = "")
+}
+
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+
+est <- function(mod, muestra, ind) {
+  estabilidad[[ind]][str_detect(estabilidad$modelo, mod) & estabilidad$muestra == muestra]
+}
+media <- function(fac, var, grp, col = "media") {
+  inv_medias[[col]][inv_medias$factor == fac & inv_medias$variable == var & inv_medias$grupo == grp]
+}
+cor_conj <- function(a, b) a2(conj_cor[[b]][conj_cor$factor == a])
+dcfi <- function(mod, var, niv) inv_sec$dCFI[inv_sec$modelo == mod & inv_sec$variable == var & inv_sec$nivel == niv]
+ra <- function(mod, mu, col) rev_aj[[col]][rev_aj$modelo == mod & rev_aj$muestra == mu]
+rmsea_ic <- function(mod, mu) paste0("RMSEA = ", a3(ra(mod, mu, "rmsea.scaled")), ", IC 90% [",
+                                     a3(ra(mod, mu, "rmsea.ci.lower.scaled")), ", ",
+                                     a3(ra(mod, mu, "rmsea.ci.upper.scaled")), "]")
+rc <- function(esc) { x <- rev_cor[rev_cor$escala == esc, ]; paste0("*r* = ", a2(x$r), ", IC 95% [", a2(x$ic_inf), ", ", a2(x$ic_sup), "]") }
+ve <- function(fa, va, col = "r") a2(val_ext[[col]][val_ext$factor == fa & val_ext$variable == va])
+
+n_total <- sum(inv_grupos$n[inv_grupos$variable == "Sexo"])
+pct <- function(var, grp) f1(100 * inv_grupos$n[inv_grupos$variable == var & inv_grupos$grupo == grp] / n_total)
+n_r2_bajo <- sum(rev_par$R2 < .5)
+n_resid <- function(mod) ra(mod, "Mitad 2", "resid_mayor_010")
+# Respuesta al informe de revisión
+esem_lbl <- "ESEM de cuatro factores (rotación objetivo)"
+esem <- function(col, mod = esem_lbl) inf_esem[[col]][inf_esem$modelo == mod]
+esem_cruz <- inf_esemc %>% filter(!principal) %>% arrange(desc(abs(carga)))
+esem_prin <- inf_esemc %>% filter(principal)
+esr <- function(a, b) a2(inf_esemr$r[(inf_esemr$factor1 == a & inf_esemr$factor2 == b) |
+                                       (inf_esemr$factor1 == b & inf_esemr$factor2 == a)])
+cruz <- function(it, fac) a2(inf_esemc$carga[inf_esemc$item == it & inf_esemc$factor == fac])
+ph <- function(p) if (p < .001) "< ,001" else paste("=", a3(p))
+holm <- function(fac, var, grp) ph(inf_holm$p_holm[inf_holm$factor == fac & inf_holm$variable == var & inf_holm$grupo == grp])
+difm <- function(item, fac, grp, col = "media") inf_difm[[col]][inf_difm$item_libre == item & inf_difm$factor == fac & inf_difm$grupo == grp]
+anc <- inf_anc %>% group_by(factor, grupo) %>% summarise(min = min(media), max = max(media), pmax = max(p), .groups = "drop")
+ancr <- function(fac, grp, col) s2(anc[[col]][anc$factor == fac & anc$grupo == grp])
+eco <- function(fac, var, col = "r") inf_eco[[col]][inf_eco$factor == fac & inf_eco$variable == var]
+cal <- function(ind) inf_cal$valor[startsWith(inf_cal$indicador, ind)]
+pv <- function(p) if (p < .001) "< ,001" else a3(p)
+hp <- function(fac, var, grp) pv(inf_holm$p_holm[inf_holm$factor == fac & inf_holm$variable == var & inf_holm$grupo == grp])
+n_modelos_afc <- nrow(ajuste_m) + 6
+dmacs_nse <- max(c(inf_dif$`dMACS_C2-C3`, inf_dif$`dMACS_D-E`), na.rm = TRUE)
+dmacs_sexo <- max(inf_dif$dMACS_Mujer, na.rm = TRUE)
+dcfi_libre <- max(abs(inf_dif$dCFI))
+r_cp <- rev_cor$r[rev_cor$escala == "Consumo sustentable y político, dos factores"]
+ic_cp <- rev_cor$ic_sup[rev_cor$escala == "Consumo sustentable y político, dos factores"]
+htmt_cp <- inf_htmt$consumo_pol[inf_htmt$factor == "compra_sust"]
+sens <- function(an, esc, col) inf_sens[[col]][inf_sens$analisis == an & inf_sens$escala == esc]
+n_m9 <- inf_m9$n[inf_m9$M9 == "5"]
+pct_ingreso_nr <- f1(100 * (n_total - eco("ahorro", "ingreso", "n")) / n_total)
+```
+
+Este anexo describe en detalle los procedimientos estadísticos y los resultados técnicos del estudio. El artículo principal resume estos resultados en un lenguaje no técnico. El material suplementario (Tablas S1 a S17 y Figura S1) acompaña a este anexo; la Tabla S16 registra qué decisiones se especificaron antes de estimar los modelos en la mitad de prueba y cuáles después. La estructura final se seleccionó y evaluó con los mismos datos, por lo que los resultados que siguen deben leerse como evidencia preliminar. La descripción de la muestra, el instrumento y el procedimiento de recolección se presenta en el artículo principal. Todos los documentos, el código y las salidas completas están en https://github.com/x0czz/Validacion-consumo.
+
+# Análisis de datos
+
+No hubo valores perdidos en los ítems analizados. La asimetría de los ítems varió entre `r s2(min(desc$asimetria))` y `r s2(max(desc$asimetria))` y la curtosis entre `r s2(min(desc$curtosis))` y `r s2(max(desc$curtosis))` (Tabla S1 del material suplementario). Como los ítems son ordinales, no se buscaron casos atípicos multivariados. Para evaluar la calidad de las respuestas se identificaron los casos que respondieron en menos de un tercio de la mediana de duración y los que dieron la misma respuesta a todos los ítems de dos o más baterías (respuesta en línea recta); los modelos finales se reestimaron sin esos casos. Para reducir el efecto suelo y techo, las categorías extremas con menos del 10% de las respuestas se fusionaron de forma iterativa con la categoría adyacente, de modo que los ítems quedaron con entre tres y cinco categorías. Como el colapso se definió con la muestra completa antes de dividirla, los modelos finales se reestimaron también con las cinco categorías originales. Con menos de cinco categorías, las correlaciones de Pearson sesgan los resultados; por eso todos los análisis usaron correlaciones policóricas o estimadores para datos ordinales [@bandalos_factor_2010]. La pertinencia del análisis factorial se evaluó con la prueba de esfericidad de Bartlett [-@bartlett_tests_1950] y el índice de Kaiser-Meyer-Olkin [KMO; @kaiser_index_1974].
+
+La muestra se dividió aleatoriamente en dos mitades (n~1~ = `r est("R3", "Mitad 1", "n")`; n~2~ = `r est("R3", "Mitad 2", "n")`). En la primera se realizó un análisis factorial exploratorio (AFE) con extracción por residuos mínimos, que no requiere normalidad multivariada y es estable con matrices policóricas, y rotación oblicua (*oblimin*), porque se esperaban factores correlacionados. El número de factores se evaluó con el análisis paralelo [@horn_rationale_1965] y la prueba MAP [@velicer_determining_1976], y se compararon las soluciones de tres a ocho factores según su ajuste, el número de ítems con cargas salientes y la presencia de factores definidos por menos de tres ítems. Se consideró saliente una carga de ,40, que equivale a un 16% de varianza compartida. Los ítems se depuraron de forma iterativa, eliminando en cada paso el de menor carga entre los que no alcanzaban ese valor o presentaban cargas cruzadas (≥ ,30 en dos factores), y reestimando el modelo tras cada eliminación. Para obtener escalas breves, el procedimiento se repitió en la misma mitad con una carga mínima de ,50 (25% de varianza compartida) en las soluciones de tres a cinco factores, y se retuvieron los factores de al menos tres ítems cuyo contenido coincidía con un factor de la primera depuración, con los ítems que superaron el criterio en al menos una de las tres soluciones (Tabla S10 y Figura S1). En ambas etapas, entre los ítems que incumplían algún criterio se eliminó primero el de menor carga máxima, restando ,10 a la carga de los que tenían cargas cruzadas para darles prioridad.
+
+En la segunda mitad se estimaron análisis factoriales confirmatorios (AFC) con el estimador WLSMV, recomendado para indicadores ordinales con menos de cinco categorías [@bandalos_factor_2010]. Se consideró buen ajuste un CFI y un TLI ≥ ,95, un RMSEA ≤ ,06 y un SRMR ≤ ,08 [@hu_cutoff_1999], y ajuste aceptable un RMSEA ≤ ,08 [@maccallum_power_1996]. Como estos puntos de corte se derivaron con datos continuos y tienden a ser optimistas con WLSMV e indicadores ordinales [@xia_rmsea_2019], se usaron como orientación y se complementaron con el desajuste local. El RMSEA se informa con su intervalo de confianza del 90%, y el desajuste local se examinó con las correlaciones residuales mayores que |,10|. Para las escalas finales se informan además las versiones robustas del CFI, el TLI y el RMSEA, que corrigen el sesgo de los índices escalados con datos ordinales [@savalei_improving_2021]. Los modelos anidados se compararon con la prueba de diferencia de χ² escalada [@satorra_scaled_2000]. Para examinar si las cuatro dimensiones podían representarse en un mismo modelo, se estimó un modelo conjunto con los cuatro factores correlacionados y se comparó su desajuste local entre ítems de distintas escalas y de una misma escala. Como ese modelo y los de cada escala no están anidados ni tienen los mismos indicadores, sus índices de ajuste no se compararon entre sí. En un análisis posterior se estimaron también un modelo exploratorio de ecuaciones estructurales (ESEM) con rotación objetivo, que admite cargas cruzadas pequeñas [@asparouhov_exploratory_2009], y un bifactor-ESEM. La estabilidad de los modelos finales se evaluó reestimándolos en la mitad exploratoria y en la muestra completa. La confiabilidad se estimó con el coeficiente omega calculado a partir de las cargas estandarizadas del modelo WLSMV, que corresponde a la confiabilidad de las variables de respuesta latente y no del puntaje observado [@mcdonald_test_1999], y con la varianza media extraída [AVE; @fornell_evaluating_1981]. La validez discriminante se evaluó con el criterio de Fornell y Larcker, con el intervalo de confianza de la correlación entre factores y con la razón heterorrasgo-monorrasgo [HTMT; @henseler_new_2015], con ,85 como umbral. Se calculó además la determinación de los puntajes factoriales [@grice_computing_2001] y su correlación con el promedio simple de los ítems.
+
+La invarianza de medida por sexo, edad (18-34, 35-54 y 55 o más) y NSE (ABC1, C2-C3 y D-E) se evaluó siguiendo la secuencia para indicadores ordinales de @wu_identification_2016: configural, umbrales, métrica y escalar. La escala de los factores se identificó fijando su media en 0 y su varianza en 1 en el grupo de referencia, sin ítem marcador, y se verificó que todas las categorías de respuesta se observaran en cada grupo. Cada nivel se aceptó si, respecto del anterior, el CFI no disminuía más de ,010 y el RMSEA no aumentaba más de ,015 [@chen_sensitivity_2007]. La diferencia de χ² escalada se informa, pero no se usó para decidir, porque con muestras de este tamaño detecta diferencias triviales. Como el desempeño de esos puntos de corte con datos ordinales no está establecido y la Δχ² podría ser preferible con estimadores robustos [@sass_evaluating_2014], cuando ambos criterios discreparon se examinó cada ítem: se liberó uno a uno su intercepto, se registraron el índice de modificación, el cambio en el ajuste y en las medias latentes, y se calculó el tamaño de efecto dMACS [@nye_effect_2011], adaptado a ítems ordinales como la diferencia en la puntuación esperada del ítem entre grupos a igual nivel del factor. Cuando la invarianza escalar no se sostuvo, se liberaron uno a uno los interceptos con mayores índices de modificación [@byrne_testing_1989]; esta modificación es post hoc y debe replicarse. Como las diferencias de medias con invarianza parcial dependen de qué ítems actúan como anclas, las comparaciones por edad se repitieron usando como únicas anclas cada par de ítems de cada factor. Alcanzada la invarianza escalar, se compararon las medias latentes, expresadas en desviaciones estándar del grupo de referencia, y los valores *p* de las 20 comparaciones se corrigieron con el procedimiento de @holm_simple_1979.
+
+La validez con otras variables se evaluó con las correlaciones entre los factores y variables externas, estimadas en la muestra completa en modelos que incluían cada escala. Las variables externas se trataron como indicadores únicos continuos sin error de medida, salvo las binarias, que se trataron como ordinales. Se esperaba que el consumo político se correlacionara positivamente con considerar que el consumo expresa una postura política y negativamente con una posición política de derecha, dada la asociación del consumo político con orientaciones progresistas [@micheletti_political_2003]. Para el ahorro doméstico, la literatura sugiere que responde más a condiciones materiales que a una orientación ideológica [@ariztia_nuevo_2010; @silva_indicadores_2013]. Si es así, debería relacionarse negativamente con la lectura política del consumo y con el ingreso, y positivamente con indicadores de presión financiera. Esta última implicancia se puso a prueba en un análisis posterior, con el ingreso mensual del hogar (cinco tramos; el `r pct_ingreso_nr`% prefirió no responder), haber contraído deudas para comprar alimentos (como primer o segundo motivo de endeudamiento) y declararse más endeudado que tres años antes. La base no registra respuestas "no sabe" en la posición política, y el `r f1(100 * n_m9 / n_total)`% eligió el valor 5; como ese valor puede reunir a quienes no se ubican en la escala, el análisis se repitió excluyéndolo.
+
+No se registró un plan de análisis antes de examinar los datos. Para distinguir la evidencia confirmatoria de las decisiones tomadas tras inspeccionar resultados, la Tabla S16 registra cada decisión, la mitad de la muestra en que se tomó y si se especificó antes o después de ver los resultados de la mitad de prueba. Solo la comparación del modelo unidimensional con la estructura exploratoria y con su separación teórica en compra sustentable y consumo político se especificó antes de estimar los modelos en la mitad de prueba. La selección de las escalas breves, su organización en dos factores, el modelo conjunto, el ESEM, los interceptos liberados por edad y los análisis de sensibilidad se definieron después y deben leerse como exploratorios.
+
+Los análisis se realizaron en R `r version_r` con los paquetes `psych` `r version_de("psych")` [@revelle_psych_2024], `lavaan` `r version_de("lavaan")` [@rosseel_lavaan_2012] y `semTools` `r version_de("semTools")` [@jorgensen_semtools_2022].
+
+# Resultados detallados
+
+## Estructura factorial exploratoria
+
+En la mitad exploratoria, la prueba de Bartlett fue significativa, χ²(`r vb$gl`) = `r miles(vb$chi2_psych)`, *p* < ,001, y el KMO global fue `r a2(vb$KMO)` (MSA mínimo = `r a2(vb$MSA_min)`, en un ítem de actitudes hacia el reciclaje). Como la prueba de Bartlett supone normalidad multivariada y aquí se aplicó a correlaciones policóricas, se interpreta solo como orientación. Los criterios sobre el número de factores no convergieron: el análisis paralelo sugirió `r n_factores$factores[1]` factores y la prueba MAP, `r n_factores$factores[2]`. Ninguna solución inicial tuvo una estructura simple (Tabla S2). Las de tres a cinco factores fusionaban el ahorro doméstico con la planificación de compras, y desde cinco factores aparecían factores definidos por solo dos ítems, como las compras en línea o la reparación de objetos y la compra de ropa de segunda mano, o factores sin ítems con cargas salientes, que son débiles y poco replicables [@bandalos_factor_2010]. Se retuvo la solución de cinco factores como punto intermedio entre ambos criterios y como punto de partida de la depuración, aunque su ajuste fue bajo (TLI = `r a2(comp_sol$TLI[comp_sol$factores == 5])`).
+
+La depuración eliminó `r nrow(eliminados)` ítems (Tabla S3) y dejó `r 46 - nrow(eliminados)` en cinco factores: compra sustentable y consumo político, ahorro doméstico, planificación de compras, facilidad para reciclar y valoración del reciclaje. Al eliminar los ítems sin cargas salientes o con cargas cruzadas, el ahorro doméstico y la planificación quedaron en factores separados. La solución final explicó el `r f1(100 * afe_v$prop_estructura2[afe_v$factor == "Varianza común total (suma de comunalidades)"])`% de la varianza de los ítems. Los coeficientes de patrón y de estructura, las comunalidades y las correlaciones entre factores se presentan en las Tablas S4 a S6. Las correlaciones entre factores fueron bajas a moderadas; la mayor fue entre ahorro doméstico y planificación de compras (*r* = `r a2(afe_phi[["Planificación de compras"]][afe_phi$factor == "Ahorro doméstico"])`). Con los ítems depurados, el análisis paralelo sugirió seis factores. El sexto factor plausible, que separa la compra sustentable del consumo político, se puso a prueba en el AFC.
+
+## Estructura factorial en la mitad de prueba
+
+Los resultados de esta sección provienen de la mitad de prueba, pero solo el primer párrafo corresponde a comparaciones especificadas de antemano; los siguientes describen decisiones tomadas tras inspeccionar esos resultados (Tabla S16).
+
+En la mitad de prueba, el modelo unidimensional ajustó de forma deficiente (Tabla A1). Separar el primer factor exploratorio en compra sustentable y consumo político mejoró el ajuste. Eliminar después, de forma post hoc, el ítem "En mi hogar, todos/as reciclamos", que describe una práctica más que una actitud, lo mejoró algo más, pero ese modelo de `r ajuste_m$n_items[4]` ítems no alcanzó un CFI de ,95, y los factores de actitudes hacia el reciclaje mostraron confiabilidad insuficiente. Con el criterio exigente, ningún factor se repitió exactamente en las soluciones exploratorias de tres a cinco factores (Tabla S10). Se definieron tres bloques: consumo crítico y político (siete ítems de la batería O3; cinco de ellos superaron ,50 en las tres soluciones), ahorro doméstico (cinco ítems, todos sobre ,50 solo en la solución de tres factores) y planificación de compras (tres ítems, en las soluciones de cuatro y cinco factores); los factores de reciclaje retuvieron solo dos ítems cada uno. El modelo "Consumo crítico, un factor" de la Tabla A1 corresponde al primero de esos núcleos. A la compra sustentable se agregaron dos ítems de compra de productos orgánicos y reciclados, que en la solución inicial de cinco factores cargaban con los de compra sustentable pero no superaron el criterio exigente. En total se estimaron `r n_modelos_afc` modelos en la mitad de prueba (Tabla A1), por lo que esta fase fue en parte exploratoria.
+
+Dos modelos breves resultaron adecuados (Tabla A1). El primero, *consumo sustentable y político*, distingue un factor de compra sustentable y uno de consumo político. Su ajuste fue bueno según CFI, TLI y SRMR, y aceptable según el RMSEA (`r rmsea_ic("Consumo sustentable y político, dos factores", "Mitad 2")`). Tratar sus nueve ítems como un único factor empeoró el ajuste de forma significativa, Δχ²(`r rev_dif$dif_gl`) = `r f2(rev_dif$dif_chi2)`, *p* < ,001. El segundo, *prácticas domésticas*, distingue el ahorro doméstico de la planificación de compras, con buen ajuste en todos los índices (`r rmsea_ic("Prácticas domésticas, dos factores", "Mitad 2")`). Las versiones robustas de los índices confirmaron el buen ajuste de la escala de prácticas domésticas (CFI = `r a3(rb("Prácticas domésticas", "Mitad de prueba", "cfi.robust"))`; RMSEA = `r a3(rb("Prácticas domésticas", "Mitad de prueba", "rmsea.robust"))`), pero no el de la escala de consumo sustentable y político, cuyo ajuste resultó insuficiente con esos índices (CFI = `r a3(rb("Consumo sustentable y político", "Mitad de prueba", "cfi.robust"))`; RMSEA = `r a3(rb("Consumo sustentable y político", "Mitad de prueba", "rmsea.robust"))`, IC 90% [`r a3(rb("Consumo sustentable y político", "Mitad de prueba", "rmsea.ci.lower.robust"))`, `r a3(rb("Consumo sustentable y político", "Mitad de prueba", "rmsea.ci.upper.robust"))`]; valores similares en la muestra completa). En ambos, ninguna estimación fue impropia y todos los modelos convergieron. Hubo `r n_resid("Consumo sustentable y político, dos factores")` correlaciones residuales mayores que |,10| en la primera escala, con un máximo de `r a2(ra("Consumo sustentable y político, dos factores", "Mitad 2", "resid_max"))`, y ninguna en la segunda. Ambos modelos mantuvieron su ajuste en la mitad exploratoria (CFI = `r a3(est("R3", "Mitad 1", "CFI"))` y `r a3(est("R5", "Mitad 1", "CFI"))`) y en la muestra completa (CFI = `r a3(est("R3", "Muestra completa", "CFI"))` y `r a3(est("R5", "Muestra completa", "CFI"))`; `r rmsea_ic("Consumo sustentable y político, dos factores", "Muestra completa")` y `r rmsea_ic("Prácticas domésticas, dos factores", "Muestra completa")`).
+
+El modelo conjunto con los cuatro factores no alcanzó un buen ajuste (CFI = `r a3(ra("Ambas escalas en un modelo conjunto", "Mitad 2", "cfi.scaled"))`; `r rmsea_ic("Ambas escalas en un modelo conjunto", "Mitad 2")`; Tabla A1), y su desajuste se localizó entre las escalas: superaron |,10| el `r pct2(n_entre, p_entre)`% de las correlaciones residuales entre ítems de distintas escalas (`r n_entre` de `r p_entre`), frente al `r pct2(n_dentro, p_dentro)`% de las correlaciones dentro de una misma escala (`r n_dentro` de `r p_dentro`). Casi todos esos residuos involucraron al consumo político y las prácticas domésticas. El ESEM, en cambio, ajustó bien (CFI = `r a3(esem("cfi.scaled"))`; RMSEA = `r a3(esem("rmsea.scaled"))`, IC 90% [`r a3(esem("rmsea.ci.lower.scaled"))`, `r a3(esem("rmsea.ci.upper.scaled"))`]; Tabla A1), con `r esem("resid_entre_010")` residuo entre escalas mayor que |,10|. Todas sus cargas principales superaron `r a2(floor(100 * min(esem_prin$carga)) / 100)` y ninguna carga cruzada alcanzó ,30; las mayores fueron las del ítem O3.4 en consumo político (`r cruz("O3_4", "consumo_pol")`), del O2.11 en consumo político (`r cruz("O2_11", "consumo_pol")`) y del O3.3 en compra sustentable (`r cruz("O3_3", "compra_sust")`) (Tabla S13). En el ESEM, el consumo político siguió prácticamente sin relación con el ahorro (*r* = `r esr("consumo_pol", "ahorro")`), y la compra sustentable se correlacionó con el consumo político (*r* = `r esr("compra_sust", "consumo_pol")`), la planificación (*r* = `r esr("compra_sust", "planificacion")`) y el ahorro (*r* = `r esr("compra_sust", "ahorro")`). El bifactor-ESEM produjo una solución impropia, con una carga estandarizada mayor que 1, y se descartó. Por lo tanto, el desajuste del modelo conjunto se debe a cargas cruzadas pequeñas y no a que las dimensiones requieran instrumentos separados: las cuatro pueden estimarse en un mismo modelo si se admiten esas cargas. Las dos escalas se presentan por separado por razones prácticas, porque cada una puede usarse de forma independiente con un modelo confirmatorio simple. La compra sustentable se agrupó con el consumo político porque formó un solo factor con él en el análisis exploratorio y es el factor con el que más se correlaciona.
+
+::: {custom-style="Titulo tabla"}
+**Tabla A1**
+
+*Índices de Ajuste de los Modelos Confirmatorios en la Mitad de Prueba (n = `r est("R3", "Mitad 2", "n")`)*
+:::
+
+```{r}
+#| label: tabla-ajuste
+#| results: asis
+etiqueta <- function(x) str_remove(x, "^[MR]\\d ")
+breves <- c("Consumo crítico, un factor", "Consumo sustentable y político, un factor",
+            "Consumo sustentable y político, dos factores", "Ahorro doméstico, un factor",
+            "Prácticas domésticas, dos factores", "Ambas escalas en un modelo conjunto")
+bind_rows(
+  ajuste_m %>% transmute(Modelo = paste0("Inicial: ", etiqueta(modelo)), k = n_items,
+                         chi2 = chisq.scaled, gl = df, CFI = cfi.scaled, TLI = tli.scaled,
+                         RMSEA = rmsea.scaled, lo = rmsea.ci.lower.scaled, hi = rmsea.ci.upper.scaled,
+                         SRMR = srmr),
+  rev_aj %>% filter(muestra == "Mitad 2") %>%
+    mutate(modelo = factor(modelo, levels = breves)) %>% arrange(modelo) %>%
+    transmute(Modelo = if_else(modelo == "Ambas escalas en un modelo conjunto",
+                               "Conjunto: ambas escalas, cuatro factores", paste0("Breve: ", modelo)),
+              k = c(7, 9, 9, 5, 8, 17),
+              chi2 = chisq.scaled, gl = df.scaled, CFI = cfi.scaled, TLI = tli.scaled,
+              RMSEA = rmsea.scaled, lo = rmsea.ci.lower.scaled, hi = rmsea.ci.upper.scaled, SRMR = srmr),
+  inf_esem %>% filter(modelo == esem_lbl) %>%
+    transmute(Modelo = "ESEM: ambas escalas, cuatro factores", k = 17, chi2 = chisq.scaled, gl = df,
+              CFI = cfi.scaled, TLI = tli.scaled, RMSEA = rmsea.scaled, lo = rmsea.ci.lower.scaled,
+              hi = rmsea.ci.upper.scaled, SRMR = srmr)
+) %>%
+  mutate(p = if_else(pchisq(chi2, gl, lower.tail = FALSE) < .001, "< ,001",
+                     a3(pchisq(chi2, gl, lower.tail = FALSE))),
+         chi2 = miles(chi2),
+         RMSEA = paste0(a3(RMSEA), " [", a3(lo), ", ", a3(hi), "]"),
+         across(c(CFI, TLI, SRMR), a3)) %>%
+  select(Modelo, k, chi2, gl, p, CFI, TLI, RMSEA, SRMR) %>%
+  rename(`Ítems` = k, `χ²` = chi2, `*p*` = p, `RMSEA [IC 90%]` = RMSEA) %>%
+  tabla_md(c(21, 6, 9, 5, 7, 7, 7, 19, 6), c("l", rep("r", 8)))
+```
+
+*Nota.* Índices escalados (WLSMV). Inicial: modelos con los ítems retenidos en la depuración con carga ≥ ,40; el modelo "seis factores, sin O4.6" elimina post hoc un ítem. Breve: modelos con los ítems retenidos con carga ≥ ,50 y al menos tres ítems por factor; "Consumo crítico, un factor" contiene los siete ítems de la batería O3 que formaron un núcleo estable en el análisis exploratorio. Conjunto: los cuatro factores de ambas escalas en un mismo modelo, que no está anidado en los modelos de cada escala. ESEM: modelo exploratorio de ecuaciones estructurales con los mismos 17 ítems y rotación objetivo (estimado después de los demás). Los modelos finales propuestos son los de dos factores.
+
+## Parámetros, confiabilidad y calidad de los factores
+
+En la muestra completa, todas las cargas estandarizadas fueron significativas (*p* < ,001) y superaron ,48 (Tabla A2; cargas no estandarizadas y errores estándar en la Tabla S7). Las correlaciones entre los factores de cada escala fueron altas pero lejanas a 1 (compra sustentable y consumo político, `r rc("Consumo sustentable y político, dos factores")`; ahorro y planificación, `r rc("Prácticas domésticas, dos factores")`). Todos los factores alcanzaron un omega de al menos ,70. Sin embargo, la AVE de los cuatro factores quedó bajo ,50 (entre `r a2(min(confiab$AVE))` y `r a2(max(confiab$AVE))`), y `r n_r2_bajo` de los 17 ítems tuvieron menos de la mitad de su varianza explicada por su factor (*R*² < ,50). Es decir, las escalas son confiables como conjunto, pero cada ítem por separado contiene una proporción importante de varianza específica o de error. La planificación de compras fue el factor más frágil, con tres ítems y uno de ellos con carga de `r a2(min(rev_par$std[rev_par$lhs == "planificacion"]))`. La correlación entre compra sustentable y consumo político implica una varianza compartida de `r a2(r_cp^2)`, mayor que la AVE de ambos factores, por lo que no se cumple el criterio de Fornell y Larcker. Sin embargo, el límite superior de su intervalo de confianza (`r a2(ic_cp)`) y la HTMT (`r a2(htmt_cp)`) quedaron bajo ,85: los factores son distinguibles, aunque están estrechamente relacionados. Además, el AFC sobreestima esa correlación, porque al fijar en cero las cargas cruzadas traslada la varianza que los ítems comparten con el otro factor a la correlación entre factores [@asparouhov_exploratory_2009]. En la mitad de prueba, la correlación entre compra sustentable y consumo político bajó de `r cc2("compra_sust", "consumo_pol")` en el AFC conjunto a `r esr("compra_sust", "consumo_pol")` en el ESEM, lo que equivale a una varianza compartida de `r a2(inf_esemr$r[inf_esemr$factor1 == "compra_sust" & inf_esemr$factor2 == "consumo_pol"]^2)`, inferior a la AVE de ambos factores; las demás correlaciones disminuyeron o se mantuvieron. La determinación de los puntajes factoriales fue de al menos `r a2(floor(100 * min(inf_det$determinacion)) / 100)`, y el promedio simple de los ítems de cada factor se correlacionó entre `r a2(floor(100 * min(inf_det$r_suma_factorial)) / 100)` y `r a2(max(inf_det$r_suma_factorial))` con el puntaje factorial.
+
+::: {custom-style="Titulo tabla"}
+**Tabla A2**
+
+*Ítems, Cargas Factoriales Estandarizadas y Confiabilidad de las Escalas (N = `r miles(n_total, 0)`)*
+:::
+
+```{r}
+#| label: tabla-cargas
+#| results: asis
+enunciados <- desc %>% select(item, enunciado)
+filas <- rev_par %>%
+  rename(factor = lhs, item = rhs) %>%
+  left_join(enunciados, by = "item") %>%
+  left_join(confiab %>% select(factor, omega, AVE), by = "factor") %>%
+  group_by(factor) %>%
+  group_modify(~ bind_rows(
+    tibble(cod = "", txt = paste0("**", nombres_factor[.y$factor], "** (ω = ", a2(.x$omega[1]),
+                                  "; AVE = ", a2(.x$AVE[1]), ")"), lam = "", r2 = ""),
+    tibble(cod = str_replace(.x$item, "_", "."), txt = str_trim(.x$enunciado),
+           lam = a2(.x$std), r2 = a2(.x$R2)))) %>%
+  ungroup() %>%
+  mutate(factor = factor(factor, levels = names(nombres_factor))) %>%
+  arrange(factor)
+cat("| Ítem | Enunciado | λ | *R*² |\n",
+    "|:----------|:----------------------------------------------------------------|------:|------:|\n",
+    paste0("| ", filas$cod, " | ", filas$txt, " | ", filas$lam, " | ", filas$r2, " |", collapse = "\n"), "\n", sep = "")
+```
+
+*Nota.* Escala Consumo sustentable y político: factores Compra sustentable y Consumo político. Escala Prácticas domésticas: factores Ahorro doméstico y Planificación de compras. Todos los ítems se responden con la pregunta "¿Qué tan seguido usted…?" (1 = *Nunca*; 2 = *Rara vez*; 3 = *A veces*; 4 = *La mayoría de las veces*; 5 = *Siempre*). λ = carga factorial estandarizada; *R*² = proporción de varianza del ítem explicada por el factor; ω = omega; AVE = varianza media extraída.
+
+## Invarianza de medida y diferencias entre grupos
+
+La invarianza configural, de umbrales y métrica se sostuvo en ambas escalas para las tres variables (Tabla A3; índices completos y diferencias de χ² en la Tabla S8, y estadísticos por grupo en la Tabla S9). Todas las categorías de respuesta se observaron en cada grupo (la celda menor tuvo `r min(inf_celd$n)` casos). La invarianza escalar se sostuvo por sexo y NSE según el criterio de los índices de ajuste, aunque la diferencia de χ² fue significativa y algunos ΔCFI quedaron cerca del límite. El análisis por ítem mostró efectos pequeños (Tabla S11): liberar cualquier intercepto cambió el CFI en `r a3(dcfi_libre)` o menos, y el dMACS fue como máximo de `r a2(dmacs_nse)` por NSE y de `r a2(dmacs_sexo)` por sexo. Los ítems con mayores índices de modificación por NSE fueron O2.4 y O2.5, en prácticas domésticas, y O3.3 y O3.5, en consumo político. Por edad no se sostuvo (ΔCFI = `r a3(dcfi("Consumo sustentable y político", "Edad", "Escalar"))` y `r a3(dcfi("Prácticas domésticas", "Edad", "Escalar"))`), pero se alcanzó invarianza escalar parcial liberando, en los tramos de 35 a 54 y de 55 o más, el intercepto del ítem sobre participación en marchas y los de cortar el agua al lavarse los dientes y desenchufar aparatos. En esos ítems, a igual nivel en el factor, las personas mayores de 35 años respondieron más bajo que las de 18 a 34. Cada factor conservó al menos tres ítems invariantes.
+
+::: {custom-style="Titulo tabla"}
+**Tabla A3**
+
+*Invarianza de Medida de las Escalas por Sexo, Edad y Nivel Socioeconómico*
+:::
+
+```{r}
+#| label: tabla-invarianza
+#| results: asis
+inv_sec %>%
+  filter(nivel != "Configural") %>%
+  mutate(valor = paste0(a3(dCFI), " / ", a3(dRMSEA)),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         nivel = factor(nivel, levels = c("Umbrales", "Métrica", "Escalar"))) %>%
+  select(modelo, variable, nivel, valor) %>%
+  pivot_wider(names_from = nivel, values_from = valor) %>%
+  arrange(modelo, variable) %>%
+  left_join(inv_parcial %>% filter(cumple) %>%
+              transmute(modelo, variable = factor("Edad", levels = c("Sexo", "Edad", "NSE")),
+                        `Escalar parcial` = paste0(a3(dCFI), " / ", a3(dRMSEA))),
+            by = c("modelo", "variable")) %>%
+  group_by(modelo) %>%
+  mutate(modelo = if_else(row_number() == 1, modelo, "")) %>%
+  ungroup() %>%
+  mutate(across(everything(), ~ replace_na(as.character(.x), ""))) %>%
+  rename(Escala = modelo, Variable = variable) %>%
+  tabla_md(c(22, 9, 15, 15, 15, 15), c("l", "l", "r", "r", "r", "r"))
+```
+
+*Nota.* Cada celda muestra ΔCFI / ΔRMSEA respecto del nivel anterior; el nivel escalar parcial se compara con el métrico. Criterio de aceptación: ΔCFI ≥ −,010 y ΔRMSEA ≤ ,015. Interceptos liberados post hoc en el modelo escalar parcial por edad, en los tramos de 35 a 54 y de 55 o más: O3.9 (consumo sustentable y político); O2.2 y O2.5 (prácticas domésticas). Las diferencias se calcularon con valores sin redondear, por lo que pueden no coincidir en el tercer decimal con la resta de los índices de la Tabla S8. NSE = nivel socioeconómico.
+
+Tras corregir por comparaciones múltiples, solo algunas diferencias de medias latentes se sostuvieron (Figura A1). Respecto del grupo ABC1, la compra sustentable fue menor en el grupo C2-C3 (`r s2(media("compra_sust", "NSE", "C2-C3"))` *DE*; *p* corregido `r holm("compra_sust", "NSE", "C2-C3")`) y en el D-E (`r s2(media("compra_sust", "NSE", "D-E"))` *DE*; *p* corregido `r holm("compra_sust", "NSE", "D-E")`). El ahorro doméstico aumentó con la edad (35-54: `r s2(media("ahorro", "Edad", "35-54"))` *DE*; 55 o más: `r s2(media("ahorro", "Edad", "55 o más"))` *DE*; ambos *p* corregidos `r holm("ahorro", "Edad", "55 o más")`), y la compra sustentable fue mayor en el tramo de 55 o más (`r s2(media("compra_sust", "Edad", "55 o más"))` *DE*; *p* corregido `r holm("compra_sust", "Edad", "55 o más")`). No se sostuvieron, en cambio, el menor consumo político en los grupos C2-C3 y D-E (`r s2(media("consumo_pol", "NSE", "C2-C3"))` y `r s2(media("consumo_pol", "NSE", "D-E"))` *DE*; *p* corregidos de `r hp("consumo_pol", "NSE", "C2-C3")` y `r hp("consumo_pol", "NSE", "D-E")`), el mayor ahorro doméstico en el grupo D-E (`r s2(media("ahorro", "NSE", "D-E"))` *DE*; *p* corregido `r holm("ahorro", "NSE", "D-E")`) ni la mayor planificación de compras de las mujeres (`r s2(media("planificacion", "Sexo", "Mujer"))` *DE*; *p* corregido `r holm("planificacion", "Sexo", "Mujer")`). La diferencia en ahorro por NSE dependía además de un solo ítem: al liberar el intercepto del ítem sobre desenchufar aparatos, bajó a `r s2(difm("O2_5", "ahorro", "D-E"))` *DE* (*p* `r ph(difm("O2_5", "ahorro", "D-E", "p"))`). Las diferencias por edad fueron sensibles a la elección de los ítems ancla (Tabla S12). Según el par de ítems usado, la diferencia en ahorro entre el tramo de 55 o más y el de 18 a 34 varió entre `r ancr("ahorro", "55 o más", "min")` y `r ancr("ahorro", "55 o más", "max")` *DE*, siempre significativa, y la de compra sustentable entre `r ancr("compra_sust", "55 o más", "min")` y `r ancr("compra_sust", "55 o más", "max")` *DE*. En cambio, las diferencias por edad en consumo político cambiaron de signo según las anclas.
+
+::: {custom-style="Titulo tabla"}
+**Figura A1**
+
+*Diferencias de Medias Latentes Respecto del Grupo de Referencia*
+:::
+
+```{r}
+#| label: figura-medias
+#| fig-width: 5.5
+#| fig-height: 4.5
+inv_medias %>%
+  left_join(inf_holm %>% select(modelo, variable, grupo, factor, p_holm),
+            by = c("modelo", "variable", "grupo", "factor")) %>%
+  mutate(factor = factor(nombres_factor[factor], levels = nombres_factor),
+         comparacion = paste(grupo, "vs.", referencia),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         significativo = if_else(p_holm < 0.05, "p < ,05 (Holm)", "No significativo")) %>%
+  ggplot(aes(media, comparacion, shape = significativo)) +
+  geom_vline(xintercept = 0, colour = "grey60") +
+  geom_pointrange(aes(xmin = ic_inf, xmax = ic_sup), size = 0.25) +
+  facet_grid(variable ~ factor, scales = "free_y", space = "free_y",
+             labeller = labeller(factor = label_wrap_gen(14))) +
+  scale_shape_manual(values = c("p < ,05 (Holm)" = 16, "No significativo" = 1)) +
+  scale_x_continuous(labels = function(x) sub("^-", "−", format(x, decimal.mark = ","))) +
+  labs(x = "Diferencia de medias latentes (DE)", y = NULL, shape = NULL) +
+  theme_bw(base_size = 8, base_family = "serif") +
+  theme(legend.position = "top", panel.grid.minor = element_blank())
+```
+
+*Nota.* Puntos e intervalos de confianza del 95% de la diferencia de medias latentes, en desviaciones estándar del grupo de referencia (hombres, 18-34 años y ABC1). Puntos rellenos: diferencias significativas tras la corrección de Holm para las 20 comparaciones. Las comparaciones por edad se basan en invarianza escalar parcial y dependen de los ítems ancla (Tabla S12). NSE = nivel socioeconómico; DE = desviación estándar.
+
+## Relación con otras variables
+
+Las correlaciones con las variables externas siguieron el patrón esperado, aunque con magnitudes pequeñas (Tabla A4). El consumo político se correlacionó positivamente con considerar que el consumo expresa una postura política (*r* = `r ve("consumo_pol", "politica_consumo")`) y negativamente con una posición política de derecha (*r* = `r ve("consumo_pol", "posicion_politica")`). El ahorro doméstico, en cambio, se correlacionó negativamente con esa lectura política del consumo (*r* = `r ve("ahorro", "politica_consumo")`) y no se asoció con la posición política ni con la educación. La compra sustentable y la planificación de compras mostraron asociaciones débiles o nulas con las tres variables. Al excluir el valor 5 de la posición política (n = `r eco("consumo_pol", "M9_l (sin M9 = 5)", "n")`), las correlaciones del consumo político con esa variable (*r* = `r a2(eco("consumo_pol", "M9_l (sin M9 = 5)"))`) y con la lectura política del consumo (*r* = `r a2(eco("consumo_pol", "C3_14_l (sin M9 = 5)"))`) mantuvieron su dirección y fueron algo mayores (Tabla S15). El ahorro doméstico no se asoció con el ingreso del hogar (*r* = `r a2(eco("ahorro", "ingreso"))`), con haber contraído deudas para comprar alimentos (*r* = `r a2(eco("ahorro", "deuda_alimentos"))`) ni con declararse más endeudado (*r* = `r a2(eco("ahorro", "mas_endeudado"))`), de modo que estos datos no respaldan que refleje restricciones materiales. El ingreso se asoció débilmente con la compra sustentable (*r* = `r a2(eco("compra_sust", "ingreso"))`) y con el consumo político (*r* = `r a2(eco("consumo_pol", "ingreso"))`).
+
+## Análisis de sensibilidad
+
+Se marcaron `r cal("Casos marcados")` casos (`r f1(100 * cal("Casos marcados") / n_total)`%): `r cal("Duración < 1/3")` respondieron en menos de un tercio de la mediana de duración y `r cal("Línea recta en dos o más")` respondieron en línea recta en dos o más baterías. Excluirlos no cambió el ajuste ni las cargas de las escalas (Tabla S14). Estimar los modelos con las cinco categorías originales tampoco cambió las cargas, que variaron en `r a2(max(abs(inf_cuc$colapsado - inf_cuc$sin_colapsar)))` o menos, ni el CFI, aunque el RMSEA de la escala de consumo sustentable y político en la mitad de prueba subió de `r a3(sens("Publicado (mitad 2)", "Consumo sustentable y político", "rmsea.scaled"))` a `r a3(sens("Sin colapsar categorías (mitad 2)", "Consumo sustentable y político", "rmsea.scaled"))`.
+
+::: {custom-style="Titulo tabla"}
+**Tabla A4**
+
+*Correlaciones entre los Factores y Variables Externas (N = `r miles(n_total, 0)`)*
+:::
+
+```{r}
+#| label: tabla-validez
+#| results: asis
+val_ext %>%
+  mutate(factor = factor(nombres_factor[factor], levels = nombres_factor),
+         variable = recode(variable, politica_consumo = "Consumo como postura política",
+                           posicion_politica = "Posición política (derecha)",
+                           educacion = "Nivel educacional"),
+         valor = paste0(a2(r), " [", a2(ic_inf), ", ", a2(ic_sup), "]", if_else(p < .05, "\\*", ""))) %>%
+  select(factor, variable, valor) %>%
+  pivot_wider(names_from = variable, values_from = valor) %>%
+  arrange(factor) %>%
+  rename(Factor = factor) %>%
+  mutate(Factor = as.character(Factor)) %>%
+  tabla_md(c(22, 20, 20, 20), c("l", "r", "r", "r"))
+```
+
+*Nota.* Correlaciones [IC 95%] entre cada factor latente y la variable externa, estimadas en un modelo con WLSMV que incluye la escala correspondiente y las tres variables. Consumo como postura política: acuerdo con "La forma en que uno consume algunos bienes tiene que ver con la postura política de uno" (1-5). Posición política: 1 = izquierda, 10 = derecha. Nivel educacional: 1 = sin estudios formales, 10 = postgrado. \* *p* < ,05.
+
+
+# Salidas técnicas completas
+
+Las salidas completas de R para los modelos factoriales y de invarianza están en la carpeta `output/resultados_tecnicos/` del repositorio, en un archivo por modelo y en un archivo único (`salidas_tecnicas_completas.txt`):
+
+- Análisis factorial exploratorio: pruebas de Bartlett y KMO, análisis paralelo y MAP, y la solución final de cinco factores (mitad exploratoria).
+- Análisis factoriales confirmatorios de cada escala en la mitad de prueba y en la muestra completa, la alternativa de un factor, la prueba de diferencia de χ², el modelo conjunto y el ESEM: estimaciones no estandarizadas y estandarizadas, errores estándar, umbrales, R², índices de ajuste, correlaciones residuales y confiabilidad.
+- Invarianza por sexo, edad y NSE para cada escala: índices de ajuste de cada nivel, pruebas de diferencia de χ², estimaciones completas del modelo final e índices de modificación de los interceptos.
+
+Las salidas de `lavaan` muestran dos versiones de los índices de ajuste: la columna *Scaled* corresponde a los valores informados en este anexo, y las filas *Robust* a las versiones robustas de @savalei_improving_2021, que se comentan en los resultados. El script `processing/verificacion_reproducibilidad.R` reestima desde los datos las pruebas de Bartlett y la secuencia de invarianza y las compara con las cifras publicadas.
+
+# Referencias
+
+::: {#refs}
+:::

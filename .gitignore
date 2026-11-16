@@ -1,0 +1,11 @@
+# Microdatos de la Encuesta Sociedad de Consumo 2023: pertenecen al proyecto Fondecyt
+# N.º 11200893 y no se publican. Para reproducir los modelos sin microdatos se usan las
+# matrices de output/reproducibilidad/.
+input/data/
+input/*.rds
+*.sav
+output/models/
+# Archivos temporales
+.Rhistory
+.~lock.*
+~$*

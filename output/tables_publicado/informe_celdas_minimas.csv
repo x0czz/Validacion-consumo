@@ -1,0 +1,52 @@
+variable,grupo,item,categoria,n
+Edad,55 o más,O1_10,1,53
+Edad,55 o más,O2_1,1,37
+Edad,55 o más,O2_11,3,103
+Edad,55 o más,O2_12,1,97
+Edad,55 o más,O2_2,2,92
+Edad,55 o más,O2_3,1,20
+Edad,55 o más,O2_4,1,44
+Edad,55 o más,O2_5,1,60
+Edad,55 o más,O2_8,1,33
+Edad,55 o más,O2_9,1,53
+Edad,55 o más,O3_2,2,121
+Edad,55 o más,O3_3,4,38
+Edad,55 o más,O3_4,1,47
+Edad,55 o más,O3_5,3,102
+Edad,55 o más,O3_7,1,64
+Edad,55 o más,O3_8,2,42
+Edad,55 o más,O3_9,2,52
+NSE,ABC1,O1_10,1,24
+NSE,ABC1,O2_1,1,21
+NSE,ABC1,O2_11,1,43
+NSE,ABC1,O2_12,1,37
+NSE,ABC1,O2_2,1,38
+NSE,ABC1,O2_3,1,24
+NSE,ABC1,O2_4,1,43
+NSE,ABC1,O2_5,2,38
+NSE,ABC1,O2_8,1,18
+NSE,ABC1,O2_9,1,12
+NSE,ABC1,O3_2,2,58
+NSE,ABC1,O3_3,4,18
+NSE,ABC1,O3_4,1,23
+NSE,ABC1,O3_5,2,65
+NSE,ABC1,O3_7,2,37
+NSE,ABC1,O3_8,2,28
+NSE,ABC1,O3_9,2,44
+Sexo,Hombre,O1_10,1,111
+Sexo,Mujer,O2_1,1,116
+Sexo,Hombre,O2_11,3,169
+Sexo,Hombre,O2_12,3,154
+Sexo,Mujer,O2_2,1,159
+Sexo,Hombre,O2_3,1,76
+Sexo,Mujer,O2_4,2,167
+Sexo,Hombre,O2_5,1,126
+Sexo,Mujer,O2_8,1,79
+Sexo,Hombre,O2_9,1,90
+Sexo,Hombre,O3_2,2,212
+Sexo,Hombre,O3_3,4,94
+Sexo,Hombre,O3_4,1,122
+Sexo,Mujer,O3_5,3,198
+Sexo,Hombre,O3_7,1,132
+Sexo,Mujer,O3_8,2,99
+Sexo,Hombre,O3_9,2,153

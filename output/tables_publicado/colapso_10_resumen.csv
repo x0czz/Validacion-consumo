@@ -1,0 +1,47 @@
+item,enunciado,categorias,agrupacion,colapsado
+O1_1,"Compra algún producto en Amazon, Ali Express, E-Bay, Wish u otra tienda fuera del país",4,1 ; 2 ; 3 ; 4+5,TRUE
+O1_2,Viaja fuera del país en avión,3,1 ; 2 ; 3+4+5,TRUE
+O1_3,"Ve alguna serie o película en Netflix, Youtube o similar",4,1+2 ; 3 ; 4 ; 5,TRUE
+O1_4,"Usa Uber, Rappi o Pedidos Ya",4,1 ; 2 ; 3 ; 4+5,TRUE
+O1_5,Compra ropa de segunda mano,4,1 ; 2 ; 3 ; 4+5,TRUE
+O1_6,Cultiva y cosecha sus propios alimentos,3,1 ; 2 ; 3+4+5,TRUE
+O1_7,"Repara su ropa, accesorios y/o electrodomésticos",4,1+2 ; 3 ; 4 ; 5,TRUE
+O1_8,Adquiere productos con la etiqueta “comercio justo”,4,1 ; 2 ; 3 ; 4+5,TRUE
+O1_9,Compara precios en internet antes de comprar,4,1+2 ; 3 ; 4 ; 5,TRUE
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,3,1+2+3 ; 4 ; 5,TRUE
+O2_2,Corta el agua mientras se lava los dientes. ,3,1+2+3 ; 4 ; 5,TRUE
+O2_3,Toma duchas cortas,4,1+2 ; 3 ; 4 ; 5,TRUE
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,3,1+2+3 ; 4 ; 5,TRUE
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,4,1+2 ; 3 ; 4 ; 5,TRUE
+O2_6,Separa la basura de su hogar para reciclaje. ,5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O2_7,Re-utiliza papel en la impresión de documentos. ,5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O2_8,Planifica compra de alimentos. ,4,1+2 ; 3 ; 4 ; 5,TRUE
+O2_9,Planifica compras de vestuario. ,5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O2_10,Lee la etiqueta de los productos antes de decidir compra. ,4,1+2 ; 3 ; 4 ; 5,TRUE
+O2_11,Compra productos orgánicos o naturales. ,3,1+2 ; 3 ; 4+5,TRUE
+O2_12,Compra productos hechos con material reciclado. ,3,1+2 ; 3 ; 4+5,TRUE
+O2_13,Comenta información sobre los productos y empresas. ,4,1 ; 2 ; 3 ; 4+5,TRUE
+O2_14,Pide la boleta de los productos que compra ,4,1+2 ; 3 ; 4 ; 5,TRUE
+O3_1,"Deja de comprar un producto porque se ha enterado de que daña el medioambiente, aunque sea más barato.",5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O3_2,Intenta influir en lo que consumen otras personas,3,1 ; 2 ; 3+4+5,TRUE
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,4,1 ; 2 ; 3 ; 4+5,TRUE
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",4,1 ; 2 ; 3 ; 4+5,TRUE
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,3,1 ; 2 ; 3+4+5,TRUE
+O3_6,Realiza un reclamo en el lugar de venta cuando un producto o servicio no lo satisface,5,1 ; 2 ; 3 ; 4 ; 5,FALSE
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",4,1 ; 2 ; 3 ; 4+5,TRUE
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",3,1 ; 2 ; 3+4+5,TRUE
+O3_9,Participa en marchas o movilizaciones,3,1 ; 2 ; 3+4+5,TRUE
+O3_10,Compra en pequeños negocios,3,1+2+3 ; 4 ; 5,TRUE
+O4_1,Es necesario hacerse cargo de las tareas de reciclaje,3,1+2+3 ; 4 ; 5,TRUE
+O4_2,Es fácil entender el etiquetado de los envases para separar el reciclaje,3,1+2 ; 3 ; 4+5,TRUE
+O4_3,Es fácil llevar mi reciclaje hasta los centros de acopio,4,1 ; 2 ; 3 ; 4+5,TRUE
+O4_4,No tengo tiempo para hacerme cargo de todo lo que implica reciclar,3,1+2 ; 3 ; 4+5,TRUE
+O4_5,En mi comuna o barrio es fácil reciclar,4,1 ; 2 ; 3 ; 4+5,TRUE
+O4_6,"En mi hogar, todos/as reciclamos",4,1 ; 2 ; 3 ; 4+5,TRUE
+O4_7,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,4,1 ; 2 ; 3 ; 4+5,TRUE
+O4_8,Reciclar es bueno para la economía,3,1+2+3 ; 4 ; 5,TRUE
+O4_9,Consumir menos es mejor que reciclar,3,1+2 ; 3 ; 4+5,TRUE
+O4_10,"Con la vida apurada de hoy, es mejor comprar algo nuevo que reparar algo que no funciona",4,1 ; 2 ; 3 ; 4+5,TRUE
+O4_11,Lo que compramos o dejamos de comprar es un problema de cada persona,4,1+2 ; 3 ; 4 ; 5,TRUE
+O4_12,Me considero más un ciudadano que un consumidor,4,1+2 ; 3 ; 4 ; 5,TRUE

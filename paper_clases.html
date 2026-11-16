@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Perfiles de prácticas de consumo socioambientales en Chile: un análisis de clases latentes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="paper_clases_files/libs/clipboard/clipboard.min.js"></script>
+<script src="paper_clases_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="paper_clases_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="paper_clases_files/libs/quarto-html/popper.min.js"></script>
+<script src="paper_clases_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="paper_clases_files/libs/quarto-html/anchor.min.js"></script>
+<link href="paper_clases_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="paper_clases_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="paper_clases_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="paper_clases_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="paper_clases_files/libs/bootstrap/bootstrap-21c7ad4b31a8d39bca29604a2a3c1441.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><style>
+  body {
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 12pt !important;
+    line-height: 2 !important;
+    text-align: left !important;
+  }
+  p { text-indent: 1.25cm; margin-bottom: 0; }
+  h1, h2, h3 {
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 12pt !important;
+    font-weight: bold;
+    text-indent: 0;
+  }
+  table, figure { line-height: 1.2 !important; }
+  h1.title, .subtitle { color: #ffffff !important; }
+</style>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+</head>
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Perfiles de prácticas de consumo socioambientales en Chile: un análisis de clases latentes</h1>
+            <p class="subtitle lead">Profiles of Socio-Environmental Consumption Practices in Chile: A Latent Class Analysis</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contenidos</h2>
+   
+  <ul class="collapse">
+<li>
+<a href="#m%C3%A9todo" id="toc-método" class="nav-link active" data-scroll-target="#m%C3%A9todo">Método</a>
+  <ul class="collapse">
+<li><a href="#participantes" id="toc-participantes" class="nav-link" data-scroll-target="#participantes">Participantes</a></li>
+  <li><a href="#instrumentos" id="toc-instrumentos" class="nav-link" data-scroll-target="#instrumentos">Instrumentos</a></li>
+  <li><a href="#procedimiento" id="toc-procedimiento" class="nav-link" data-scroll-target="#procedimiento">Procedimiento</a></li>
+  <li><a href="#an%C3%A1lisis-de-datos" id="toc-análisis-de-datos" class="nav-link" data-scroll-target="#an%C3%A1lisis-de-datos">Análisis de datos</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a>
+  <ul class="collapse">
+<li><a href="#n%C3%BAmero-de-clases" id="toc-número-de-clases" class="nav-link" data-scroll-target="#n%C3%BAmero-de-clases">Número de clases</a></li>
+  <li><a href="#perfiles-de-las-clases" id="toc-perfiles-de-las-clases" class="nav-link" data-scroll-target="#perfiles-de-las-clases">Perfiles de las clases</a></li>
+  <li><a href="#robustez-de-la-soluci%C3%B3n" id="toc-robustez-de-la-solución" class="nav-link" data-scroll-target="#robustez-de-la-soluci%C3%B3n">Robustez de la solución</a></li>
+  <li><a href="#relaci%C3%B3n-con-sexo-edad-y-nivel-socioecon%C3%B3mico" id="toc-relación-con-sexo-edad-y-nivel-socioeconómico" class="nav-link" data-scroll-target="#relaci%C3%B3n-con-sexo-edad-y-nivel-socioecon%C3%B3mico">Relación con sexo, edad y nivel socioeconómico</a></li>
+  <li><a href="#evidencia-de-validez-de-la-interpretaci%C3%B3n" id="toc-evidencia-de-validez-de-la-interpretación" class="nav-link" data-scroll-target="#evidencia-de-validez-de-la-interpretaci%C3%B3n">Evidencia de validez de la interpretación</a></li>
+  </ul>
+</li>
+  <li><a href="#discusi%C3%B3n" id="toc-discusión" class="nav-link" data-scroll-target="#discusi%C3%B3n">Discusión</a></li>
+  <li><a href="#contribuci%C3%B3n-de-los-autores" id="toc-contribución-de-los-autores" class="nav-link" data-scroll-target="#contribuci%C3%B3n-de-los-autores">Contribución de los autores</a></li>
+  <li><a href="#financiaci%C3%B3n" id="toc-financiación" class="nav-link" data-scroll-target="#financiaci%C3%B3n">Financiación</a></li>
+  <li><a href="#conflicto-de-intereses" id="toc-conflicto-de-intereses" class="nav-link" data-scroll-target="#conflicto-de-intereses">Conflicto de intereses</a></li>
+  <li><a href="#declaraci%C3%B3n-de-disponibilidad-de-datos" id="toc-declaración-de-disponibilidad-de-datos" class="nav-link" data-scroll-target="#declaraci%C3%B3n-de-disponibilidad-de-datos">Declaración de disponibilidad de datos</a></li>
+  <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
+  </ul><div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="paper_clases.docx"><i class="bi bi-file-word"></i>MS Word</a></li><li><a href="paper_clases.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li></ul></div></nav>
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content"><p><strong>Título reducido:</strong> Consumption Practice Profiles</p>
+<p><strong>Número de palabras:</strong> 5.720 (sin incluir la lista de referencias)</p>
+<p><strong>Declaración responsable de autoría, originalidad y carácter inédito:</strong> las personas firmantes declaran que son autoras del trabajo, que este es original e inédito, que no ha sido publicado total ni parcialmente y que no se encuentra en evaluación en ninguna otra revista. Todas las personas autoras han aprobado la versión enviada.</p>
+<div style="page-break-after: always;"></div>
+<p><strong>Resumen</strong></p>
+<p><strong>Antecedentes:</strong> Las tipologías de consumidores “conscientes” o “responsables” usadas en América Latina se construyen sumando prácticas declaradas, lo que supone que las personas difieren solo en cuánto hacen y no en qué hacen. Este estudio identifica perfiles de prácticas de consumo socioambientales en Chile y evalúa si forman un continuo o combinaciones cualitativamente distintas. <strong>Método:</strong> Se aplicó un análisis de clases latentes a 17 ítems de prácticas de la Encuesta Sociedad de Consumo 2023 (N = 1.623). La relación de las clases con sexo, edad y nivel socioeconómico se estimó con un enfoque de tres pasos corregido por error de clasificación. <strong>Resultados:</strong> La solución de cinco clases fue la mejor según BIC y CAIC. Tres clases formaron una gradiente (Amplio, Intermedio y Bajo), pero 33,0% de la muestra perteneció a perfiles opuestos: uno doméstico, con ahorro alto y poco consumo político, y uno político, con el ahorro más bajo. La clase política fue más probable entre jóvenes y hombres y entre quienes ven el consumo como una postura política; la doméstica, entre personas mayores y de nivel socioeconómico bajo. <strong>Conclusiones:</strong> Las tipologías sumativas confunden perfiles cualitativamente distintos.</p>
+<p><strong>Palabras clave:</strong> prácticas de consumo, consumo político, clases latentes, tipologías de consumidores, Chile.</p>
+<p><strong>Abstract</strong></p>
+<p><strong>Background:</strong> Typologies of “conscious” or “responsible” consumers used in Latin America are built by summing self-reported practices, which assumes that people differ only in how much they do, not in what they do. This study identifies profiles of socio-environmental consumption practices in Chile and tests whether they form a continuum or qualitatively distinct combinations. <strong>Method:</strong> Latent class analysis was applied to 17 practice items from the 2023 Consumer Society Survey (N = 1,623). Associations with sex, age, and socioeconomic status were estimated with a bias-adjusted three-step approach. <strong>Results:</strong> The five-class solution was the best according to BIC and CAIC. Three classes formed a gradient (Broad, Intermediate, and Low), but 33.0% of the sample belonged to opposite profiles: a household profile, with high saving and little political consumption, and a political profile, with the lowest saving. The political class was more likely among young people, men, and those who see consumption as a political stance; the household class, among older and lower-status people. <strong>Conclusions:</strong> Summative typologies conflate qualitatively distinct profiles.</p>
+<p><strong>Keywords:</strong> consumption practices, political consumerism, latent class analysis, consumer typologies, Chile.</p>
+<div style="page-break-after: always;"></div>
+<p>En Chile, el consumo ocupa un lugar central en la vida social. Desde la década de 1990, la expansión del consumo y del crédito ha sido interpretada como un mecanismo de integración social que desplazó a la participación política <span class="citation" data-cites="moulian_chile_1997">(<a href="#ref-moulian_chile_1997" role="doc-biblioref">Moulian, 1997</a>)</span>, y el endeudamiento de los hogares se normalizó como un pilar del modelo socioeconómico <span class="citation" data-cites="marambio_normalizacion_2022">(<a href="#ref-marambio_normalizacion_2022" role="doc-biblioref">Marambio-Tapia, 2022</a>)</span>. En ese contexto, las prácticas mediante las cuales las personas incorporan consideraciones ambientales o políticas a su consumo son un espacio relevante para estudiar la relación entre ciudadanía y mercado.</p>
+<p>Estas prácticas suelen agruparse bajo las nociones de consumo consciente o responsable. Esas nociones han sido criticadas porque trasladan al consumidor individual la responsabilidad por problemas que se originan en la producción, y porque no cuestionan el proceso productivo <span class="citation" data-cites="barros_consumo_2008 yoshizato_ideologizacao_2016">(<a href="#ref-barros_consumo_2008" role="doc-biblioref">Barros &amp; Costa, 2008</a>; <a href="#ref-yoshizato_ideologizacao_2016" role="doc-biblioref">Yoshizato Bierwagen, 2016</a>)</span>. En Chile se ha advertido, por ejemplo, que los llamados a acortar la ducha para cuidar el agua omiten que la industria concentra la mayor parte de su consumo <span class="citation" data-cites="marambio_consumo_2024">(<a href="#ref-marambio_consumo_2024" role="doc-biblioref">Marambio-Tapia, 2024</a>)</span>. Por eso, en este estudio se habla de <em>prácticas de consumo socioambientales</em>: prácticas cotidianas de compra, uso y organización del consumo con implicancias ambientales o políticas, sin suponer que expresen una responsabilidad o una virtud individual.</p>
+<p>La forma más extendida de clasificar a las personas según estas prácticas proviene del Instituto Akatu. Su tipología suma el número de conductas que cada persona declara realizar y, con puntos de corte, ordena a la población en indiferentes, iniciantes, comprometidos y conscientes; estos últimos rondan el 5% de la población brasileña <span class="citation" data-cites="akatu_pesquisa_2007">(<a href="#ref-akatu_pesquisa_2007" role="doc-biblioref">Instituto Akatu, 2007</a>)</span>. La adaptación chilena de ese índice estimó que solo el 6,5% de la población podía clasificarse como “consumidora responsable” <span class="citation" data-cites="ariztia_nuevo_2010">(<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">Ariztía et&nbsp;al., 2010</a>)</span>. Otros estudios chilenos clasifican a los consumidores según el promedio de sus respuestas en escalas tipo Likert, con cortes fijos que distinguen consumidores indiferentes, principiantes, comprometidos y responsables <span class="citation" data-cites="acunamoraga_sustentabilidad_2018">(<a href="#ref-acunamoraga_sustentabilidad_2018" role="doc-biblioref">Acuña Moraga &amp; Severino González, 2018</a>)</span>. En todos estos casos, los tipos son tramos de un mismo puntaje: las personas difieren en cuánto hacen, no en qué hacen.</p>
+<p>Hay razones para dudar de ese supuesto. Al analizar las prácticas del índice chileno, <span class="citation" data-cites="ariztia_nuevo_2010">Ariztía et&nbsp;al. (<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">2010</a>)</span> encontraron dimensiones con bases sociales opuestas: la compra consciente se concentraba en sectores de mayores recursos y educación, mientras que el ahorro doméstico era masivo, transversal y más frecuente en mujeres, personas mayores y sectores medios bajos y bajos. Los propios autores advirtieron que el índice “aglutina prácticas muy disímiles, lo cual tiende a esconder la distribución del consumo responsable en términos de nivel socioeconómico” <span class="citation" data-cites="ariztia_nuevo_2010">(<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">Ariztía et&nbsp;al., 2010, p. 107</a>)</span>. En la misma línea, un estudio psicométrico previo con los datos que aquí se analizan encontró que la compra sustentable, el consumo político, el ahorro doméstico y la planificación de compras son dimensiones distintas; que la compra sustentable es menos frecuente en los niveles socioeconómicos medio y bajo, y que el ahorro doméstico aumenta con la edad pero no se asocia con el ingreso ni con indicadores de presión financiera [referencia anonimizada]. La literatura sobre consumo político también muestra que prácticas aparentemente cercanas, como el boicot y la compra deliberada o <em>buycott</em>, se combinan en tipos distintos de personas, con normas de ciudadanía diferentes <span class="citation" data-cites="copeland_conceptualizing_2014">(<a href="#ref-copeland_conceptualizing_2014" role="doc-biblioref">Copeland, 2014</a>)</span>.</p>
+<p>Esos análisis, sin embargo, se centran en variables: muestran qué prácticas tienden a ir juntas en la población, pero no cómo se combinan en cada persona. Que el ahorro y la compra sustentable sean dimensiones distintas no dice si existen personas que ahorran mucho sin comprar de forma sustentable, ni cuántas son. Para responder esa pregunta se requiere un enfoque centrado en personas. El análisis de clases latentes (LCA) identifica subgrupos no observados a partir de los patrones de respuesta <span class="citation" data-cites="collins_latent_2010">(<a href="#ref-collins_latent_2010" role="doc-biblioref">Collins &amp; Lanza, 2010</a>)</span>. A diferencia de las tipologías por puntos de corte, el número de grupos se elige comparando modelos con criterios de ajuste, cada persona tiene una probabilidad de pertenecer a cada grupo y no se supone de antemano que los grupos estén ordenados <span class="citation" data-cites="weller_latent_2020">(<a href="#ref-weller_latent_2020" role="doc-biblioref">Weller et&nbsp;al., 2020</a>)</span>. Si la población se ordena en un continuo, el LCA debería recuperar clases ordenadas, de más a menos en todas las prácticas. Si existen combinaciones cualitativamente distintas, debería recuperar clases que no caben en ese orden.</p>
+<p>Esta distinción tiene consecuencias sustantivas. Si una persona ahorra agua y energía por necesidad económica y otra compra productos orgánicos porque puede pagarlos, un índice sumativo puede asignarles el mismo puntaje y la misma etiqueta de “consumidor consciente”. La tipología resultante atribuiría a disposiciones individuales lo que en parte refleja condiciones materiales, que es justamente lo que la crítica a la individualización señala.</p>
+<p>El objetivo de este estudio es identificar perfiles de prácticas de consumo socioambientales en población chilena mediante un análisis de clases latentes. Se plantean dos preguntas: (a) ¿cuántos perfiles existen y forman un continuo o combinaciones cualitativamente distintas?; y (b) ¿cómo se distribuyen los perfiles según sexo, edad y nivel socioeconómico?</p>
+<p>Respecto de la segunda pregunta, a partir de <span class="citation" data-cites="ariztia_nuevo_2010">Ariztía et&nbsp;al. (<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">2010</a>)</span> se esperaba que un perfil centrado en el ahorro doméstico fuera más frecuente en mujeres, personas mayores y sectores de menor NSE, y que la compra sustentable se concentrara en el NSE alto. Para el consumo político la evidencia es mixta: estudios europeos lo asocian a personas mayores, con más educación e ingresos <span class="citation" data-cites="ackermann_psychological_2020p">(<a href="#ref-ackermann_psychological_2020p" role="doc-biblioref">Ackermann &amp; Gundelach, 2020</a>)</span>, aunque sus formas digitales y de movilización podrían ser más frecuentes entre jóvenes. También se esperaba que un eventual perfil político se asociara con una lectura política del consumo, lo que serviría como evidencia de validez de su interpretación <span class="citation" data-cites="samuelsen_latent_2010">(<a href="#ref-samuelsen_latent_2010" role="doc-biblioref">Samuelsen &amp; Dayton, 2010</a>)</span>.</p>
+<section id="método" class="level1"><h1>Método</h1>
+<section id="participantes" class="level2"><h2 class="anchored" data-anchor-id="participantes">Participantes</h2>
+<p>Participaron 1.623 personas mayores de 18 años, residentes en las 16 regiones de Chile (el 40,5% en la Región Metropolitana), que respondieron la Encuesta Sociedad de Consumo 2023 <span class="citation" data-cites="marambio_encuesta_2023">(<a href="#ref-marambio_encuesta_2023" role="doc-biblioref">Marambio-Tapia &amp; Soto Márquez, 2023</a>)</span>. El 51,7% eran mujeres. Por tramo de edad, el 41,0% tenía entre 18 y 34 años, el 33,8% entre 35 y 54, y el 25,2% 55 o más. Según el nivel socioeconómico (NSE), el 13,1% pertenecía al grupo alto (ABC1), el 36,8% al medio (C2-C3) y el 50,0% al bajo (D-E); el NSE corresponde a la clasificación de siete grupos (AB a E) del perfil de cada panelista en Netquest, agrupada en tres. La encuesta fue realizada por Netquest, empresa certificada según la norma ISO 20252:2019, con su panel en línea, que en Chile reúne a cerca de 300.000 personas registradas para responder encuestas. Netquest invitó a integrantes del panel mediante correos personalizados y aplicó cuotas por sexo, edad (seis tramos), NSE (siete grupos) y zona (Región Metropolitana y resto del país), definidas por el equipo de investigación para una meta de 1.600 casos. De 6.775 panelistas invitados, 2.135 iniciaron la encuesta, lo que da una tasa de participación de 31,5% (calculada por la empresa como la proporción de invitados que iniciaron su participación), y 1.626 la completaron y superaron los controles de calidad de la empresa. Esos controles excluyeron 76 casos: 28 por incongruencias entre sus respuestas y su perfil en el panel, 28 por fallar preguntas de atención, 14 por no superar un captcha, 4 por participación duplicada y 2 por edad o NSE fuera de los rangos requeridos. La base analizada contiene 1.623 casos [Completar: motivo de la diferencia con los 1.626 casos informados por Netquest]. Se trata de una muestra no probabilística por cuotas de personas que responden habitualmente encuestas en línea: su composición por sexo, edad, NSE y zona se ajusta a las cuotas, pero los resultados no pueden generalizarse a la población chilena.</p>
+</section><section id="instrumentos" class="level2"><h2 class="anchored" data-anchor-id="instrumentos">Instrumentos</h2>
+<p>Se usaron 17 ítems de prácticas de consumo que, en un estudio previo con la misma muestra, conformaron dos escalas con ajuste adecuado, confiabilidad aceptable e invarianza escalar por sexo y NSE, y escalar parcial por edad [referencia anonimizada]. Esa estructura se seleccionó y evaluó con los mismos datos, por lo que es provisional hasta su replicación independiente. Los ítems miden cuatro dimensiones: compra sustentable (cuatro ítems; por ejemplo, “Compra productos orgánicos o naturales”), consumo político (cinco ítems; por ejemplo, “Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores”), ahorro doméstico (cinco ítems; por ejemplo, “Corta el agua mientras se lava los dientes”) y planificación de compras (tres ítems; por ejemplo, “Planifica compra de alimentos”). Se responden con la pregunta “¿Qué tan seguido usted…?” en una escala de cinco puntos (1 = <em>Nunca</em>; 5 = <em>Siempre</em>). Los enunciados completos se presentan en la Figura 1.</p>
+<p>Para evaluar la validez de la interpretación de las clases se usaron dos preguntas de la misma encuesta: el acuerdo con la afirmación “La forma en que uno consume algunos bienes tiene que ver con la postura política de uno” (1 = <em>Muy en desacuerdo</em>; 5 = <em>Muy de acuerdo</em>) y la posición política (1 = <em>Izquierda</em>; 10 = <em>Derecha</em>).</p>
+</section><section id="procedimiento" class="level2"><h2 class="anchored" data-anchor-id="procedimiento">Procedimiento</h2>
+<p>La encuesta fue autoadministrada en línea entre el 18 y el 25 de julio de 2023. El 80,2% de las personas respondió desde un teléfono móvil, y la mediana de duración fue de 19,8 minutos. El orden de los ítems se rotó aleatoriamente dentro de cada batería. El proyecto contó con la aprobación del Comité de Ética de la Universidad Católica del Maule. Al inscribirse en el panel, cada participante accede a la información legal de Netquest y firma un consentimiento informado incluido en su perfil de usuario, que se rige por las condiciones de uso del panel. Este estudio es un análisis secundario de datos anonimizados, levantados en el marco de los proyectos Fondecyt N.º 11200893 y N.º 1212677, con objetivos más amplios que los de este artículo. La base no cuenta con ponderadores.</p>
+</section><section id="análisis-de-datos" class="level2"><h2 class="anchored" data-anchor-id="análisis-de-datos">Análisis de datos</h2>
+<p>No hubo valores perdidos en los ítems analizados. Para reducir el efecto suelo y techo, las categorías extremas con menos del 10% de las respuestas se fusionaron de forma iterativa con la categoría adyacente, de modo que los ítems quedaron con entre tres y cinco categorías, todas con respuestas, como recomiendan <span class="citation" data-cites="samuelsen_latent_2010">Samuelsen &amp; Dayton (<a href="#ref-samuelsen_latent_2010" role="doc-biblioref">2010</a>)</span>. Los ítems se analizaron como indicadores categóricos, sin agregarlos en puntajes.</p>
+<p>El modelo de clases latentes supone que la probabilidad de un patrón de respuestas <strong>y</strong> es una mezcla de <em>T</em> clases, dentro de las cuales los ítems son independientes (independencia local):</p>
+<p><span class="math display">\[
+P(\mathbf{y}) = \sum_{t=1}^{T} \pi_t \prod_{j=1}^{17} \prod_{r=1}^{R_j} \rho_{jr \mid t}^{\, I(y_j = r)}
+\]</span></p>
+<p>donde π<sub><em>t</em></sub> es la proporción de la clase <em>t</em> y ρ<sub><em>jr</em>|<em>t</em></sub> la probabilidad de que una persona de esa clase responda la categoría <em>r</em> del ítem <em>j</em>. No se impusieron restricciones a estos parámetros. Se estimaron modelos de una a ocho clases por máxima verosimilitud con el algoritmo EM, en el paquete <code>poLCA</code> 1.6.0.2 de R 4.3.3 <span class="citation" data-cites="linzer_polca_2011">(<a href="#ref-linzer_polca_2011" role="doc-biblioref">Linzer &amp; Lewis, 2011</a>)</span>, con un criterio de convergencia de 10<sup>−10</sup> en el cambio de la log-verosimilitud y un máximo de 5.000 iteraciones. Cada modelo se estimó con 100 conjuntos de valores iniciales aleatorios; se retuvo la solución de mayor verosimilitud y se registró cuántos inicios la replicaban, como evidencia de haber alcanzado el máximo global <span class="citation" data-cites="samuelsen_latent_2010">(<a href="#ref-samuelsen_latent_2010" role="doc-biblioref">Samuelsen &amp; Dayton, 2010</a>)</span>. También se verificó que todos los parámetros tuvieran errores estándar finitos, condición compatible con un modelo identificado, y se identificaron las probabilidades estimadas en los límites de 0 o 1.</p>
+<p>El número de clases se eligió priorizando el BIC y el CAIC, que muestran el mejor desempeño en estudios de simulación <span class="citation" data-cites="nylund_deciding_2007">(<a href="#ref-nylund_deciding_2007" role="doc-biblioref">Nylund et&nbsp;al., 2007</a>)</span>, junto con la entropía relativa, la probabilidad posterior media de asignación a cada clase (AvePP; aceptable sobre ,70), el tamaño de la clase más pequeña (sobre 5%) y la interpretabilidad <span class="citation" data-cites="weller_latent_2020">(<a href="#ref-weller_latent_2020" role="doc-biblioref">Weller et&nbsp;al., 2020</a>)</span>; el AIC y el aBIC, que penalizan menos la complejidad, se informan como referencia. Las pruebas de ajuste absoluto (G² y χ²) no son interpretables con tablas de contingencia dispersas <span class="citation" data-cites="samuelsen_latent_2010">(<a href="#ref-samuelsen_latent_2010" role="doc-biblioref">Samuelsen &amp; Dayton, 2010</a>)</span>, como en este caso, en que se observaron 1.611 patrones de respuesta distintos en 1.623 personas, por lo que se informan solo de forma descriptiva. Como análisis de robustez, se comparó la solución elegida con las de tres y cuatro clases, siguiendo cómo se reasignaban las personas de una solución a otra.</p>
+<p>Dos decisiones de modelamiento requieren justificación. Primero, <code>poLCA</code> trata las categorías de cada ítem como nominales, sin imponer orden. Esto permite perfiles no monótonos y no supone distancias entre categorías, a costa de estimar más parámetros. Para evaluar si los resultados dependían de esa decisión, se reestimó el modelo con ítems dicotomizados, que distinguen solo entre responder <em>La mayoría de las veces</em> o <em>Siempre</em> y el resto, con 50 inicios aleatorios por modelo. Segundo, los ítems se seleccionaron porque forman factores correlacionados, lo que anticipa cierta dependencia entre ítems de una misma dimensión dentro de cada clase: las clases resumen combinaciones de prácticas, pero dentro de ellas las personas pueden seguir variando de forma continua. Por eso la independencia local se evaluó con los residuos bivariados (BVR), considerando problemáticos los valores sobre 3,84, y su cumplimiento se trata como aproximado.</p>
+<p>La relación entre la pertenencia a las clases y el sexo, la edad (18-34, 35-54 y 55 o más) y el NSE (ABC1, C2-C3 y D-E) se estimó con el enfoque de tres pasos corregido por máxima verosimilitud <span class="citation" data-cites="vermunt_latent_2010 bakk_estimating_2013">(<a href="#ref-bakk_estimating_2013" role="doc-biblioref">Bakk et&nbsp;al., 2013</a>; <a href="#ref-vermunt_latent_2010" role="doc-biblioref">Vermunt, 2010</a>)</span>. En el primer paso se estimó el modelo de medida sin covariables, de modo que estas no modificaran la definición de las clases. En el segundo, cada persona se asignó a su clase más probable y se calculó la matriz de error de clasificación, es decir, la probabilidad de ser asignado a cada clase según la clase real. En el tercero se estimó una regresión logística multinomial de la clase latente sobre las tres variables simultáneamente, tratando la clase asignada como un indicador imperfecto de la clase real, con los errores fijados en esa matriz. Este procedimiento corrige la atenuación de las asociaciones que se produce al usar directamente la clase asignada. Se usó como referencia la clase Intermedio, la más grande y de perfil medio. Los efectos de cada variable se evaluaron con pruebas de Wald conjuntas para todas las clases, y para facilitar la interpretación se calcularon las probabilidades predichas de pertenecer a cada clase en cada grupo, promediando sobre la muestra con las demás variables en sus valores observados, con intervalos de confianza del 95% obtenidos por simulación de los coeficientes.</p>
+<p>No se incluyeron interacciones entre las variables sociodemográficas, porque no había hipótesis sobre ellas y fragmentarían los grupos más pequeños. Como evidencia de validez de la interpretación de las clases, se estimó un segundo modelo de tres pasos que agregaba la lectura política del consumo y la posición política, ambas estandarizadas, controlando por sexo, edad y NSE.</p>
+</section></section><section id="resultados" class="level1"><h1>Resultados</h1>
+<section id="número-de-clases" class="level2"><h2 class="anchored" data-anchor-id="número-de-clases">Número de clases</h2>
+<p>El BIC y el CAIC alcanzaron su mínimo con cinco clases (Tabla 1). El BIC de las soluciones de cinco y seis clases fue prácticamente igual (60.982,3 y 60.982,7), pero la de seis clases incluyó una clase de menos del 5% de la muestra y su máximo de verosimilitud se replicó solo en 36 de 100 inicios. La solución de cinco clases replicó su máximo en 91 de 100 inicios, tuvo una entropía de ,797 y ninguna clase fue menor al 8,5% de la muestra. La probabilidad posterior media de asignación varió entre ,85 y ,92. Todos los parámetros tuvieron errores estándar finitos, y solo 1 de las 305 probabilidades condicionales quedó en el límite: la probabilidad de la categoría más baja de planificación de la compra de alimentos en la clase Amplio, que es sustantivamente plausible. Como era esperable con una tabla tan dispersa, G²(1.399) = 35.380,9 no es interpretable como prueba de ajuste (Tabla S3 del material suplementario). Se retuvo la solución de cinco clases.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Tabla 1</strong></p>
+<p><em>Índices de Ajuste de los Modelos de Clases Latentes con Una a Ocho Clases</em></p>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 11%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: center;">Clases</th>
+<th style="text-align: right;">LL</th>
+<th style="text-align: right;">npar</th>
+<th style="text-align: right;">BIC</th>
+<th style="text-align: right;">CAIC</th>
+<th style="text-align: right;">aBIC</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">Entropía</th>
+<th style="text-align: right;">Clase mín.</th>
+<th style="text-align: right;">Réplicas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">−32.402,5</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">65.130,2</td>
+<td style="text-align: right;">65.174,2</td>
+<td style="text-align: right;">64.990,4</td>
+<td style="text-align: right;">64.893,0</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">100/100</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">−31.071,7</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">62.801,4</td>
+<td style="text-align: right;">62.890,4</td>
+<td style="text-align: right;">62.518,6</td>
+<td style="text-align: right;">62.321,5</td>
+<td style="text-align: right;">,771</td>
+<td style="text-align: right;">,485</td>
+<td style="text-align: right;">100/100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: right;">−30.288,3</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">61.567,1</td>
+<td style="text-align: right;">61.701,1</td>
+<td style="text-align: right;">61.141,4</td>
+<td style="text-align: right;">60.844,6</td>
+<td style="text-align: right;">,808</td>
+<td style="text-align: right;">,242</td>
+<td style="text-align: right;">100/100</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: right;">−29.941,3</td>
+<td style="text-align: right;">179</td>
+<td style="text-align: right;">61.205,8</td>
+<td style="text-align: right;">61.384,8</td>
+<td style="text-align: right;">60.637,1</td>
+<td style="text-align: right;">60.240,6</td>
+<td style="text-align: right;">,811</td>
+<td style="text-align: right;">,103</td>
+<td style="text-align: right;">45/100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: right;">−29.663,3</td>
+<td style="text-align: right;">224</td>
+<td style="text-align: right;">60.982,3</td>
+<td style="text-align: right;">61.206,3</td>
+<td style="text-align: right;">60.270,7</td>
+<td style="text-align: right;">59.774,5</td>
+<td style="text-align: right;">,797</td>
+<td style="text-align: right;">,085</td>
+<td style="text-align: right;">91/100</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: right;">−29.497,1</td>
+<td style="text-align: right;">269</td>
+<td style="text-align: right;">60.982,7</td>
+<td style="text-align: right;">61.251,7</td>
+<td style="text-align: right;">60.128,2</td>
+<td style="text-align: right;">59.532,3</td>
+<td style="text-align: right;">,810</td>
+<td style="text-align: right;">,049</td>
+<td style="text-align: right;">36/100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: right;">−29.356,4</td>
+<td style="text-align: right;">314</td>
+<td style="text-align: right;">61.033,9</td>
+<td style="text-align: right;">61.347,9</td>
+<td style="text-align: right;">60.036,3</td>
+<td style="text-align: right;">59.340,8</td>
+<td style="text-align: right;">,810</td>
+<td style="text-align: right;">,030</td>
+<td style="text-align: right;">18/100</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: right;">−29.249,3</td>
+<td style="text-align: right;">359</td>
+<td style="text-align: right;">61.152,3</td>
+<td style="text-align: right;">61.511,3</td>
+<td style="text-align: right;">60.011,9</td>
+<td style="text-align: right;">59.216,6</td>
+<td style="text-align: right;">,809</td>
+<td style="text-align: right;">,029</td>
+<td style="text-align: right;">16/100</td>
+</tr>
+</tbody>
+</table>
+<p><em>Nota.</em> LL = log-verosimilitud; npar = número de parámetros; BIC = criterio de información bayesiano; CAIC = criterio de información de Akaike consistente; aBIC = BIC ajustado por tamaño muestral; AIC = criterio de información de Akaike; Clase mín. = proporción de la clase más pequeña; Réplicas = inicios aleatorios, de 100, que alcanzaron la misma log-verosimilitud máxima.</p>
+</section><section id="perfiles-de-las-clases" class="level2"><h2 class="anchored" data-anchor-id="perfiles-de-las-clases">Perfiles de las clases</h2>
+<p>La Tabla 2 y la Figura 1 describen las cinco clases. Tres de ellas forman una gradiente con el mismo orden en las cuatro dimensiones. La clase <strong>Amplio</strong> (21,8%) presentó niveles altos en todas las prácticas y fue la única con compra sustentable alta. La clase <strong>Intermedio</strong> (28,1%), la más grande, presentó niveles medios en todas. La clase <strong>Bajo</strong> (17,1%) presentó niveles bajos en todo, salvo un ahorro doméstico medio-bajo.</p>
+<p>Las otras dos clases, que suman el 33,0% de la muestra, no encajan en esa gradiente. La clase <strong>Doméstico</strong> (24,5%) presentó un ahorro doméstico tan alto como la clase Amplio (,83 y ,83, respectivamente) y planificación alta, pero poco consumo político (,18) y compra sustentable media. La clase <strong>Político</strong> (8,5%) presentó el perfil inverso: el consumo político más alto de todas las clases (,78), compra sustentable media y el ahorro doméstico más bajo (,30), inferior incluso al de la clase Bajo (,47).</p>
+<p>Las probabilidades condicionales de respuesta de cada ítem, con sus errores estándar, se presentan en las Tablas S1 y S2. Por ejemplo, la probabilidad de participar al menos a veces en asociaciones de consumidores o cooperativas fue de ,66 en la clase Político y de ,25 o menos en las demás, mientras que la probabilidad de evitar casi siempre dejar luces prendidas fue de ,39 en la clase Político y de ,72 o más en las otras.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Tabla 2</strong></p>
+<p><em>Tamaño de las Clases, Calidad de Clasificación y Respuesta Media Esperada por Dimensión</em></p>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Clase</th>
+<th style="text-align: right;">%</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">AvePP</th>
+<th style="text-align: right;">Compra sustentable</th>
+<th style="text-align: right;">Consumo político</th>
+<th style="text-align: right;">Ahorro doméstico</th>
+<th style="text-align: right;">Planificación</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Amplio</td>
+<td style="text-align: right;">21,8</td>
+<td style="text-align: right;">355</td>
+<td style="text-align: right;">,90</td>
+<td style="text-align: right;">,80</td>
+<td style="text-align: right;">,57</td>
+<td style="text-align: right;">,83</td>
+<td style="text-align: right;">,77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Intermedio</td>
+<td style="text-align: right;">28,1</td>
+<td style="text-align: right;">468</td>
+<td style="text-align: right;">,85</td>
+<td style="text-align: right;">,48</td>
+<td style="text-align: right;">,35</td>
+<td style="text-align: right;">,61</td>
+<td style="text-align: right;">,49</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Doméstico</td>
+<td style="text-align: right;">24,5</td>
+<td style="text-align: right;">393</td>
+<td style="text-align: right;">,85</td>
+<td style="text-align: right;">,47</td>
+<td style="text-align: right;">,18</td>
+<td style="text-align: right;">,83</td>
+<td style="text-align: right;">,66</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Político</td>
+<td style="text-align: right;">8,5</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">,92</td>
+<td style="text-align: right;">,58</td>
+<td style="text-align: right;">,78</td>
+<td style="text-align: right;">,30</td>
+<td style="text-align: right;">,47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bajo</td>
+<td style="text-align: right;">17,1</td>
+<td style="text-align: right;">273</td>
+<td style="text-align: right;">,88</td>
+<td style="text-align: right;">,20</td>
+<td style="text-align: right;">,13</td>
+<td style="text-align: right;">,47</td>
+<td style="text-align: right;">,34</td>
+</tr>
+</tbody>
+</table>
+<p><em>Nota.</em> % = proporción estimada por el modelo; n = personas asignadas a cada clase según su probabilidad posterior más alta; AvePP = probabilidad posterior media de las personas asignadas a la clase. Las dimensiones muestran la respuesta media esperada en la clase, reescalada de 0 (categoría más baja) a 1 (categoría más alta) y promediada entre los ítems de cada dimensión.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Figura 1</strong></p>
+<p><em>Respuesta Media Esperada en Cada Ítem según Clase Latente</em></p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="paper_clases_files/figure-html/figura-perfiles-1.png" class="img-fluid figure-img" width="624"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Nota.</em> 0 = categoría de respuesta más baja; 1 = más alta. Compra sustentable: O2.11 compra productos orgánicos o naturales; O2.12 compra productos hechos con material reciclado; O3.4 compra un producto porque no daña el medioambiente, aunque sea más caro; O3.7 se informa de dónde vienen los productos que consume. Consumo político: O3.2 intenta influir en lo que consumen otras personas; O3.3 usa redes sociales para promover empresas éticas o sostenibles; O3.5 realiza reclamos o demandas colectivas en el Sernac; O3.8 participa en asociaciones de consumidores o cooperativas; O3.9 participa en marchas o movilizaciones. Ahorro doméstico: O2.1 evita dejar luces prendidas; O2.2 corta el agua al lavarse los dientes; O2.3 toma duchas cortas; O2.4 espera que los alimentos se enfríen antes de refrigerarlos; O2.5 desenchufa aparatos eléctricos. Planificación: O1.10 elabora un presupuesto mensual; O2.8 planifica la compra de alimentos; O2.9 planifica la compra de vestuario.</p>
+<p>El supuesto de independencia local se cumplió de forma aproximada. 21 de los 136 pares de ítems (15,4%) tuvieron residuos bivariados sobre 3,84, con un máximo de 13,5. Esos pares correspondieron a ítems de una misma dimensión, como la participación en asociaciones y en marchas, lo que indica que dentro de cada clase persiste algo de variación continua en cada dimensión.</p>
+</section><section id="robustez-de-la-solución" class="level2"><h2 class="anchored" data-anchor-id="robustez-de-la-solución">Robustez de la solución</h2>
+<p>La mayor parte de la mejora del BIC ocurrió hasta las tres clases: de la reducción total, el paso de dos a tres clases aportó el 29,8%, el de tres a cuatro el 8,7% y el de cuatro a cinco el 5,4%. Por eso se compararon las soluciones de tres, cuatro y cinco clases (Figura 2). La solución de tres clases distinguió una clase Amplio, una Bajo y un grupo con el consumo político más alto y el ahorro doméstico más bajo, mezclado con personas de nivel medio. Con cuatro clases, ese grupo se separó en una clase Político más nítida y una clase Intermedio. Con cinco, parte de la clase Bajo y parte de la Amplio formaron la clase Doméstico.</p>
+<p>El perfil político, con alto consumo político y bajo ahorro doméstico, apareció en las tres soluciones. El perfil doméstico, en cambio, solo se distinguió con cinco clases. Las soluciones más simples dejaron más dependencia local sin explicar (49 pares con BVR sobre 3,84 con tres clases y 31 con cuatro, frente a 21 con cinco), y la de cuatro clases replicó su máximo de verosimilitud solo en 45 de 100 inicios.</p>
+<p>El análisis con ítems dicotomizados prefirió seis clases según el BIC (Tabla S4). Su concordancia con la clasificación principal fue baja (índice de Rand ajustado = ,26 con cinco clases), porque al perder la gradación de las respuestas la zona intermedia se repartió de otra forma. Los perfiles no ordenados, sin embargo, reaparecieron (Tabla S5): una clase pequeña (3,0%) con consumo político moderado (,54) y ahorro doméstico casi nulo (,05), formada en un 88% por personas de la clase Político, y una clase con ahorro doméstico alto y poco consumo político, correspondiente a la clase Doméstico. Las clases Amplio y Bajo también se reprodujeron.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Figura 2</strong></p>
+<p><em>Perfiles por Dimensión en las Soluciones de Tres, Cuatro y Cinco Clases</em></p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="paper_clases_files/figure-html/figura-robustez-1.png" class="img-fluid figure-img" width="624"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Nota.</em> Respuesta media esperada por dimensión (0 = categoría más baja; 1 = más alta). Las clases se nombran con la misma regla en las tres soluciones; la clase Doméstico solo se distingue con cinco clases.</p>
+</section><section id="relación-con-sexo-edad-y-nivel-socioeconómico" class="level2"><h2 class="anchored" data-anchor-id="relación-con-sexo-edad-y-nivel-socioeconómico">Relación con sexo, edad y nivel socioeconómico</h2>
+<p>La clasificación de las personas fue precisa: la probabilidad de ser asignado a la propia clase varió entre ,84 y ,90. Controlando mutuamente las tres variables, la pertenencia a las clases se asoció con la edad (Wald(8) = 70,79, <em>p</em> &lt; ,001), el sexo (Wald(4) = 34,37, <em>p</em> &lt; ,001) y el NSE (Wald(8) = 19,52, <em>p</em> = ,012). La Tabla 3 presenta las razones de odds frente a la clase Intermedio y la Figura 3, las probabilidades predichas.</p>
+<p>La clase Político fue la más asociada a la edad y al sexo. Su probabilidad fue de 13,1% entre personas de 18 a 34 años y de 2,9% entre las de 55 o más (<em>OR</em> = 0,24, IC 95% [0,10, 0,54]), y de 13,3% en hombres frente a 4,8% en mujeres (<em>OR</em> = 0,38, IC 95% [0,23, 0,62]). No se asoció con el NSE. La clase Doméstico, en cambio, aumentó con la edad, de 16,6% a 33,4% (<em>OR</em> = 2,26, IC 95% [1,43, 3,58]), y fue más probable en el NSE bajo que en el alto (26,5% frente a 14,7%; <em>OR</em> = 2,19, IC 95% [1,19, 4,02]). La clase Amplio fue más probable entre mujeres (<em>OR</em> = 1,50, IC 95% [1,06, 2,14]) y personas de 55 o más años (<em>OR</em> = 1,68, IC 95% [1,10, 2,58]), y menos probable en el NSE medio que en el alto (<em>OR</em> = 0,57, IC 95% [0,35, 0,93]). La clase Bajo fue más probable entre jóvenes: su probabilidad fue de 24,3% entre los 18 y 34 años y de 10,7% desde los 55.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Tabla 3</strong></p>
+<p><em>Razones de Odds de Pertenecer a Cada Clase frente a la Clase Intermedio (Modelo de Tres Pasos)</em></p>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Variable (referencia)</th>
+<th style="text-align: right;">Amplio</th>
+<th style="text-align: right;">Doméstico</th>
+<th style="text-align: right;">Político</th>
+<th style="text-align: right;">Bajo</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mujer (ref. hombre)</td>
+<td style="text-align: right;">1,50 [1,06, 2,14]*</td>
+<td style="text-align: right;">1,40 [0,97, 2,03]</td>
+<td style="text-align: right;">0,38 [0,23, 0,62]*</td>
+<td style="text-align: right;">0,96 [0,65, 1,42]</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-54 (ref. 18-34)</td>
+<td style="text-align: right;">0,92 [0,62, 1,37]</td>
+<td style="text-align: right;">1,44 [0,94, 2,21]</td>
+<td style="text-align: right;">0,49 [0,30, 0,82]*</td>
+<td style="text-align: right;">0,46 [0,29, 0,71]*</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">55 o más (ref. 18-34)</td>
+<td style="text-align: right;">1,68 [1,10, 2,58]*</td>
+<td style="text-align: right;">2,26 [1,43, 3,58]*</td>
+<td style="text-align: right;">0,24 [0,10, 0,54]*</td>
+<td style="text-align: right;">0,48 [0,29, 0,81]*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C2-C3 (ref. ABC1)</td>
+<td style="text-align: right;">0,57 [0,35, 0,93]*</td>
+<td style="text-align: right;">1,66 [0,89, 3,09]</td>
+<td style="text-align: right;">0,72 [0,35, 1,50]</td>
+<td style="text-align: right;">1,13 [0,62, 2,04]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D-E (ref. ABC1)</td>
+<td style="text-align: right;">0,85 [0,53, 1,35]</td>
+<td style="text-align: right;">2,19 [1,19, 4,02]*</td>
+<td style="text-align: right;">1,20 [0,60, 2,40]</td>
+<td style="text-align: right;">1,42 [0,80, 2,51]</td>
+</tr>
+</tbody>
+</table>
+<p><em>Nota.</em> Razones de odds [IC 95%] de una regresión logística multinomial de la clase latente sobre sexo, edad y NSE, estimadas simultáneamente y corregidas por error de clasificación. La categoría de referencia de cada variable se indica entre paréntesis. NSE = nivel socioeconómico. * <em>p</em> &lt; ,05.</p>
+<div data-custom-style="Titulo tabla">
+<p><strong>Figura 3</strong></p>
+<p><em>Probabilidad Predicha de Pertenecer a Cada Clase según Sexo, Edad y Nivel Socioeconómico</em></p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="paper_clases_files/figure-html/figura-tres-pasos-1.png" class="img-fluid figure-img" width="624"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Nota.</em> Probabilidad predicha de pertenecer a cada clase en cada grupo, promediando sobre la muestra con las demás variables en sus valores observados, e intervalos de confianza del 95% obtenidos por simulación de los coeficientes. Las líneas punteadas separan sexo, edad y NSE. NSE = nivel socioeconómico.</p>
+</section><section id="evidencia-de-validez-de-la-interpretación" class="level2"><h2 class="anchored" data-anchor-id="evidencia-de-validez-de-la-interpretación">Evidencia de validez de la interpretación</h2>
+<p>Al agregar la lectura política del consumo y la posición política al modelo de tres pasos, ambas se asociaron con la pertenencia a las clases (Wald(4) = 42,86, <em>p</em> &lt; ,001 y Wald(4) = 17,33, <em>p</em> = ,002; Tabla S6). Por cada desviación estándar de acuerdo con que el consumo expresa una postura política, aumentó la probabilidad de pertenecer a la clase Político (<em>OR</em> = 1,50, IC 95% [1,19, 1,87]) y disminuyó la de pertenecer a las clases Doméstico (<em>OR</em> = 0,75, IC 95% [0,62, 0,91]) y Bajo (<em>OR</em> = 0,75, IC 95% [0,62, 0,91]), frente a la clase Intermedio. La posición política no distinguió a la clase Político (<em>OR</em> = 1,00, IC 95% [0,79, 1,27]), pero las personas más de derecha tuvieron mayor probabilidad de pertenecer a la clase Doméstico (<em>OR</em> = 1,23, IC 95% [1,04, 1,47]).</p>
+</section></section><section id="discusión" class="level1"><h1>Discusión</h1>
+<p>Este estudio buscó identificar perfiles de prácticas de consumo socioambientales en Chile y evaluar si forman un continuo, como suponen las tipologías sumativas, o combinaciones cualitativamente distintas. El resultado principal es que ambas cosas ocurren. Una parte de la población se ordena en una gradiente de más a menos prácticas, pero cerca de un tercio pertenece a dos perfiles que combinan las prácticas de forma opuesta: uno doméstico, centrado en el ahorro y la planificación, y uno político, con el consumo político más alto y el ahorro doméstico más bajo.</p>
+<p>Este hallazgo cuestiona el supuesto central de las tipologías de tipo Akatu <span class="citation" data-cites="akatu_pesquisa_2007 ariztia_nuevo_2010">(<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">Ariztía et&nbsp;al., 2010</a>; <a href="#ref-akatu_pesquisa_2007" role="doc-biblioref">Instituto Akatu, 2007</a>)</span> y de las clasificaciones por promedio <span class="citation" data-cites="acunamoraga_sustentabilidad_2018">(<a href="#ref-acunamoraga_sustentabilidad_2018" role="doc-biblioref">Acuña Moraga &amp; Severino González, 2018</a>)</span>. En un índice sumativo, una persona de la clase Doméstico y una de la clase Político pueden obtener puntajes similares, porque ambas realizan muchas prácticas en una esfera y pocas en la otra. Esas personas quedarían en el mismo tramo de la tipología, aunque sus prácticas sean casi opuestas. El resultado extiende lo que <span class="citation" data-cites="ariztia_nuevo_2010">Ariztía et&nbsp;al. (<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">2010</a>)</span> observaron a nivel de variables: las prácticas que ellos identificaron como dimensiones distintas no solo se separan en la población, sino que definen tipos distintos de personas. También es coherente con la evidencia de que el consumo político se combina en tipos diferenciados <span class="citation" data-cites="copeland_conceptualizing_2014">(<a href="#ref-copeland_conceptualizing_2014" role="doc-biblioref">Copeland, 2014</a>)</span>, aunque aquí la distinción relevante no es entre boicot y <em>buycott</em>, sino entre la esfera doméstica y la pública.</p>
+<p>La clase Político merece atención. Es la que más practica formas colectivas de consumo, como participar en asociaciones, cooperativas o movilizaciones, y a la vez la que menos ahorra en el hogar, incluso menos que la clase Bajo. Una lectura posible es que este grupo no adhiere a las formas individualizadas de acción ambiental, como acortar la ducha o desenchufar aparatos, y privilegia las colectivas. Esa lectura es coherente con la crítica a la responsabilización del consumidor <span class="citation" data-cites="barros_consumo_2008 marambio_consumo_2024">(<a href="#ref-barros_consumo_2008" role="doc-biblioref">Barros &amp; Costa, 2008</a>; <a href="#ref-marambio_consumo_2024" role="doc-biblioref">Marambio-Tapia, 2024</a>)</span> y con definiciones de consumo crítico orientadas a lo colectivo <span class="citation" data-cites="marambio_consumo_2025">(<a href="#ref-marambio_consumo_2025" role="doc-biblioref">Marambio-Tapia, 2025</a>)</span>. La evidencia de validez la respalda en parte: quienes pertenecen a esta clase ven más el consumo como una postura política, mientras que la clase Doméstico lo ve menos así. La posición en el eje izquierda-derecha, en cambio, no distinguió a la clase Político, lo que sugiere que su rasgo distintivo es politizar el consumo más que una orientación ideológica particular. El diseño, sin embargo, no permite identificar motivaciones, por lo que esta interpretación requiere confirmación con instrumentos que midan las razones de cada práctica.</p>
+<p>La clase Doméstico, por su parte, es más probable entre personas mayores y en el NSE bajo, aun controlando por sexo y edad. Este perfil coincide con lo que <span class="citation" data-cites="ariztia_nuevo_2010">Ariztía et&nbsp;al. (<a href="#ref-ariztia_nuevo_2010" role="doc-biblioref">2010</a>)</span> describieron como un estilo de vida ahorrativo, masivo y transversal, más frecuente en personas mayores y en sectores medios bajos y bajos. Que el ahorro doméstico se separe del consumo político y de la compra sustentable se ha interpretado como señal de que estas prácticas responden en parte a condiciones materiales y no necesariamente a una orientación ambiental <span class="citation" data-cites="silva_indicadores_2013">(<a href="#ref-silva_indicadores_2013" role="doc-biblioref">Silva et&nbsp;al., 2013</a>)</span>. Sin embargo, con estos mismos datos, el factor de ahorro doméstico no se asoció con el ingreso del hogar ni con indicadores de presión financiera [referencia anonimizada], por lo que esa interpretación requiere evidencia directa. Aun así, clasificar a estas personas como “consumidores conscientes” o “comprometidos” atribuiría a una disposición ambiental prácticas que pueden responder a hábitos o a la economía del hogar.</p>
+<p>Las bases sociales de los perfiles también difieren de lo esperado. La clase Político es joven y masculina, y no se asocia con el NSE. Este resultado contrasta con estudios que asocian el consumo político a personas mayores, con más educación e ingresos, y a mujeres <span class="citation" data-cites="ackermann_psychological_2020p">(<a href="#ref-ackermann_psychological_2020p" role="doc-biblioref">Ackermann &amp; Gundelach, 2020</a>)</span>, y con tipologías que asocian el consumo consciente a mujeres y mayores de 45 años <span class="citation" data-cites="akatu_pesquisa_2007">(<a href="#ref-akatu_pesquisa_2007" role="doc-biblioref">Instituto Akatu, 2007</a>)</span>. Puede reflejar formas de participación más recientes, como el uso de redes sociales para promover empresas o la participación en movilizaciones, y el hecho de que aquí el consumo político aparece separado de las prácticas domésticas, en las que las mujeres y las personas mayores tienen más presencia. El NSE, en cambio, distingue sobre todo entre las clases Amplio y Doméstico: en el NSE alto, la frecuencia de prácticas tiende a acompañarse de compra sustentable; en el bajo, de ahorro doméstico sin consumo político. Esto es compatible con el gradiente socioeconómico de la compra sustentable observado en el análisis factorial [referencia anonimizada] y refuerza la idea de que una misma cantidad de prácticas puede tener contenidos socialmente distintos.</p>
+<p>El estudio tiene limitaciones. Persistió algo de dependencia local entre ítems de una misma dimensión, esperable porque los ítems se seleccionaron por formar factores: dentro de cada clase hay variación continua. Un modelo de mezcla factorial, que combina clases y factores, permitiría evaluar esa alternativa. Las categorías se trataron como nominales; el análisis con ítems dicotomizados reprodujo los perfiles no ordenados, pero repartió de otra forma la zona intermedia, por lo que el tamaño de las clases Intermedio y Doméstico depende del tratamiento de las respuestas. El perfil doméstico solo se distinguió con cinco clases, de modo que su existencia depende de esa elección, aunque fue la mejor respaldada por los criterios de información y la estabilidad de la estimación. No se aplicó la prueba bootstrap de razón de verosimilitudes, que el paquete utilizado no implementa. El modelo de tres pasos supone que las variables sociodemográficas se relacionan con las respuestas solo a través de la clase; no se evaluó si algún ítem funciona distinto según sexo, edad o NSE dentro de cada clase, aunque el estudio previo mostró invarianza escalar por sexo y NSE en el modelo factorial de estos ítems [referencia anonimizada]. Las asociaciones son transversales y no permiten inferir causalidad, y la evidencia de validez se basa en dos ítems únicos. Por último, la muestra proviene de un panel en línea y es no probabilística y sin ponderadores; aunque las cuotas aseguran su composición por sexo, edad, NSE y zona, subrepresenta a quienes no usan internet o no participan en paneles de encuestas, por lo que las proporciones describen la muestra y no necesariamente a la población chilena; además, como toda encuesta a individuos, el estudio registra prácticas declaradas sin vincularlas con las condiciones de producción y de oferta que las hacen posibles.</p>
+<p>En conclusión, las prácticas de consumo socioambientales en Chile no se distribuyen en un único continuo de compromiso. Junto a una gradiente de más a menos prácticas existen perfiles doméstico y político con prácticas y bases sociales distintas. Las tipologías sumativas ocultan esos perfiles, y con ellos la diferencia entre un ahorro doméstico cuyas motivaciones están por establecer y una participación política a través del consumo.</p>
+</section><section id="contribución-de-los-autores" class="level1"><h1>Contribución de los autores</h1>
+<p>Autor 1: Conceptualización, Metodología, Software, Análisis formal, Visualización, Redacción – borrador original. Autor 2: Investigación, Curación de datos, Obtención de financiación, Supervisión, Redacción – revisión y edición.</p>
+</section><section id="financiación" class="level1"><h1>Financiación</h1>
+<p>Este trabajo fue financiado por la Agencia Nacional de Investigación y Desarrollo de Chile (ANID), proyectos Fondecyt N.º 11200893, “El consumo y las formas de lo político”, y N.º 1212677. La fuente de financiación no ha participado en el diseño del estudio, la recogida de datos, el análisis o interpretación de estos, la redacción del manuscrito o en la decisión de enviarlo para su publicación.</p>
+</section><section id="conflicto-de-intereses" class="level1"><h1>Conflicto de intereses</h1>
+<p>Los investigadores declaran no tener conflictos de interés.</p>
+</section><section id="declaración-de-disponibilidad-de-datos" class="level1"><h1>Declaración de disponibilidad de datos</h1>
+<p>Los datos pertenecen a los proyectos Fondecyt N.º 11200893 y N.º 1212677 y no están disponibles públicamente. El material suplementario (Tablas S1 a S6) y el código de análisis en R están disponibles en https://github.com/x0czz/Validacion-consumo.</p>
+</section><section id="referencias" class="level1"><h1>Referencias</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-ackermann_psychological_2020p" class="csl-entry" role="listitem">
+Ackermann, K., &amp; Gundelach, B. (2020). Psychological roots of political consumerism: <span>Personality</span> traits and participation in boycott and buycott. <em>International Political Science Review</em>. <a href="https://doi.org/10.1177/0192512120959683">https://doi.org/10.1177/0192512120959683</a>
+</div>
+<div id="ref-acunamoraga_sustentabilidad_2018" class="csl-entry" role="listitem">
+Acuña Moraga, O. E., &amp; Severino González, P. (2018). <span>Sustentabilidad y comportamiento del consumidor socialmente responsable</span>. <em>Opción: Revista de Ciencias Humanas y Sociales</em>, (87), 299-324.
+</div>
+<div id="ref-ariztia_nuevo_2010" class="csl-entry" role="listitem">
+Ariztía, T., Melero, J. M., &amp; Montero, M. J. (2010). Un nuevo consumidor chileno: <span>De</span> los derechos a las responsabilidades. En C. Fuentes Saavedra (Ed.), <em>Chile 2009: <span>Percepciones</span> y actitudes sociales. <span>Informe</span> de la quinta <span>Encuesta</span> <span>Nacional</span> <span>UDP</span></em> (pp. 103-112). Universidad Diego Portales.
+</div>
+<div id="ref-bakk_estimating_2013" class="csl-entry" role="listitem">
+Bakk, Z., Tekle, F. B., &amp; Vermunt, J. K. (2013). Estimating the association between latent class membership and external variables using bias-adjusted three-step approaches. <em>Sociological Methodology</em>, <em>43</em>(1), 272-311. <a href="https://doi.org/10.1177/0081175012470644">https://doi.org/10.1177/0081175012470644</a>
+</div>
+<div id="ref-barros_consumo_2008" class="csl-entry" role="listitem">
+Barros, D. F., &amp; Costa, A. M. da. (2008). Consumo consciente no <span>Brasil</span>: <span>Um</span> olhar introdutório sobre práticas de resistência ao consumo por meio da análise do discurso do <span>Instituto</span> <span>Akatu</span> pelo <span>Consumo</span> <span>Consciente</span>. <em>XXXII Encontro da ANPAD</em>, 1-16.
+</div>
+<div id="ref-collins_latent_2010" class="csl-entry" role="listitem">
+Collins, L. M., &amp; Lanza, S. T. (2010). <em>Latent class and latent transition analysis: <span>With</span> applications in the social, behavioral, and health sciences</em>. Wiley.
+</div>
+<div id="ref-copeland_conceptualizing_2014" class="csl-entry" role="listitem">
+Copeland, L. (2014). Conceptualizing political consumerism: <span>How</span> citizenship norms differentiate boycotting from buycotting. <em>Political Studies</em>, <em>62</em>(S1), 172-186. <a href="https://doi.org/10.1111/1467-9248.12067">https://doi.org/10.1111/1467-9248.12067</a>
+</div>
+<div id="ref-akatu_pesquisa_2007" class="csl-entry" role="listitem">
+Instituto Akatu. (2007). <em>Pesquisa nº 7: <span>Como</span> e por que os brasileiros praticam o consumo consciente?</em> Instituto Akatu.
+</div>
+<div id="ref-linzer_polca_2011" class="csl-entry" role="listitem">
+Linzer, D. A., &amp; Lewis, J. B. (2011). <span>poLCA</span>: <span>An</span> <span>R</span> package for polytomous variable latent class analysis. <em>Journal of Statistical Software</em>, <em>42</em>(10), 1-29. <a href="https://doi.org/10.18637/jss.v042.i10">https://doi.org/10.18637/jss.v042.i10</a>
+</div>
+<div id="ref-marambio_normalizacion_2022" class="csl-entry" role="listitem">
+Marambio-Tapia, A. (2022). Normalización de la deuda y retailización del crédito como pilares del neoliberalismo chileno avanzado. <em>Iberoamericana – Nordic Journal of Latin American and Caribbean Studies</em>, <em>51</em>(1), 14-25. <a href="https://doi.org/10.16993/iberoamericana.529">https://doi.org/10.16993/iberoamericana.529</a>
+</div>
+<div id="ref-marambio_consumo_2024" class="csl-entry" role="listitem">
+Marambio-Tapia, A. (2024). Consumo crítico y otras economías. En <em>Ampliando las agendas vecinales: <span>Apuntes</span> de la <span>Escuela</span> de <span>Formación</span> <span>Comunitaria</span></em> (pp. 33-37). Escuela de Sociología, Universidad Católica del Maule.
+</div>
+<div id="ref-marambio_consumo_2025" class="csl-entry" role="listitem">
+Marambio-Tapia, A. (2025). Consumo crítico en pandemia en <span>Chile</span>: <span>Iniciativas</span> económicas alternativas que producen comunidad sin <span>Estado</span> ni mercado. <em>Iberoamericana – Nordic Journal of Latin American and Caribbean Studies</em>, <em>54</em>(1), 73-85. <a href="https://doi.org/10.16993/iberoamericana.643">https://doi.org/10.16993/iberoamericana.643</a>
+</div>
+<div id="ref-marambio_encuesta_2023" class="csl-entry" role="listitem">
+Marambio-Tapia, A., &amp; Soto Márquez, A. (2023). <em>Encuesta <span>Sociedad</span> de <span>Consumo</span> 2023: <span>Informe</span> preliminar de resultados (versión 1.1)</em>. Proyecto Fondecyt 11200893.
+</div>
+<div id="ref-moulian_chile_1997" class="csl-entry" role="listitem">
+Moulian, T. (1997). <em>Chile actual: <span>Anatomía</span> de un mito</em>. LOM Ediciones; ARCIS.
+</div>
+<div id="ref-nylund_deciding_2007" class="csl-entry" role="listitem">
+Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in latent class analysis and growth mixture modeling: <span>A</span> <span>Monte</span> <span>Carlo</span> simulation study. <em>Structural Equation Modeling: A Multidisciplinary Journal</em>, <em>14</em>(4), 535-569. <a href="https://doi.org/10.1080/10705510701575396">https://doi.org/10.1080/10705510701575396</a>
+</div>
+<div id="ref-samuelsen_latent_2010" class="csl-entry" role="listitem">
+Samuelsen, K. M., &amp; Dayton, C. M. (2010). Latent class analysis. En G. R. Hancock &amp; R. O. Mueller (Eds.), <em>The reviewer’s guide to quantitative methods in the social sciences</em> (pp. 173-184). Routledge.
+</div>
+<div id="ref-silva_indicadores_2013" class="csl-entry" role="listitem">
+Silva, M. E., Oliveira, A. P. M. de, &amp; Gómez, C. R. P. (2013). <span>Indicadores de consumo consciente: uma avaliação do recifense sob a ótica do consumo sustentável</span>. <em>Revista Eletrônica de Ciência Administrativa</em>, <em>12</em>(2), 173-190. <a href="https://doi.org/10.5329/RECADM.2013012">https://doi.org/10.5329/RECADM.2013012</a>
+</div>
+<div id="ref-vermunt_latent_2010" class="csl-entry" role="listitem">
+Vermunt, J. K. (2010). Latent class modeling with covariates: <span>Two</span> improved three-step approaches. <em>Political Analysis</em>, <em>18</em>(4), 450-469. <a href="https://doi.org/10.1093/pan/mpq025">https://doi.org/10.1093/pan/mpq025</a>
+</div>
+<div id="ref-weller_latent_2020" class="csl-entry" role="listitem">
+Weller, B. E., Bowen, N. K., &amp; Faubert, S. J. (2020). Latent class analysis: <span>A</span> guide to best practice. <em>Journal of Black Psychology</em>, <em>46</em>(4), 287-311. <a href="https://doi.org/10.1177/0095798420930932">https://doi.org/10.1177/0095798420930932</a>
+</div>
+<div id="ref-yoshizato_ideologizacao_2016" class="csl-entry" role="listitem">
+Yoshizato Bierwagen, M. (2016). A ideologização do consumo consciente: <span>Soberania</span> do consumidor e liberdade de escolha no caso do <span>Instituto</span> <span>Akatu</span>. <em>Gestão.Org: Revista Eletrônica de Gestão Organizacional</em>, <em>14</em>, 75-87. <a href="https://doi.org/10.21714/1679-18272016v14Esp.p75-87">https://doi.org/10.21714/1679-18272016v14Esp.p75-87</a>
+</div>
+</div>
+</section></main><!-- /main column --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+</body></html>

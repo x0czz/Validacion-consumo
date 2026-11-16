@@ -1,0 +1,126 @@
+---
+title: "Diagnóstico de influencia del modelo multinivel"
+author: "Nicolás Outerbridge"
+date: today
+date-format: D [de] MMMM [de] YYYY
+lang: es
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(lme4)
+library(influence.ME)
+library(dplyr)
+
+load("input/lapop23.RData")
+```
+
+# Preparación de los datos
+
+Se descompone la inseguridad en un componente entre países (media del país) y uno intra-país (desviación respecto de la media del país).
+
+```{r}
+#| label: prep-datos
+
+lapop <- lapop |>
+  group_by(country) |>
+  mutate(
+    insegur_cluster_mean = mean(insegur, na.rm = TRUE),
+    insegur_within = insegur - insegur_cluster_mean
+  ) |>
+  ungroup()
+```
+
+# Modelo
+
+```{r}
+#| label: modelo
+
+model <- lmer(
+  pt_police ~ female + age + educR + ideo +
+    insegur_within + insegur_cluster_mean +
+    (1 | country),
+  data = lapop
+)
+
+summary(model)
+```
+
+# Influencia a nivel de país
+
+Se reestima el modelo excluyendo un país a la vez. Con $J = 16$ países, los puntos de corte son $2/\sqrt{J} = 0.5$ para DFBETAS y $4/J = 0.25$ para la distancia de Cook.
+
+```{r}
+#| label: influencia
+
+infl <- influence(model, group = "country")
+
+J <- 16
+umbral_dfb  <- 2 / sqrt(J)   # 0.5
+umbral_cook <- 4 / J         # 0.25
+```
+
+## DFBETAS
+
+```{r}
+#| label: dfbetas
+
+dfb <- dfbetas(infl)
+round(dfb, 3)
+
+which(abs(dfb) > umbral_dfb, arr.ind = TRUE)
+```
+
+```{r}
+#| label: fig-dfbetas
+#| fig-cap: "DFBETAS por país y parámetro de efectos fijos"
+
+plot(infl, which = "dfbetas", cutoff = umbral_dfb)
+```
+
+## Distancia de Cook
+
+```{r}
+#| label: cook
+
+cook <- cooks.distance(infl)
+cook[cook > umbral_cook, , drop = FALSE]
+```
+
+```{r}
+#| label: fig-cook
+#| fig-cap: "Distancia de Cook por país"
+
+plot(infl, which = "cook", cutoff = umbral_cook, sort = TRUE)
+```
+
+## Test de significancia
+
+Se evalúa si al excluir un país cambia la significancia o el signo de los coeficientes. Para el predictor de nivel individual se usa 1.96 y para el de nivel país el valor crítico de t con 14 grados de libertad.
+
+```{r}
+#| label: sigtest
+
+sig_n1 <- sigtest(infl, test = 1.96)
+sig_n1$insegur_within
+
+sig_n2 <- sigtest(infl, test = qt(0.975, df = 14))
+sig_n2$insegur_cluster_mean
+```
+
+# Resultados
+
+El análisis de DFBETAS identifica algunos países que superan el punto de corte de 0.5 en uno o más coeficientes. La distancia de Cook marca tres países por sobre el corte de 0.25. Sin embargo, el test de significancia no detecta ningún país cuya exclusión altere la significancia o el signo de los coeficientes, por lo que los resultados del modelo no dependen de un país en particular.

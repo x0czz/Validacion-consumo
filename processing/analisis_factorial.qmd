@@ -1,0 +1,935 @@
+---
+title: "Análisis factorial de las baterías O1–O4"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+Este documento analiza la estructura factorial de las baterías O1–O4 de la Encuesta Sociedad de Consumo 2023. Usa la base `db_proc`, generada en `prep_colapso_10.qmd`, donde las categorías extremas con menos de 10% ya están colapsadas y O4 está invertida (valor alto = más acuerdo).
+
+El flujo es:
+
+- **Secciones 1 a 4.** Pruebas previas de pertinencia del análisis factorial, en la muestra completa.
+- **Sección 5.** División aleatoria de la muestra en dos mitades.
+- **Secciones 6 y 7.** Análisis factorial exploratorio (AFE) en la mitad 1: número de factores y depuración de ítems.
+- **Sección 8.** Análisis factorial confirmatorio (AFC) en la mitad 2: comparación de modelos alternativos.
+- **Sección 9.** Modelos de medida reducidos: subconjuntos de ítems con criterios más exigentes, que logran buen ajuste y confiabilidad.
+
+Las pruebas previas son tres:
+
+1. **Determinante de la matriz de correlaciones.** Si es muy cercano a cero (menor a 0,00001), hay multicolinealidad extrema.
+2. **Prueba de esfericidad de Bartlett.** Contrasta la hipótesis de que la matriz de correlaciones es una matriz identidad, es decir, que los ítems no se correlacionan. Rechazarla (p < 0,05) es condición necesaria para factorizar.
+3. **Medida de adecuación muestral de Kaiser-Meyer-Olkin (KMO).** Compara las correlaciones con las correlaciones parciales. Se calcula para el conjunto (KMO global) y para cada ítem (MSA).
+
+Como los ítems son ordinales con 3 a 5 categorías, todas las pruebas usan la **matriz de correlaciones policóricas**. Al final se compara con la matriz de Pearson como análisis de sensibilidad.
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(haven)
+library(here)
+library(psych)
+library(GPArotation)
+library(lavaan)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "")
+
+db_proc <- readRDS(here("input", "data", "proc", "db_proc.rds"))
+
+items <- db_proc %>%
+  select(matches("^O[1-4]_\\d+$")) %>%
+  mutate(across(everything(), ~ as.numeric(zap_labels(.x))))
+
+etiquetas <- map_chr(db_proc %>% select(all_of(names(items))),
+                     ~ str_remove(attr(.x, "label"), "_[^_]*$"))
+
+n <- nrow(items)
+
+# Conjuntos de ítems a evaluar
+conjuntos <- list(
+  "O1–O4 (46 ítems)"     = names(items),
+  "Prácticas O1–O3"      = grep("^O[1-3]_", names(items), value = TRUE),
+  "O1 Prácticas de consumo"           = grep("^O1_", names(items), value = TRUE),
+  "O2 Prácticas cotidianas"           = grep("^O2_", names(items), value = TRUE),
+  "O3 Consumo crítico y político"     = grep("^O3_", names(items), value = TRUE),
+  "O4 Actitudes hacia el reciclaje"   = grep("^O4_", names(items), value = TRUE)
+)
+```
+
+La base tiene `r n` casos y `r ncol(items)` ítems. La razón casos por ítem es `r round(n / ncol(items), 1)`, por sobre el mínimo habitual de 10.
+
+# 1. Matriz de correlaciones policóricas
+
+```{r}
+#| label: policoricas
+poly <- polychoric(items)
+R_poly <- poly$rho
+
+# Verificar que la matriz sea definida positiva
+autovalores <- eigen(R_poly, only.values = TRUE)$values
+definida_positiva <- all(autovalores > 0)
+
+if (!definida_positiva) {
+  R_poly <- cor.smooth(R_poly)
+}
+```
+
+La matriz policórica `r if (definida_positiva) "es definida positiva" else "no era definida positiva y se suavizó con cor.smooth()"`. Su autovalor mínimo es `r round(min(autovalores), 4)`.
+
+```{r}
+#| label: fig-correlaciones
+#| fig-cap: "Correlaciones policóricas entre los 46 ítems"
+#| fig-height: 9
+#| fig-width: 9
+R_poly %>%
+  as.data.frame() %>%
+  rownames_to_column("item1") %>%
+  pivot_longer(-item1, names_to = "item2", values_to = "r") %>%
+  mutate(across(c(item1, item2), ~ factor(.x, levels = names(items)))) %>%
+  ggplot(aes(item1, fct_rev(item2), fill = r)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "#b2182b", mid = "white", high = "#2166ac",
+                       midpoint = 0, limits = c(-1, 1)) +
+  labs(x = NULL, y = NULL, fill = "r") +
+  theme_minimal(base_size = 8) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+## Ítems con correlaciones débiles
+
+Un ítem que no se correlaciona al menos 0,30 con ningún otro difícilmente cargará en un factor común.
+
+```{r}
+#| label: correlaciones-debiles
+R_sin_diag <- R_poly
+diag(R_sin_diag) <- NA
+
+max_r <- tibble(
+  item = names(items),
+  enunciado = etiquetas,
+  r_max = apply(abs(R_sin_diag), 1, max, na.rm = TRUE),
+  n_r_030 = apply(abs(R_sin_diag) >= 0.30, 1, sum, na.rm = TRUE)
+) %>%
+  arrange(r_max)
+
+max_r %>%
+  filter(r_max < 0.30) %>%
+  kable(digits = 2,
+        col.names = c("Ítem", "Enunciado", "Correlación máxima (abs.)", "N° de correlaciones ≥ 0,30 (abs.)"),
+        caption = "Ítems sin ninguna correlación de 0,30 o más") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 2. Determinante, Bartlett y KMO por conjunto de ítems
+
+```{r}
+#| label: pruebas-conjuntos
+pruebas_previas <- function(vars, R_total, n) {
+  R <- R_total[vars, vars]
+  bart <- cortest.bartlett(R, n = n)
+  kmo  <- KMO(R)
+  tibble(
+    n_items      = length(vars),
+    determinante = det(R),
+    bartlett_chi2 = bart$chisq,
+    bartlett_gl   = bart$df,
+    bartlett_p    = bart$p.value,
+    kmo_global    = kmo$MSA,
+    msa_min       = min(kmo$MSAi),
+    item_msa_min  = names(which.min(kmo$MSAi))
+  )
+}
+
+tabla_pruebas <- imap_dfr(conjuntos, ~ pruebas_previas(.x, R_poly, n) %>%
+                            mutate(conjunto = .y, .before = 1))
+
+tabla_pruebas %>%
+  mutate(
+    determinante  = formatC(determinante, format = "e", digits = 2),
+    bartlett_chi2 = formatC(bartlett_chi2, format = "f", digits = 1, big.mark = "."),
+    bartlett_p    = if_else(bartlett_p < 0.001, "< 0,001", formatC(bartlett_p, digits = 3))
+  ) %>%
+  kable(digits = 3,
+        col.names = c("Conjunto", "Ítems", "Determinante", "Bartlett χ²", "gl", "p",
+                      "KMO global", "MSA mínimo", "Ítem con MSA mínimo"),
+        caption = "Pruebas de pertinencia del análisis factorial (correlaciones policóricas)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+Criterios de interpretación del KMO (Kaiser, 1974):
+
+| KMO | Interpretación |
+|---|---|
+| ≥ 0,90 | Excelente |
+| 0,80–0,89 | Muy bueno |
+| 0,70–0,79 | Aceptable |
+| 0,60–0,69 | Mediocre |
+| 0,50–0,59 | Bajo |
+| < 0,50 | Inaceptable |
+
+: Escala de Kaiser para el KMO {.striped}
+
+El determinante de la matriz de 46 ítems es por construcción muy pequeño: con muchos ítems, el determinante tiende a cero aunque no haya multicolinealidad. Es más informativo mirarlo por batería.
+
+# 3. Adecuación muestral por ítem (MSA)
+
+El MSA de cada ítem se calcula dentro del conjunto completo de 46 ítems y dentro de su propia batería. Un MSA menor a 0,50 es inaceptable; entre 0,50 y 0,60, dudoso. Aquí solo se identifican: la decisión de excluir ítems se toma junto con el análisis factorial exploratorio.
+
+```{r}
+#| label: msa-items
+msa_total <- KMO(R_poly)$MSAi
+
+msa_bateria <- map(conjuntos[3:6], ~ KMO(R_poly[.x, .x])$MSAi) %>%
+  unname() %>%
+  unlist()
+
+tabla_msa <- tibble(
+  item = names(items),
+  enunciado = etiquetas,
+  msa_total = msa_total[names(items)],
+  msa_bateria = msa_bateria[names(items)]
+) %>%
+  mutate(
+    clasificacion = cut(msa_total,
+                        breaks = c(-Inf, 0.5, 0.6, 0.7, 0.8, 0.9, Inf),
+                        labels = c("Inaceptable", "Bajo", "Mediocre",
+                                   "Aceptable", "Muy bueno", "Excelente"),
+                        right = FALSE)
+  )
+
+tabla_msa %>%
+  arrange(msa_total) %>%
+  kable(digits = 2,
+        col.names = c("Ítem", "Enunciado", "MSA (46 ítems)", "MSA (batería)", "Clasificación"),
+        caption = "Adecuación muestral por ítem, de menor a mayor") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  row_spec(which(arrange(tabla_msa, msa_total)$msa_total < 0.6), bold = TRUE)
+```
+
+```{r}
+#| label: fig-msa
+#| fig-cap: "MSA por ítem en el conjunto de 46 ítems. Líneas en 0,50 y 0,60."
+#| fig-height: 8
+tabla_msa %>%
+  mutate(bateria = str_extract(item, "^O\\d"),
+         item = fct_reorder(item, msa_total)) %>%
+  ggplot(aes(msa_total, item, colour = bateria)) +
+  geom_vline(xintercept = c(0.5, 0.6), linetype = "dashed", colour = "grey50") +
+  geom_point(size = 2) +
+  labs(x = "MSA", y = NULL, colour = "Batería") +
+  theme_minimal()
+```
+
+# 4. Sensibilidad: correlaciones de Pearson
+
+Muchos trabajos reportan Bartlett y KMO sobre la matriz de Pearson. Se presenta la comparación para mostrar que la conclusión no depende del tipo de correlación.
+
+```{r}
+#| label: sensibilidad-pearson
+R_pear <- cor(items)
+
+tabla_pear <- imap_dfr(conjuntos, ~ pruebas_previas(.x, R_pear, n) %>%
+                         mutate(conjunto = .y, .before = 1))
+
+tibble(
+  Conjunto = tabla_pruebas$conjunto,
+  `KMO policórica` = tabla_pruebas$kmo_global,
+  `KMO Pearson` = tabla_pear$kmo_global,
+  `Bartlett χ² policórica` = tabla_pruebas$bartlett_chi2,
+  `Bartlett χ² Pearson` = tabla_pear$bartlett_chi2
+) %>%
+  kable(digits = c(0, 3, 3, 1, 1), format.args = list(big.mark = "."),
+        caption = "KMO global y Bartlett según tipo de correlación") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 5. División de la muestra
+
+La estructura se explora en una mitad aleatoria de la muestra y se confirma en la otra. Así, el modelo confirmatorio se evalúa con datos que no se usaron para construirlo. La semilla fija hace reproducible la división.
+
+```{r}
+#| label: division-muestra
+set.seed(20231)
+idx_m1 <- sample(n, floor(n / 2))
+
+mitad1 <- items[idx_m1, ]
+mitad2 <- items[-idx_m1, ]
+
+# Control: medias por ítem similares en ambas mitades
+dif_medias <- abs(colMeans(mitad1) - colMeans(mitad2))
+```
+
+La mitad 1 (exploratoria) tiene `r nrow(mitad1)` casos y la mitad 2 (confirmatoria), `r nrow(mitad2)`. La mayor diferencia de medias entre mitades es `r round(max(dif_medias), 2)` puntos (ítem `r names(which.max(dif_medias))`), lo que indica que ambas son comparables.
+
+# 6. Número de factores (mitad 1)
+
+Se usan dos criterios: el **análisis paralelo** de Horn, que retiene los factores cuyos autovalores superan los de datos aleatorios, y la **prueba MAP** de Velicer, que busca el número de factores que minimiza la correlación parcial promedio. Con muestras grandes y muchos ítems, el análisis paralelo tiende a sobrestimar y el MAP a subestimar, por lo que se examinan las soluciones intermedias.
+
+```{r}
+#| label: analisis-paralelo
+#| results: hide
+R_m1 <- polychoric(mitad1)$rho
+
+set.seed(20231)
+pa <- fa.parallel(R_m1, n.obs = nrow(mitad1), fm = "minres", fa = "fa",
+                  n.iter = 50, plot = FALSE)
+map <- vss(R_m1, n = 10, n.obs = nrow(mitad1), fm = "minres", plot = FALSE)$map
+```
+
+El análisis paralelo sugiere `r pa$nfact` factores y la prueba MAP, `r which.min(map)`.
+
+```{r}
+#| label: fig-paralelo
+#| fig-cap: "Análisis paralelo: autovalores observados y simulados (mitad 1, 46 ítems)"
+tibble(factor = 1:15,
+       Observados = pa$fa.values[1:15],
+       `Datos aleatorios` = pa$fa.sim[1:15]) %>%
+  pivot_longer(-factor, names_to = "serie", values_to = "autovalor") %>%
+  ggplot(aes(factor, autovalor, colour = serie)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = 1:15) +
+  labs(x = "Factor", y = "Autovalor", colour = NULL) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+Se comparan las soluciones de 3 a 8 factores con extracción por residuos mínimos (*minres*) y rotación oblicua (*oblimin*), porque se esperan factores correlacionados.
+
+```{r}
+#| label: comparar-soluciones
+comparar_k <- map_dfr(3:8, function(k) {
+  f <- fa(R_m1, nfactors = k, n.obs = nrow(mitad1), fm = "minres", rotate = "oblimin")
+  L <- abs(unclass(f$loadings))
+  tibble(
+    factores = k,
+    TLI = f$TLI,
+    RMSEA = f$RMSEA[1],
+    RMSR = f$rms,
+    items_carga_040 = sum(apply(L, 1, max) >= 0.40),
+    items_cruzados = sum(apply(L >= 0.30, 1, sum) >= 2)
+  )
+})
+
+comparar_k %>%
+  kable(digits = 3,
+        col.names = c("Factores", "TLI", "RMSEA", "RMSR",
+                      "Ítems con carga ≥ 0,40", "Ítems con cargas cruzadas"),
+        caption = "Soluciones exploratorias con los 46 ítems") %>%
+  kable_styling(full_width = FALSE)
+```
+
+Ninguna solución con los 46 ítems ajusta bien, y en todas cerca de un tercio de los ítems no carga al menos 0,40 en ningún factor. Se adopta la **solución de 5 factores** como punto de partida porque es la más interpretable y la más cercana a las dimensiones de la propuesta. El número final se contrasta en el AFC.
+
+# 7. Depuración de ítems (mitad 1)
+
+Se eliminan, de uno en uno, los ítems que no cumplen dos criterios: carga máxima de al menos 0,40 y ausencia de cargas cruzadas (carga de 0,30 o más en dos o más factores). En cada paso se elimina el ítem con la carga máxima más baja y se reestima el modelo.
+
+```{r}
+#| label: depuracion
+k_afe <- 5
+
+depurar <- function(R, vars, k, n_obs) {
+  registro <- tibble()
+  repeat {
+    f <- fa(R[vars, vars], nfactors = k, n.obs = n_obs,
+            fm = "minres", rotate = "oblimin")
+    L <- abs(unclass(f$loadings))
+    carga_max <- apply(L, 1, max)
+    cruzadas <- apply(L >= 0.30, 1, sum)
+    malos <- names(carga_max)[carga_max < 0.40 | cruzadas >= 2]
+    if (length(malos) == 0) return(list(vars = vars, modelo = f, registro = registro))
+    peor <- malos[which.min(carga_max[malos] - 0.1 * (cruzadas[malos] >= 2))]
+    registro <- bind_rows(registro, tibble(
+      paso = nrow(registro) + 1,
+      item = peor,
+      carga_max = carga_max[peor],
+      n_cargas_030 = cruzadas[peor],
+      motivo = if_else(cruzadas[peor] >= 2, "Carga cruzada", "Carga máxima < 0,40")
+    ))
+    vars <- setdiff(vars, peor)
+  }
+}
+
+afe <- depurar(R_m1, names(items), k_afe, nrow(mitad1))
+
+afe$registro %>%
+  mutate(enunciado = etiquetas[item], .after = item) %>%
+  kable(digits = 2,
+        col.names = c("Paso", "Ítem", "Enunciado", "Carga máxima",
+                      "N° de cargas ≥ 0,30", "Motivo"),
+        caption = "Ítems eliminados en la depuración, en orden") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+Quedan `r length(afe$vars)` de los 46 ítems. La solución depurada tiene TLI = `r round(afe$modelo$TLI, 3)`, RMSEA = `r round(afe$modelo$RMSEA[1], 3)` y RMSR = `r round(afe$modelo$rms, 3)`.
+
+```{r}
+#| label: cargas-afe
+L_afe <- unclass(afe$modelo$loadings)
+factor_principal <- apply(abs(L_afe), 1, which.max)
+
+tabla_afe <- as_tibble(L_afe, rownames = "item") %>%
+  mutate(enunciado = etiquetas[item], .after = item,
+         h2 = afe$modelo$communality[item],
+         orden = factor_principal[item],
+         carga = apply(abs(L_afe), 1, max)[item]) %>%
+  arrange(orden, desc(carga)) %>%
+  select(-orden, -carga)
+
+tabla_afe %>%
+  mutate(across(starts_with("MR"), ~ if_else(abs(.x) < 0.30, NA_real_, .x))) %>%
+  kable(digits = 2, caption = "Matriz de patrones del AFE depurado (se omiten cargas menores a 0,30; h2 = comunalidad)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+
+afe$modelo$Phi %>%
+  kable(digits = 2, caption = "Correlaciones entre factores del AFE") %>%
+  kable_styling(full_width = FALSE)
+```
+
+Los cinco factores exploratorios se interpretan así:
+
+1. **Compra sustentable y consumo político:** comercio justo, productos orgánicos y reciclados, boicot y *buycott*, influir en otros, redes sociales, reclamos al Sernac, cooperativas y marchas.
+2. **Ahorro doméstico de agua y energía:** O2.1 a O2.5.
+3. **Planificación de compras:** presupuesto mensual, comparar precios y planificar compras de alimentos y vestuario.
+4. **Facilidad para reciclar:** etiquetado, centros de acopio, barrio y reciclaje en el hogar.
+5. **Valoración del reciclaje:** necesidad de reciclar, utilidad para la economía y para el medioambiente (O4.7 carga en negativo porque está redactado en negativo).
+
+```{r}
+#| label: paralelo-depurado
+#| results: hide
+set.seed(20231)
+pa_dep <- fa.parallel(R_m1[afe$vars, afe$vars], n.obs = nrow(mitad1),
+                      fm = "minres", fa = "fa", n.iter = 50, plot = FALSE)
+```
+
+Con los `r length(afe$vars)` ítems retenidos, el análisis paralelo sugiere `r pa_dep$nfact` factores. La teoría ofrece una lectura para ese factor adicional: el primer factor podría separarse en **compra sustentable** (consumo verde) y **consumo político** (acción colectiva y discursiva), como distingue la literatura revisada. Esa hipótesis se prueba en el AFC.
+
+# 8. Análisis factorial confirmatorio (mitad 2)
+
+Los modelos se estiman en la mitad 2 con `lavaan`, tratando los ítems como ordinales y usando el estimador WLSMV. Antes de estimar, se invierte O4.7 ("Me cuesta creer que un envase reciclado sirva de algo para el medioambiente") para que todos los indicadores de valoración del reciclaje apunten en el mismo sentido.
+
+```{r}
+#| label: preparar-afc
+mitad2_afc <- mitad2 %>%
+  mutate(O4_7 = max(O4_7) + 1 - O4_7)
+
+estimar <- function(modelo) {
+  cfa(modelo, data = mitad2_afc, ordered = TRUE, estimator = "WLSMV")
+}
+```
+
+Se comparan cuatro modelos:
+
+- **M1, unidimensional:** un factor general de consumo responsable con los 27 ítems del AFE. Es el supuesto implícito de los índices sumativos tipo Akatu.
+- **M2, cinco factores:** la estructura del AFE.
+- **M3, seis factores:** separa compra sustentable y consumo político.
+- **M4, seis factores depurado:** M3 sin O4.6 ("En mi hogar, todos/as reciclamos"). Este ítem describe una práctica y no una condición para reciclar, y en M3 concentra los mayores índices de modificación.
+
+```{r}
+#| label: modelos-afc
+m1 <- '
+general =~ O1_6 + O1_8 + O2_11 + O2_12 + O3_2 + O3_3 + O3_4 + O3_5 + O3_7 +
+           O3_8 + O3_9 + O2_1 + O2_2 + O2_3 + O2_4 + O2_5 + O1_9 + O1_10 +
+           O2_8 + O2_9 + O4_2 + O4_3 + O4_5 + O4_6 + O4_1 + O4_7 + O4_8
+'
+
+m2 <- '
+sust_politico =~ O1_6 + O1_8 + O2_11 + O2_12 + O3_2 + O3_3 + O3_4 + O3_5 +
+                 O3_7 + O3_8 + O3_9
+ahorro        =~ O2_1 + O2_2 + O2_3 + O2_4 + O2_5
+planificacion =~ O1_9 + O1_10 + O2_8 + O2_9
+facilidad_rec =~ O4_2 + O4_3 + O4_5 + O4_6
+valoracion_rec =~ O4_1 + O4_7 + O4_8
+'
+
+m3 <- '
+compra_sust   =~ O1_6 + O1_8 + O2_11 + O2_12 + O3_4 + O3_7
+consumo_pol   =~ O3_2 + O3_3 + O3_5 + O3_8 + O3_9
+ahorro        =~ O2_1 + O2_2 + O2_3 + O2_4 + O2_5
+planificacion =~ O1_9 + O1_10 + O2_8 + O2_9
+facilidad_rec =~ O4_2 + O4_3 + O4_5 + O4_6
+valoracion_rec =~ O4_1 + O4_7 + O4_8
+'
+
+m4 <- '
+compra_sust   =~ O1_6 + O1_8 + O2_11 + O2_12 + O3_4 + O3_7
+consumo_pol   =~ O3_2 + O3_3 + O3_5 + O3_8 + O3_9
+ahorro        =~ O2_1 + O2_2 + O2_3 + O2_4 + O2_5
+planificacion =~ O1_9 + O1_10 + O2_8 + O2_9
+facilidad_rec =~ O4_2 + O4_3 + O4_5
+valoracion_rec =~ O4_1 + O4_7 + O4_8
+'
+
+ajustes <- list(
+  "M1 Unidimensional"         = estimar(m1),
+  "M2 Cinco factores (AFE)"   = estimar(m2),
+  "M3 Seis factores"          = estimar(m3),
+  "M4 Seis factores, sin O4.6" = estimar(m4)
+)
+```
+
+## Ajuste de los modelos
+
+Criterios convencionales para buen ajuste: CFI y TLI ≥ 0,95 (aceptable ≥ 0,90), RMSEA ≤ 0,06 (aceptable ≤ 0,08) y SRMR ≤ 0,08. Se reportan los índices escalados (robustos).
+
+```{r}
+#| label: tabla-ajuste
+indices <- c("chisq.scaled", "df", "pvalue.scaled", "cfi.scaled", "tli.scaled",
+             "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "srmr")
+
+tabla_ajuste <- imap_dfr(ajustes, ~ as_tibble_row(fitMeasures(.x, indices)) %>%
+                           mutate(modelo = .y, .before = 1)) %>%
+  mutate(across(-modelo, as.numeric),
+         n_items = map_int(ajustes, ~ length(lavNames(.x, "ov"))), .after = modelo)
+
+tabla_ajuste %>%
+  mutate(rmsea_ic = sprintf("[%.3f; %.3f]", rmsea.ci.lower.scaled, rmsea.ci.upper.scaled),
+         pvalue.scaled = if_else(pvalue.scaled < 0.001, "< 0,001",
+                                 formatC(pvalue.scaled, digits = 3))) %>%
+  select(modelo, n_items, chisq.scaled, df, pvalue.scaled, cfi.scaled, tli.scaled,
+         rmsea.scaled, rmsea_ic, srmr) %>%
+  kable(digits = 3, format.args = list(big.mark = "."),
+        col.names = c("Modelo", "Ítems", "χ² escalado", "gl", "p", "CFI", "TLI",
+                      "RMSEA", "IC 90% RMSEA", "SRMR"),
+        caption = "Índices de ajuste de los modelos confirmatorios (mitad 2, WLSMV)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+M2 está anidado en M3: equivale a fijar en 1 la correlación entre compra sustentable y consumo político. La diferencia se contrasta con la prueba de χ² escalada.
+
+```{r}
+#| label: prueba-diferencia
+lavTestLRT(ajustes[["M3 Seis factores"]], ajustes[["M2 Cinco factores (AFE)"]]) %>%
+  as.data.frame() %>%
+  mutate(Modelo = c("M3 Seis factores", "M2 Cinco factores (AFE)"), .before = 1) %>%
+  select(Modelo, Df, `Chisq diff`, `Df diff`, `Pr(>Chisq)`) %>%
+  mutate(`Pr(>Chisq)` = if_else(`Pr(>Chisq)` < 0.001, "< 0,001",
+                                formatC(`Pr(>Chisq)`, digits = 3))) %>%
+  kable(digits = 2, row.names = FALSE,
+        col.names = c("Modelo", "gl", "Diferencia χ² escalada", "Diferencia gl", "p"),
+        caption = "Prueba de diferencia de χ² escalada (Satorra, 2000): M3 frente a M2") %>%
+  kable_styling(full_width = FALSE)
+```
+
+El modelo unidimensional se descarta: su ajuste es muy deficiente. Separar compra sustentable y consumo político (M3) mejora significativamente el ajuste respecto de M2. M4 es el mejor modelo: su RMSEA y su SRMR están en rango de buen ajuste, aunque el CFI y el TLI quedan en torno a 0,90, bajo el umbral estricto de 0,95.
+
+## Modelo final (M4)
+
+```{r}
+#| label: cargas-m4
+fit_final <- ajustes[["M4 Seis factores, sin O4.6"]]
+sol <- standardizedSolution(fit_final)
+
+cargas <- sol %>%
+  filter(op == "=~") %>%
+  transmute(factor = lhs, item = rhs, enunciado = etiquetas[rhs],
+            carga = est.std, ee = se, p = pvalue)
+
+cargas %>%
+  mutate(p = if_else(p < 0.001, "< 0,001", formatC(p, digits = 3))) %>%
+  kable(digits = 2,
+        col.names = c("Factor", "Ítem", "Enunciado", "Carga estandarizada", "EE", "p"),
+        caption = "Cargas factoriales estandarizadas del modelo M4") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+```{r}
+#| label: correlaciones-m4
+cor_factores <- lavInspect(fit_final, "cor.lv")
+
+cor_factores %>%
+  kable(digits = 2, caption = "Correlaciones entre factores latentes del modelo M4") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Confiabilidad
+
+Para cada factor se calcula la confiabilidad compuesta (omega) a partir de las cargas estandarizadas, y la varianza media extraída (AVE). Se considera adecuado un omega de al menos 0,70; la AVE idealmente supera 0,50.
+
+```{r}
+#| label: confiabilidad
+confiabilidad <- cargas %>%
+  group_by(factor) %>%
+  summarise(
+    n_items = n(),
+    omega = sum(carga)^2 / (sum(carga)^2 + sum(1 - carga^2)),
+    AVE = mean(carga^2),
+    .groups = "drop"
+  )
+
+confiabilidad %>%
+  kable(digits = 2, col.names = c("Factor", "Ítems", "Omega", "AVE"),
+        caption = "Confiabilidad compuesta y varianza media extraída (modelo M4)") %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Índices de modificación
+
+Los diez mayores índices de modificación del modelo final. Se muestran como diagnóstico; el modelo no se reespecifica a partir de ellos para no ajustarlo a esta muestra.
+
+```{r}
+#| label: indices-modificacion
+modindices(fit_final, sort. = TRUE, maximum.number = 10) %>%
+  as_tibble() %>%
+  select(lhs, op, rhs, mi, epc, sepc.all) %>%
+  kable(digits = 2, col.names = c("", "", "", "IM", "Cambio esperado", "Cambio estandarizado"),
+        caption = "Mayores índices de modificación del modelo M4") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 9. Modelos de medida reducidos
+
+El modelo M4 cubre muchas dimensiones, pero su CFI queda bajo 0,95 y dos de sus factores tienen confiabilidad insuficiente. Esta sección busca un objetivo distinto: modelos más acotados que midan **bien** al menos algunas dimensiones, aunque se pierdan ítems.
+
+## Selección estricta de ítems (mitad 1)
+
+Se repite la depuración del AFE con criterios más exigentes: carga mínima de **0,50**, sin cargas cruzadas, y se revisa que cada factor conserve al menos tres ítems. La selección se hace solo con la mitad 1.
+
+```{r}
+#| label: depuracion-estricta
+depurar_estricto <- function(R, vars, k, n_obs, umbral = 0.50) {
+  repeat {
+    f <- fa(R[vars, vars], nfactors = k, n.obs = n_obs,
+            fm = "minres", rotate = "oblimin")
+    L <- abs(unclass(f$loadings))
+    carga_max <- apply(L, 1, max)
+    cruzadas <- apply(L >= 0.30, 1, sum)
+    malos <- names(carga_max)[carga_max < umbral | cruzadas >= 2]
+    if (length(malos) == 0) return(list(vars = vars, modelo = f))
+    peor <- malos[which.min(carga_max[malos] - 0.1 * (cruzadas[malos] >= 2))]
+    vars <- setdiff(vars, peor)
+  }
+}
+
+estrictos <- map(3:5, function(k) {
+  r <- depurar_estricto(R_m1, names(items), k, nrow(mitad1))
+  L <- unclass(r$modelo$loadings)
+  prim <- apply(abs(L), 1, which.max)
+  tibble(
+    factores = k,
+    factor = paste0("F", prim),
+    item = names(prim),
+    carga = L[cbind(seq_along(prim), prim)]
+  )
+}) %>% bind_rows()
+
+estrictos %>%
+  group_by(factores, factor) %>%
+  summarise(n_items = n(),
+            items = paste0(item, " (", formatC(carga, digits = 2, format = "f"), ")",
+                           collapse = ", "),
+            .groups = "drop") %>%
+  kable(col.names = c("Solución", "Factor", "N° ítems", "Ítems (carga)"),
+        caption = "Factores que sobreviven a la depuración estricta, por número de factores (mitad 1)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+En todas las soluciones se repiten tres núcleos con al menos tres ítems y cargas sobre 0,50:
+
+- **Consumo crítico y político:** O3.2, O3.3, O3.4, O3.5, O3.7, O3.8 y O3.9.
+- **Ahorro doméstico:** O2.1 a O2.5.
+- **Planificación de compras:** O1.10, O2.8 y O2.9.
+
+Las dimensiones de reciclaje solo retienen dos ítems cada una (O4.3 y O4.5 para facilidad; O4.1 y O4.8 para valoración), insuficiente para un factor confiable.
+
+## Validación de modelos candidatos (mitad 2)
+
+Con esos núcleos se especifican modelos candidatos y se estiman en la mitad 2. El factor de consumo crítico se prueba entero y también separado en sus dos componentes teóricos, compra sustentable y consumo político, tal como en la sección 8. Para compra sustentable se suman O2.11 y O2.12 (productos orgánicos y reciclados), que en el AFE de la sección 7 cargaban en el mismo factor.
+
+```{r}
+#| label: candidatos
+f_pol    <- "consumo_pol =~ O3_2 + O3_3 + O3_5 + O3_8 + O3_9"
+f_sust   <- "compra_sust =~ O2_11 + O2_12 + O3_4 + O3_7"
+f_crit   <- "critico =~ O3_2 + O3_3 + O3_4 + O3_5 + O3_7 + O3_8 + O3_9"
+f_crit9  <- "critico =~ O2_11 + O2_12 + O3_4 + O3_7 + O3_2 + O3_3 + O3_5 + O3_8 + O3_9"
+f_ahorro <- "ahorro =~ O2_1 + O2_2 + O2_3 + O2_4 + O2_5"
+f_plan   <- "planificacion =~ O1_10 + O2_8 + O2_9"
+
+juntar <- function(...) paste(..., sep = "\n")
+
+candidatos <- list(
+  "R1 Consumo crítico (7 ítems, 1 factor)"            = f_crit,
+  "R2 Consumo sustentable y político (9 ítems, 1 factor)" = f_crit9,
+  "R3 Compra sustentable + consumo político"           = juntar(f_sust, f_pol),
+  "R4 Ahorro doméstico"                                = f_ahorro,
+  "R5 Ahorro + planificación"                          = juntar(f_ahorro, f_plan),
+  "R6 R3 + R5 en un solo modelo"                       = juntar(f_sust, f_pol, f_ahorro, f_plan)
+)
+
+ajustes_red <- map(candidatos, estimar)
+
+omega_ave <- function(fit) {
+  standardizedSolution(fit) %>%
+    filter(op == "=~") %>%
+    group_by(factor = lhs) %>%
+    summarise(n_items = n(),
+              omega = sum(est.std)^2 / (sum(est.std)^2 + sum(1 - est.std^2)),
+              AVE = mean(est.std^2),
+              carga_min = min(est.std),
+              .groups = "drop")
+}
+
+tabla_red <- imap_dfr(ajustes_red, function(f, nombre) {
+  fm <- fitMeasures(f, indices)
+  conf <- omega_ave(f)
+  tibble(modelo = nombre,
+         n_items = length(lavNames(f, "ov")),
+         chi2 = fm["chisq.scaled"], gl = fm["df"],
+         CFI = fm["cfi.scaled"], TLI = fm["tli.scaled"],
+         RMSEA = fm["rmsea.scaled"], SRMR = fm["srmr"],
+         omega_min = min(conf$omega))
+})
+
+tabla_red %>%
+  kable(digits = 3, format.args = list(big.mark = "."),
+        col.names = c("Modelo", "Ítems", "χ² escalado", "gl", "CFI", "TLI",
+                      "RMSEA", "SRMR", "Omega mínimo"),
+        caption = "Ajuste y confiabilidad de los modelos reducidos (mitad 2, WLSMV)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+Dos modelos cumplen los criterios de buen ajuste:
+
+- **R3, compra sustentable y consumo político.** CFI y TLI sobre 0,95 y SRMR bajo 0,05; el RMSEA queda en el límite de 0,06. Separar los dos factores es necesario: el mismo conjunto de ítems como un solo factor (R2) ajusta mal.
+- **R5, ahorro doméstico y planificación de compras.**
+
+Combinar ambos en un solo modelo (R6) empeora el ajuste. Las prácticas de la esfera doméstica y las de la esfera pública se miden mejor como bloques separados.
+
+## Distinción entre compra sustentable y consumo político
+
+```{r}
+#| label: discriminante-r3
+fit_r3 <- ajustes_red[["R3 Compra sustentable + consumo político"]]
+fit_r2 <- ajustes_red[["R2 Consumo sustentable y político (9 ítems, 1 factor)"]]
+
+lavTestLRT(fit_r3, fit_r2) %>%
+  as.data.frame() %>%
+  mutate(Modelo = c("R3 Dos factores", "R2 Un factor"), .before = 1) %>%
+  select(Modelo, Df, `Chisq diff`, `Df diff`, `Pr(>Chisq)`) %>%
+  mutate(`Pr(>Chisq)` = if_else(`Pr(>Chisq)` < 0.001, "< 0,001",
+                                formatC(`Pr(>Chisq)`, digits = 3))) %>%
+  kable(digits = 2, row.names = FALSE,
+        col.names = c("Modelo", "gl", "Diferencia χ² escalada", "Diferencia gl", "p"),
+        caption = "Prueba de diferencia de χ²: dos factores frente a uno") %>%
+  kable_styling(full_width = FALSE)
+
+cor_r3 <- standardizedSolution(fit_r3) %>%
+  filter(op == "~~", lhs == "compra_sust", rhs == "consumo_pol")
+```
+
+La correlación entre compra sustentable y consumo político es `r round(cor_r3$est.std, 2)` (IC 95%: `r round(cor_r3$ci.lower, 2)` a `r round(cor_r3$ci.upper, 2)`). Están relacionados, pero el intervalo queda lejos de 1, por lo que se trata de dimensiones distintas.
+
+## Estabilidad del ajuste
+
+Los dos modelos se reestiman en la mitad 1 y en la muestra completa. Si el ajuste se mantiene, no depende de la mitad usada para validarlo.
+
+```{r}
+#| label: estabilidad
+modelos_finales <- list(
+  "R3 Compra sustentable + consumo político" = candidatos[["R3 Compra sustentable + consumo político"]],
+  "R5 Ahorro + planificación"                = candidatos[["R5 Ahorro + planificación"]]
+)
+
+muestras <- list("Mitad 1" = mitad1, "Mitad 2" = mitad2, "Muestra completa" = items)
+
+estabilidad <- imap_dfr(modelos_finales, function(m, nombre_m) {
+  imap_dfr(muestras, function(d, nombre_d) {
+    f <- cfa(m, data = d, ordered = TRUE, estimator = "WLSMV")
+    fm <- fitMeasures(f, indices)
+    tibble(modelo = nombre_m, muestra = nombre_d, n = nrow(d),
+           CFI = fm["cfi.scaled"], TLI = fm["tli.scaled"],
+           RMSEA = fm["rmsea.scaled"],
+           RMSEA_ic = sprintf("[%.3f; %.3f]", fm["rmsea.ci.lower.scaled"],
+                              fm["rmsea.ci.upper.scaled"]),
+           SRMR = fm["srmr"])
+  })
+})
+
+estabilidad %>%
+  kable(digits = 3, col.names = c("Modelo", "Muestra", "N", "CFI", "TLI",
+                                  "RMSEA", "IC 90% RMSEA", "SRMR"),
+        caption = "Ajuste de los modelos reducidos en distintas muestras") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+## Cargas y confiabilidad de los modelos reducidos (muestra completa)
+
+Las estimaciones finales se presentan con la muestra completa (N = `r n`), una vez validada la estructura.
+
+```{r}
+#| label: finales-completa
+items_afc <- items %>% mutate(O4_7 = max(O4_7) + 1 - O4_7)
+
+fits_finales <- map(modelos_finales, ~ cfa(.x, data = items_afc, ordered = TRUE,
+                                            estimator = "WLSMV"))
+
+cargas_red <- imap_dfr(fits_finales, function(f, nombre) {
+  standardizedSolution(f) %>%
+    filter(op == "=~") %>%
+    transmute(modelo = nombre, factor = lhs, item = rhs,
+              enunciado = etiquetas[rhs], carga = est.std, ee = se)
+})
+
+cargas_red %>%
+  select(-modelo) %>%
+  kable(digits = 2,
+        col.names = c("Factor", "Ítem", "Enunciado", "Carga estandarizada", "EE"),
+        caption = "Cargas estandarizadas de los modelos reducidos (muestra completa)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1, valign = "top")
+
+confiabilidad_red <- imap_dfr(fits_finales, ~ omega_ave(.x) %>% mutate(modelo = .y, .before = 1))
+
+confiabilidad_red %>%
+  kable(digits = 2,
+        col.names = c("Modelo", "Factor", "Ítems", "Omega", "AVE", "Carga mínima"),
+        caption = "Confiabilidad compuesta y varianza media extraída (muestra completa)") %>%
+  kable_styling(full_width = FALSE) %>%
+  collapse_rows(columns = 1, valign = "top")
+
+cor_r5 <- lavInspect(fits_finales[["R5 Ahorro + planificación"]], "cor.lv")
+```
+
+En el modelo R5, ahorro doméstico y planificación de compras se correlacionan en `r round(cor_r5["ahorro", "planificacion"], 2)`.
+
+## Modelo conjunto: relaciones entre bloques
+
+¿Por qué dos modelos y no uno con los cuatro factores? Para responderlo se estima el modelo conjunto (R6) en las tres muestras y se examina dónde se concentra su desajuste.
+
+```{r}
+#| label: conjunto-ajuste
+m_conjunto <- candidatos[["R6 R3 + R5 en un solo modelo"]]
+
+conjunto_ajuste <- imap_dfr(muestras, function(d, nombre_d) {
+  f <- cfa(m_conjunto, data = d, ordered = TRUE, estimator = "WLSMV")
+  fm <- fitMeasures(f, indices)
+  tibble(muestra = nombre_d, n = nrow(d),
+         CFI = fm["cfi.scaled"], TLI = fm["tli.scaled"],
+         RMSEA = fm["rmsea.scaled"], SRMR = fm["srmr"])
+})
+
+conjunto_ajuste %>%
+  kable(digits = 3, col.names = c("Muestra", "N", "CFI", "TLI", "RMSEA", "SRMR"),
+        caption = "Ajuste del modelo conjunto de cuatro factores (17 ítems)") %>%
+  kable_styling(full_width = FALSE)
+
+fit_conjunto <- cfa(m_conjunto, data = items, ordered = TRUE, estimator = "WLSMV")
+cor_conjunto <- lavInspect(fit_conjunto, "cor.lv")
+
+cor_conjunto %>%
+  kable(digits = 2, caption = "Correlaciones entre los cuatro factores (muestra completa)") %>%
+  kable_styling(full_width = FALSE)
+```
+
+El ajuste es estable en las tres muestras y aceptable según RMSEA y SRMR, pero el CFI y el TLI quedan bajo 0,95. Para localizar el desajuste se comparan las correlaciones residuales dentro de cada bloque (doméstico o público) y entre bloques.
+
+```{r}
+#| label: conjunto-residuos
+bloque <- c(O2_11 = "Público", O2_12 = "Público", O3_4 = "Público", O3_7 = "Público",
+            O3_2 = "Público", O3_3 = "Público", O3_5 = "Público", O3_8 = "Público",
+            O3_9 = "Público", O2_1 = "Doméstico", O2_2 = "Doméstico",
+            O2_3 = "Doméstico", O2_4 = "Doméstico", O2_5 = "Doméstico",
+            O1_10 = "Doméstico", O2_8 = "Doméstico", O2_9 = "Doméstico")
+
+res <- residuals(fit_conjunto, type = "cor")$cov[names(bloque), names(bloque)]
+sup <- upper.tri(res)
+mismo <- outer(bloque, bloque, "==")
+
+conjunto_residuos <- tibble(
+  pares = c("Dentro de un mismo bloque", "Entre bloques"),
+  n_pares = c(sum(sup & mismo), sum(sup & !mismo)),
+  residuo_medio_abs = c(mean(abs(res[sup & mismo])), mean(abs(res[sup & !mismo]))),
+  residuos_mayores_010 = c(sum(abs(res[sup & mismo]) > 0.10), sum(abs(res[sup & !mismo]) > 0.10))
+)
+
+conjunto_residuos %>%
+  kable(digits = 3, col.names = c("Pares de ítems", "N° de pares",
+                                  "Residuo medio (abs.)", "Residuos > 0,10"),
+        caption = "Correlaciones residuales del modelo conjunto") %>%
+  kable_styling(full_width = FALSE)
+
+modindices(fit_conjunto, sort. = TRUE, maximum.number = 8) %>%
+  as_tibble() %>%
+  select(lhs, op, rhs, mi, sepc.all) %>%
+  kable(digits = 2, col.names = c("", "", "", "IM", "Cambio estandarizado"),
+        caption = "Mayores índices de modificación del modelo conjunto") %>%
+  kable_styling(full_width = FALSE)
+```
+
+El desajuste se concentra **entre** bloques: los residuos entre ítems domésticos y públicos son mayores que dentro de cada bloque. Los mayores índices de modificación piden que la planificación de compras de alimentos y vestuario (O2.8, O2.9) cargue también en los factores públicos. Es decir, los dos bloques se relacionan de una forma más compleja que la que permiten cuatro factores con cargas exclusivas.
+
+### Justificación de dos modelos separados
+
+1. **Teórica.** La propuesta distingue el consumo de la esfera privada (ahorro y gestión del hogar) del de la esfera pública (mercado y acción colectiva). Medirlos por separado es coherente con esa distinción.
+2. **Empírica.** Cada bloque por separado ajusta muy bien; el modelo conjunto solo es aceptable, y su desajuste está en las relaciones entre bloques, no en la estructura interna de cada uno.
+3. **De uso.** Para relacionar estas dimensiones con otras variables, dos instrumentos breves y bien validados son más sólidos que uno largo con desajuste.
+
+**Matiz.** Comparar el ajuste de modelos separados con el de un modelo conjunto no es una prueba formal: un modelo separado no pone a prueba las restricciones entre bloques, porque no las modela, y por eso siempre ajusta igual o mejor. El argumento no es que "separados ajustan mejor", sino que la estructura dentro de cada bloque es sólida y que la relación entre bloques no se reduce a correlaciones entre factores.
+
+Por eso se reportan ambos: los dos modelos como **instrumentos de medida**, y el modelo conjunto como **evidencia de cómo se relacionan** las dimensiones. En él, el consumo político es prácticamente independiente del ahorro doméstico (r = `r round(cor_conjunto["consumo_pol", "ahorro"], 2)`), mientras la compra sustentable se relaciona con ambos bloques: con consumo político (r = `r round(cor_conjunto["compra_sust", "consumo_pol"], 2)`), planificación (r = `r round(cor_conjunto["compra_sust", "planificacion"], 2)`) y ahorro (r = `r round(cor_conjunto["compra_sust", "ahorro"], 2)`).
+
+## Síntesis
+
+Se obtienen dos modelos de medida con buen ajuste en ambas mitades y en la muestra completa:
+
+| Modelo | Factores | Ítems |
+|---|---|---|
+| Consumo sustentable y político | Compra sustentable (O2.11, O2.12, O3.4, O3.7) y consumo político (O3.2, O3.3, O3.5, O3.8, O3.9) | 9 |
+| Prácticas domésticas | Ahorro doméstico (O2.1 a O2.5) y planificación de compras (O1.10, O2.8, O2.9) | 8 |
+
+: Modelos de medida reducidos {.striped}
+
+La planificación de compras tiene solo tres ítems y una confiabilidad cercana a 0,70: es el factor más frágil. Las actitudes hacia el reciclaje (O4) no logran un factor confiable con los ítems disponibles.
+
+# 10. Guardado
+
+```{r}
+#| label: guardar
+dir.create(here("output", "tables"), recursive = TRUE, showWarnings = FALSE)
+dir.create(here("output", "models"), recursive = TRUE, showWarnings = FALSE)
+
+write_csv(tabla_pruebas, here("output", "tables", "pruebas_previas_conjuntos.csv"))
+write_csv(tabla_msa, here("output", "tables", "pruebas_previas_msa_items.csv"))
+write_csv(afe$registro, here("output", "tables", "afe_items_eliminados.csv"))
+write_csv(tabla_afe, here("output", "tables", "afe_cargas.csv"))
+write_csv(tabla_ajuste, here("output", "tables", "afc_ajuste_modelos.csv"))
+write_csv(cargas, here("output", "tables", "afc_cargas_m4.csv"))
+write_csv(confiabilidad, here("output", "tables", "afc_confiabilidad_m4.csv"))
+
+saveRDS(R_poly, here("output", "models", "matriz_policorica_db_proc.rds"))
+saveRDS(list(idx_mitad1 = idx_m1, afe = afe$modelo, items_afe = afe$vars),
+        here("output", "models", "afe_5factores.rds"))
+saveRDS(ajustes, here("output", "models", "afc_modelos.rds"))
+
+write_csv(tabla_red, here("output", "tables", "afc_reducidos_ajuste.csv"))
+write_csv(estabilidad, here("output", "tables", "afc_reducidos_estabilidad.csv"))
+write_csv(cargas_red, here("output", "tables", "afc_reducidos_cargas.csv"))
+write_csv(confiabilidad_red, here("output", "tables", "afc_reducidos_confiabilidad.csv"))
+saveRDS(fits_finales, here("output", "models", "afc_reducidos_finales.rds"))
+
+write_csv(conjunto_ajuste, here("output", "tables", "afc_conjunto_ajuste.csv"))
+write_csv(as_tibble(cor_conjunto, rownames = "factor"),
+          here("output", "tables", "afc_conjunto_correlaciones.csv"))
+write_csv(conjunto_residuos, here("output", "tables", "afc_conjunto_residuos.csv"))
+write_csv(comparar_k, here("output", "tables", "afe_comparacion_soluciones.csv"))
+write_csv(tibble(criterio = c("Análisis paralelo (46 ítems)", "MAP de Velicer (46 ítems)",
+                              "Análisis paralelo (ítems depurados)"),
+                 factores = c(pa$nfact, which.min(map), pa_dep$nfact)),
+          here("output", "tables", "afe_numero_factores.csv"))
+```
+
+Se guardan en `output/tables/` las tablas de pruebas previas, la depuración y las cargas del AFE, el ajuste de los modelos confirmatorios, y las cargas y la confiabilidad del modelo M4 y de los modelos reducidos. En `output/models/` quedan la matriz policórica, el AFE (con los índices de la mitad 1), los cuatro modelos confirmatorios y los dos modelos reducidos estimados en la muestra completa.

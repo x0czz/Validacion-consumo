@@ -1,0 +1,18 @@
+modelo,factor,item,enunciado,carga,ee
+R3 Compra sustentable + consumo político,compra_sust,O2_11,Compra productos orgánicos o naturales. ,0.6509847498511032,0.021339187043055523
+R3 Compra sustentable + consumo político,compra_sust,O2_12,Compra productos hechos con material reciclado. ,0.6204629780543112,0.022171830741767654
+R3 Compra sustentable + consumo político,compra_sust,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.7503097428536724,0.019110000027841578
+R3 Compra sustentable + consumo político,compra_sust,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.6719142806905712,0.019771377782168892
+R3 Compra sustentable + consumo político,consumo_pol,O3_2,Intenta influir en lo que consumen otras personas,0.6475712323773197,0.022267689256334915
+R3 Compra sustentable + consumo político,consumo_pol,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.7664617169646759,0.018792345331918172
+R3 Compra sustentable + consumo político,consumo_pol,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,0.5874464907578807,0.024278436375501405
+R3 Compra sustentable + consumo político,consumo_pol,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.73914938058851,0.02419581580358803
+R3 Compra sustentable + consumo político,consumo_pol,O3_9,Participa en marchas o movilizaciones,0.6108475323912576,0.025335428338907947
+R5 Ahorro + planificación,ahorro,O2_1,Evita dejar luces prendidas en ambiente desocupados ,0.7265650569619266,0.024285456377946532
+R5 Ahorro + planificación,ahorro,O2_2,Corta el agua mientras se lava los dientes. ,0.6282880482869103,0.02543133754773462
+R5 Ahorro + planificación,ahorro,O2_3,Toma duchas cortas,0.6021701615748035,0.022296648220779862
+R5 Ahorro + planificación,ahorro,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.5899216121526496,0.02714357212041884
+R5 Ahorro + planificación,ahorro,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.6201785385826956,0.023123208585274755
+R5 Ahorro + planificación,planificacion,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,0.5998877067139821,0.023372056080309702
+R5 Ahorro + planificación,planificacion,O2_8,Planifica compra de alimentos. ,0.9015407722885967,0.02547682535446458
+R5 Ahorro + planificación,planificacion,O2_9,Planifica compras de vestuario. ,0.48410200404169423,0.024514200663187474

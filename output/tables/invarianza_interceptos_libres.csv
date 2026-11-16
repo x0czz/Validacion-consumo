@@ -1,0 +1,7 @@
+modelo,item,enunciado,grupo,intercepto,ee,p
+Consumo sustentable y político,O3_9,Participa en marchas o movilizaciones,35-54,-0.6213428425447695,0.11827340557436267,1.4928019020921113e-7
+Consumo sustentable y político,O3_9,Participa en marchas o movilizaciones,55 o más,-0.6257924993362924,0.13658554984400434,4.6123567649658526e-6
+Prácticas domésticas,O2_2,Corta el agua mientras se lava los dientes. ,35-54,-0.5444466236386741,0.07992464123264735,9.625189534290257e-12
+Prácticas domésticas,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,35-54,-0.35116810777220686,0.09072574589069266,1.0854309100127857e-4
+Prácticas domésticas,O2_2,Corta el agua mientras se lava los dientes. ,55 o más,-1.101217654691499,0.12770932536000063,0
+Prácticas domésticas,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,55 o más,-0.6287254788134667,0.12517394627405845,5.091979100591004e-7

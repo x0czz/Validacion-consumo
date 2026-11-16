@@ -1,0 +1,531 @@
+---
+title: "Análisis de clases latentes de prácticas de consumo socioambientales"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+Este script estima modelos de clases latentes (LCA) sobre las baterías O1 a O4 de la Encuesta Sociedad de Consumo 2023, usando la base `db_proc` (categorías extremas colapsadas al 10%). Se comparan tres conjuntos de indicadores:
+
+- **Modelo A, prácticas (17 ítems):** los ítems de las dos escalas validadas en `analisis_factorial.qmd` (compra sustentable, consumo político, ahorro doméstico y planificación de compras).
+- **Modelo B, prácticas y actitudes (23 ítems):** A más seis ítems de actitudes hacia el reciclaje de O4, tres de facilidad para reciclar (O4.2, O4.3, O4.5) y tres de valoración del reciclaje (O4.1, O4.7, O4.8). Son los ítems de O4 que cargaron en sus factores en el análisis factorial exploratorio. O4.6 ("En mi hogar, todos/as reciclamos") se excluye porque describe una práctica y no una actitud, y porque empeoraba el ajuste del AFC.
+- **Modelo C, control (19 ítems):** A más un solo ítem por dimensión de actitud (O4.3 y O4.1). Sirve para comprobar si los resultados de B dependen de la redundancia entre ítems de O4.
+
+Los ítems entran directamente como indicadores categóricos; no se usan puntajes factoriales.
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(haven)
+library(here)
+library(poLCA)
+adjustedRandIndex <- mclust::adjustedRandIndex
+library(knitr)
+options(knitr.kable.NA = "")
+select <- dplyr::select   # poLCA carga MASS, que enmascara select()
+
+source(here("processing", "lca_funciones.R"))
+
+archivo_modelos <- here("output", "models", "lca_enumeracion.rds")
+# La enumeración tarda unos 5 minutos. Para volver a estimar, borrar el archivo .rds
+if (!file.exists(archivo_modelos)) source(here("processing", "lca_estimar.R"))
+r <- readRDS(archivo_modelos)
+
+db_proc <- readRDS(here("input", "data", "proc", "db_proc.rds"))
+etiquetas <- map_chr(db_proc %>% select(matches("^O[1-4]_\\d+$")),
+                     ~ str_remove(attr(.x, "label"), "_[^_]*$"))
+
+dimension <- c(O2_11 = "Compra sustentable", O2_12 = "Compra sustentable", O3_4 = "Compra sustentable",
+               O3_7 = "Compra sustentable", O3_2 = "Consumo político", O3_3 = "Consumo político",
+               O3_5 = "Consumo político", O3_8 = "Consumo político", O3_9 = "Consumo político",
+               O2_1 = "Ahorro doméstico", O2_2 = "Ahorro doméstico", O2_3 = "Ahorro doméstico",
+               O2_4 = "Ahorro doméstico", O2_5 = "Ahorro doméstico", O1_10 = "Planificación",
+               O2_8 = "Planificación", O2_9 = "Planificación",
+               O4_2 = "Facilidad para reciclar", O4_3 = "Facilidad para reciclar",
+               O4_5 = "Facilidad para reciclar", O4_1 = "Valoración del reciclaje",
+               O4_7 = "Valoración del reciclaje (inverso)", O4_8 = "Valoración del reciclaje")
+orden_dim <- unique(dimension)
+```
+
+# 1. Procedimiento de estimación
+
+Cada modelo se estimó con 1 a 8 clases mediante `poLCA`, con 100 inicios aleatorios por número de clases y un máximo de 5.000 iteraciones. Se retiene la solución de mayor log-verosimilitud y se registra cuántos inicios llegan a ese mismo máximo (*réplicas*). Si pocos inicios lo replican, la solución puede ser un máximo local.
+
+Criterios para elegir el número de clases:
+
+- **BIC y CAIC:** penalizan la complejidad; se prefiere el mínimo. Son los criterios con mejor desempeño en simulaciones para LCA (Nylund et al., 2007).
+- **aBIC y AIC:** penalizan menos y tienden a sobreestimar el número de clases; se reportan como referencia.
+- **Entropía relativa:** calidad de la clasificación de 0 a 1; sobre ,80 es buena.
+- **Tamaño de la clase más pequeña:** se evitan clases con menos del 5% de la muestra.
+- **Probabilidad posterior media (AvePP):** sobre ,70 en cada clase.
+- **Interpretabilidad:** que cada clase agregue un perfil sustantivamente distinto.
+
+Como la diferencia de verosimilitudes entre modelos con k y k−1 clases no sigue una distribución χ², no se usa la prueba de razón de verosimilitudes ingenua. La prueba bootstrap (BLRT) no está implementada en `poLCA`.
+
+# 2. Enumeración de clases
+
+```{r}
+#| label: tabla-enumeracion
+enum <- r$enumeracion %>% mutate(modelo = str_extract(modelo, "^[ABC]"))
+enum %>%
+  transmute(Modelo = modelo, Clases = clases, LL = round(LL, 1), npar,
+            BIC = round(BIC, 1), aBIC = round(aBIC, 1), CAIC = round(CAIC, 1),
+            Entropía = round(entropia, 3), `Clase mín.` = round(clase_min, 3),
+            `Réplicas` = paste0(replicas, "/", inicios)) %>%
+  kable()
+```
+
+```{r}
+#| label: figura-enumeracion
+#| fig-width: 8
+#| fig-height: 3.5
+enum %>%
+  select(modelo, clases, BIC, aBIC, CAIC) %>%
+  pivot_longer(c(BIC, aBIC, CAIC), names_to = "criterio") %>%
+  ggplot(aes(clases, value, colour = criterio)) +
+  geom_line() + geom_point() +
+  facet_wrap(~ modelo, scales = "free_y", labeller = label_both) +
+  scale_x_continuous(breaks = 1:8) +
+  labs(x = "Número de clases", y = NULL, colour = NULL) +
+  theme_bw()
+```
+
+```{r}
+#| label: eleccion
+minimo <- enum %>% group_by(modelo) %>%
+  summarise(BIC_min = clases[which.min(BIC)], CAIC_min = clases[which.min(CAIC)],
+            aBIC_min = clases[which.min(aBIC)])
+kable(minimo, col.names = c("Modelo", "Mínimo BIC", "Mínimo CAIC", "Mínimo aBIC"))
+k_elegido <- 5
+```
+
+En los tres modelos, el BIC y el CAIC alcanzan su mínimo con **cinco clases**. En el modelo A, el BIC de cinco y seis clases es prácticamente igual, pero la solución de seis clases agrega una clase de menos del 5% y solo 36 de 100 inicios replican su máximo. El aBIC sigue bajando hasta ocho clases, lo que es esperable dada su menor penalización. La solución de cinco clases cumple los demás criterios: entropía cercana a ,80, ninguna clase bajo el 7% y buena replicación del máximo (91/100 en A, 85/100 en B, 90/100 en C). Se retiene la solución de cinco clases en los tres modelos.
+
+# 3. Perfiles de las clases (modelo A)
+
+```{r}
+#| label: nombres-clases
+# El orden de las clases en poLCA es arbitrario. Se nombran con una regla fija sobre
+# las medias por dimensión, para que los nombres no dependan de la semilla.
+medias_dim <- function(m) {
+  perfil_clases(m) %>% filter(item %in% r$items_A) %>%
+    mutate(dim = dimension[item]) %>%
+    group_by(clase, dim) %>% summarise(v = mean(media01), .groups = "drop") %>%
+    pivot_wider(names_from = dim, values_from = v)
+}
+nombrar <- function(m) {
+  md <- medias_dim(m) %>%
+    mutate(global = rowMeans(across(-clase)),
+           pol_menos_ahorro = `Consumo político` - `Ahorro doméstico`)
+  nombres <- rep(NA_character_, nrow(md))
+  asignar <- function(idx, nombre) { nombres[idx] <<- nombre }
+  asignar(which.max(md$pol_menos_ahorro), "Político")
+  libres <- which(is.na(nombres)); asignar(libres[which.max(md$global[libres])], "Amplio")
+  libres <- which(is.na(nombres)); asignar(libres[which.min(md$global[libres])], "Bajo")
+  libres <- which(is.na(nombres))
+  # La clase Doméstico solo se distingue de la Intermedia a partir de cinco clases
+  if (nrow(md) >= 5)
+    asignar(libres[which.max(md$`Ahorro doméstico`[libres] - md$`Consumo político`[libres])], "Doméstico")
+  libres <- which(is.na(nombres)); asignar(libres, "Intermedio")
+  nombres
+}
+orden_clases <- c("Amplio", "Intermedio", "Doméstico", "Político", "Bajo")
+
+sol <- map(c(A = "A", B = "B", C = "C"), function(x) {
+  m <- r$modelos[[x]][[k_elegido]]
+  list(modelo = m, nombres = nombrar(m))
+})
+nombre_modal <- map(sol, ~ factor(.x$nombres[.x$modelo$predclass], levels = orden_clases))
+```
+
+```{r}
+#| label: tabla-clasificacion
+clasif <- map_dfr(sol, ~ clasificacion(.x$modelo) %>% mutate(clase = .x$nombres[clase]),
+                  .id = "modelo") %>%
+  mutate(clase = factor(clase, levels = orden_clases)) %>% arrange(modelo, clase)
+clasif %>% filter(modelo == "A") %>%
+  transmute(Clase = clase, `Proporción estimada` = round(proporcion, 3),
+            `n (asignación modal)` = n_modal, AvePP = round(AvePP, 3)) %>%
+  kable()
+```
+
+```{r}
+#| label: figura-perfiles
+#| fig-width: 9
+#| fig-height: 6
+perfil_A <- perfil_clases(sol$A$modelo) %>%
+  mutate(clase = factor(sol$A$nombres[clase], levels = orden_clases),
+         dim = factor(dimension[item], levels = orden_dim),
+         item = str_replace(item, "_", "."))
+ggplot(perfil_A, aes(item, media01, group = clase, colour = clase)) +
+  geom_line() + geom_point(size = 1.5) +
+  facet_grid(~ dim, scales = "free_x", space = "free_x",
+             labeller = labeller(dim = label_wrap_gen(12))) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = NULL, y = "Respuesta media esperada (0 = mínimo, 1 = máximo)", colour = "Clase") +
+  theme_bw() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5), legend.position = "top")
+```
+
+```{r}
+#| label: tabla-perfiles-dim
+medias_dim(sol$A$modelo) %>%
+  mutate(clase = factor(sol$A$nombres[clase], levels = orden_clases)) %>%
+  arrange(clase) %>%
+  select(Clase = clase, all_of(orden_dim[1:4])) %>%
+  mutate(across(-Clase, ~ round(.x, 2))) %>%
+  kable(caption = "Respuesta media esperada por dimensión (escala 0-1)")
+```
+
+Lectura de las clases (los porcentajes son proporciones estimadas por el modelo A):
+
+- **Amplio:** niveles altos en las cuatro dimensiones.
+- **Intermedio:** niveles medios en todo; es la clase más grande.
+- **Doméstico:** ahorro y planificación altos, consumo político bajo y compra sustentable media.
+- **Político:** consumo político alto, compra sustentable media y el ahorro doméstico **más bajo de todas las clases**.
+- **Bajo:** niveles bajos en todo, salvo un ahorro doméstico medio-bajo.
+
+Las clases Amplio, Intermedio y Bajo forman una gradiente de "más o menos de todo", que es lo que supone una tipología sumativa. Las clases Doméstico y Político no encajan en esa gradiente: combinan niveles altos en una esfera con niveles bajos en la otra. En particular, la clase Político no es un escalón superior de la clase Doméstico, sino un perfil distinto.
+
+## 3.1 Comparación con las soluciones de 3 y 4 clases
+
+La mejora del BIC se reduce mucho después de tres clases, por lo que conviene revisar si las soluciones más simples cuentan la misma historia. Se comparan las soluciones de 3, 4 y 5 clases del modelo A en ajuste, calidad de clasificación, independencia local y perfiles, y se sigue cómo se reparten las personas al pasar de una solución a otra.
+
+```{r}
+#| label: comparacion-k
+ks_comp <- 3:5
+mods_k <- map(set_names(ks_comp), ~ r$modelos$A[[.x]])
+nombres_k <- map(mods_k, nombrar)
+enum_A <- enum %>% filter(modelo == "A")
+mejora_total <- enum_A$BIC[1] - min(enum_A$BIC)
+comparacion_k <- enum_A %>%
+  mutate(dBIC = c(NA, diff(BIC)), mejora_pct = -100 * dBIC / mejora_total) %>%
+  filter(clases %in% ks_comp) %>%
+  left_join(imap_dfr(mods_k, ~ tibble(clases = as.integer(.y),
+              bvr_n = sum(residuos_bivariados(.x, r$lca_datos, r$items_A)$BVR > 3.84),
+              avepp_min = min(clasificacion(.x)$AvePP))), by = "clases")
+comparacion_k %>%
+  transmute(Clases = clases, BIC = round(BIC, 1), `ΔBIC` = round(dBIC, 1),
+            `% de la mejora total` = round(mejora_pct, 1), `Entropía` = round(entropia, 3),
+            `Clase mín.` = round(clase_min, 3), `AvePP mín.` = round(avepp_min, 3),
+            `Réplicas` = paste0(replicas, "/", inicios), `Pares BVR > 3,84` = bvr_n) %>%
+  kable(caption = "Soluciones de 3, 4 y 5 clases (modelo A). % de la mejora total: parte de la reducción del BIC entre 1 clase y el mínimo que aporta cada clase adicional.")
+```
+
+```{r}
+#| label: perfiles-k
+#| fig-width: 9
+#| fig-height: 3.6
+perfiles_k <- imap_dfr(mods_k, function(m, k) {
+  medias_dim(m) %>% mutate(prop = m$P[clase], clase = nombres_k[[k]][clase], k = as.integer(k))
+}) %>%
+  pivot_longer(all_of(orden_dim[1:4]), names_to = "dim", values_to = "media01")
+perfiles_k %>%
+  mutate(dim = factor(dim, levels = orden_dim[1:4]),
+         clase = factor(paste0(clase, " (", round(100 * prop), "%)")),
+         k = paste(k, "clases")) %>%
+  ggplot(aes(dim, media01, group = clase, colour = clase)) +
+  geom_line() + geom_point() +
+  facet_wrap(~ k) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, 10)) +
+  labs(x = NULL, y = "Respuesta media esperada", colour = NULL) +
+  theme_bw() + theme(legend.position = "right")
+```
+
+```{r}
+#| label: transiciones
+modal_k <- imap(mods_k, ~ factor(nombres_k[[.y]][.x$predclass]))
+kable(table(`3 clases` = modal_k[["3"]], `4 clases` = modal_k[["4"]]),
+      caption = "Asignación modal: solución de 3 clases (filas) vs. 4 clases (columnas)")
+kable(table(`4 clases` = modal_k[["4"]], `5 clases` = modal_k[["5"]]),
+      caption = "Asignación modal: solución de 4 clases (filas) vs. 5 clases (columnas)")
+transiciones <- bind_rows(
+  as.data.frame(table(desde = modal_k[["3"]], hacia = modal_k[["4"]])) %>% mutate(paso = "3 a 4"),
+  as.data.frame(table(desde = modal_k[["4"]], hacia = modal_k[["5"]])) %>% mutate(paso = "4 a 5"))
+```
+
+Cómo cambia la solución al agregar clases:
+
+- **3 clases:** Amplio, Bajo y un grupo con el consumo político más alto y el ahorro doméstico más bajo. El perfil político ya aparece, pero mezclado con personas de nivel medio.
+- **4 clases:** ese grupo se divide en una clase Político más pequeña y nítida y una clase Intermedia, que también recibe parte de las clases Bajo y Amplio.
+- **5 clases:** la clase Bajo se divide. Una parte queda en una clase Bajo más pura y otra, junto con parte de la Amplio, forma la clase Doméstico: ahorro y planificación altos con poco consumo político.
+
+El perfil Político (consumo político alto con ahorro doméstico bajo) aparece en las tres soluciones, de modo que no depende del número de clases. La clase Doméstico, en cambio, solo aparece con cinco clases. Antes de eso, sus integrantes se reparten entre Amplio y Bajo.
+
+Criterios a favor de cada solución:
+
+- **Tres clases:** es la más parsimoniosa, y después de ella cada clase adicional mejora poco el BIC. Pero deja más dependencia local sin explicar y mezcla el perfil político con personas de nivel medio.
+- **Cuatro clases:** separa con nitidez el perfil político. Su máximo de verosimilitud se replica en menos inicios, lo que indica una solución menos estable.
+- **Cinco clases:** tiene el BIC y el CAIC mínimos, la menor dependencia local y distingue el perfil doméstico. Su desventaja es que la clase Político queda bajo el 10% de la muestra.
+
+# 4. Independencia local
+
+El LCA supone que, dentro de cada clase, los ítems son independientes. Se revisa con los residuos bivariados (BVR): el X² de Pearson de cada par de ítems, observado frente a esperado, dividido por sus grados de libertad. Valores sobre 3,84 indican dependencia no explicada por las clases.
+
+```{r}
+#| label: bvr
+items_mod <- list(A = r$items_A, B = r$items_B, C = r$items_C)
+bvr <- imap(sol, ~ residuos_bivariados(.x$modelo, r$lca_datos, items_mod[[.y]]))
+imap_dfr(bvr, ~ tibble(Modelo = .y, Pares = nrow(.x), `BVR > 3,84` = sum(.x$BVR > 3.84),
+                       `% pares` = round(100 * mean(.x$BVR > 3.84), 1),
+                       `BVR máximo` = round(max(.x$BVR), 1))) %>%
+  kable()
+imap_dfr(bvr, ~ .x %>% arrange(desc(BVR)) %>% head(5) %>% mutate(modelo = .y)) %>%
+  transmute(Modelo = modelo, `Ítem 1` = item1, `Ítem 2` = item2, BVR = round(BVR, 1)) %>%
+  kable(caption = "Cinco pares con mayor residuo bivariado en cada modelo")
+```
+
+En el modelo A, la dependencia local es moderada: los pares con residuos más altos son ítems de la misma dimensión (por ejemplo, O3.8 y O3.9, participación en organizaciones y en marchas). Es esperable, porque esas dimensiones forman factores continuos dentro de cada clase. En el modelo B, la dependencia se concentra en los ítems de O4: el par O4.3 y O4.5 ("es fácil llevar mi reciclaje a los centros de acopio" y "en mi comuna es fácil reciclar") tiene un BVR cercano a 90. Esos ítems son casi redundantes, y el modelo B viola el supuesto de forma importante. El modelo C, con un solo ítem por dimensión de actitud, elimina ese problema.
+
+# 5. ¿Las actitudes agregan clases?
+
+```{r}
+#| label: comparacion
+cruce <- function(x, y) table(nombre_modal[[x]], nombre_modal[[y]], dnn = c(x, y))
+kable(cruce("A", "B"), caption = "Asignación modal: modelo A (filas) vs. modelo B (columnas)")
+kable(cruce("A", "C"), caption = "Asignación modal: modelo A (filas) vs. modelo C (columnas)")
+ari <- tibble(Comparación = c("A vs. B", "A vs. C"),
+              ARI = c(adjustedRandIndex(nombre_modal$A, nombre_modal$B),
+                      adjustedRandIndex(nombre_modal$A, nombre_modal$C)))
+kable(ari %>% mutate(ARI = round(ARI, 3)))
+```
+
+```{r}
+#| label: actitudes-por-clase
+actitudes <- map_dfr(c(B = "B", C = "C"), function(x)
+  perfil_clases(sol[[x]]$modelo) %>%
+    filter(item %in% r$items_O4) %>%
+    mutate(clase = factor(sol[[x]]$nombres[clase], levels = orden_clases)), .id = "modelo")
+actitudes %>%
+  mutate(item = paste0(str_replace(item, "_", "."), " ", etiquetas[item])) %>%
+  select(modelo, item, clase, media01) %>%
+  pivot_wider(names_from = clase, values_from = media01) %>%
+  mutate(across(all_of(orden_clases), ~ round(.x, 2))) %>%
+  arrange(modelo) %>%
+  kable(caption = "Respuesta media esperada en ítems de actitud por clase (0-1). O4.7 está redactado en negativo: un valor alto indica menor valoración.")
+```
+
+Incluir las actitudes hacia el reciclaje **no genera clases nuevas**. Los modelos B y C recuperan las mismas cinco clases que A, con una concordancia alta en la asignación de personas (índice de Rand ajustado en la tabla; mayor en C, que no tiene el problema de dependencia local). Las clases se definen por lo que las personas hacen.
+
+Las actitudes sí difieren entre clases, y de una forma que no era obvia:
+
+- **Valoración del reciclaje.** La clase Político tiene la valoración más baja de todas ("es necesario hacerse cargo de las tareas de reciclaje", "reciclar es bueno para la economía") y el mayor escepticismo ("me cuesta creer que un envase reciclado sirva de algo"). Las clases Amplio y Doméstico tienen la valoración más alta.
+- **Facilidad para reciclar.** Varía menos. Es algo mayor en las clases Político y Amplio, y menor en Doméstico y Bajo.
+
+Es decir, quienes más practican el consumo político son quienes menos valoran el reciclaje como acción individual. Es un resultado descriptivo, con ítems de confiabilidad baja, y requiere confirmación.
+
+# 6. Distribución de las clases por sexo, edad y NSE
+
+Se usan los mismos grupos que en el análisis de invarianza. Las proporciones se calculan con las probabilidades posteriores de pertenencia a cada clase, no con la asignación modal, para no ignorar la incertidumbre de clasificación. Es una descripción. La estimación de la relación entre clases y variables sociodemográficas, con corrección del error de clasificación, está en la sección 7.
+
+```{r}
+#| label: grupos
+grupos_df <- db_proc %>%
+  transmute(Sexo = factor(as.numeric(SEXO), levels = 1:2, labels = c("Hombre", "Mujer")),
+            Edad = cut(as.numeric(EDADR), breaks = c(1, 3, 5, 7), labels = c("18-34", "35-54", "55 o más")),
+            NSE  = cut(as.numeric(NSE), breaks = c(0, 3, 5, 7), labels = c("ABC1", "C2-C3", "D-E")))
+post_A <- sol$A$modelo$posterior
+colnames(post_A) <- sol$A$nombres
+post_A <- post_A[, orden_clases]
+
+dist_grupos <- map_dfr(c("Sexo", "Edad", "NSE"), function(v) {
+  g <- grupos_df[[v]]
+  map_dfr(levels(g), function(niv) {
+    sel <- !is.na(g) & g == niv
+    tibble(variable = v, grupo = niv, n = sum(sel), clase = orden_clases,
+           porcentaje = 100 * colMeans(post_A[sel, , drop = FALSE]))
+  })
+})
+total <- tibble(variable = "Total", grupo = "Total", n = nrow(post_A), clase = orden_clases,
+                porcentaje = 100 * colMeans(post_A))
+dist_grupos <- bind_rows(total, dist_grupos)
+
+dist_grupos %>%
+  mutate(porcentaje = round(porcentaje, 1)) %>%
+  pivot_wider(names_from = clase, values_from = porcentaje) %>%
+  rename(Variable = variable, Grupo = grupo) %>%
+  kable(caption = "Distribución de las clases por grupo (%; ponderada por probabilidad posterior; modelo A)")
+
+# Prueba descriptiva de asociación (asignación modal; no corrige el error de clasificación)
+pruebas_asoc <- map_dfr(c("Sexo", "Edad", "NSE"), function(v) {
+  t <- chisq.test(table(grupos_df[[v]], nombre_modal$A))
+  tibble(Variable = v, `χ²` = round(t$statistic, 2), gl = t$parameter,
+         p = signif(t$p.value, 3),
+         `V de Cramér` = round(sqrt(t$statistic / (sum(t$observed) * (min(dim(t$observed)) - 1))), 3))
+})
+kable(pruebas_asoc, caption = "Asociación entre clase modal y variables sociodemográficas")
+```
+
+```{r}
+#| label: figura-grupos
+#| fig-width: 8
+#| fig-height: 4
+dist_grupos %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         grupo = factor(grupo, levels = unique(grupo)),
+         variable = factor(variable, levels = c("Total", "Sexo", "Edad", "NSE"))) %>%
+  ggplot(aes(grupo, porcentaje, fill = clase)) +
+  geom_col(width = 0.75) +
+  facet_grid(~ variable, scales = "free_x", space = "free_x") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = NULL, y = "%", fill = "Clase") +
+  theme_bw() + theme(legend.position = "top")
+```
+
+# 7. Enfoque de tres pasos: clases y variables sociodemográficas
+
+Las tablas de la sección 6 son descriptivas. Para estimar la relación entre la pertenencia a las clases y las variables sociodemográficas se usa el enfoque de tres pasos con corrección por máxima verosimilitud (Vermunt, 2010; Bakk et al., 2013):
+
+1. **Paso 1:** se estima el modelo de medida sin covariables (la solución de cinco clases del modelo A). Así las covariables no modifican la definición de las clases.
+2. **Paso 2:** cada persona se asigna a su clase más probable y se calcula la matriz de error de clasificación, D[s, w] = P(clase asignada = w | clase real = s), a partir de las probabilidades posteriores.
+3. **Paso 3:** se estima una regresión logística multinomial de la clase latente sobre sexo, edad y NSE, simultáneamente. La clase asignada entra como un indicador imperfecto de la clase real, con errores fijados en D. Eso corrige la atenuación que se produce al usar directamente la clase asignada.
+
+La clase de referencia es Intermedio, la más grande y la de perfil medio, de modo que cada razón de odds compara la probabilidad de pertenecer a una clase de perfil definido frente a la clase media. Los errores estándar provienen de la matriz hessiana. Los efectos de cada variable se evalúan con pruebas de Wald conjuntas sobre todas las clases. Para facilitar la lectura se calculan también las probabilidades predichas de pertenecer a cada clase en cada grupo, promediando sobre la muestra con las demás variables en sus valores observados.
+
+```{r}
+#| label: tres-pasos
+m_A <- sol$A$modelo
+nombres_A <- sol$A$nombres
+Z <- model.matrix(~ Sexo + Edad + NSE, grupos_df)
+ref <- which(nombres_A == "Intermedio")
+tp <- tres_pasos_ml(m_A, Z, ref)
+stopifnot(tp$convergencia == 0)
+
+# Matriz de error de clasificación (paso 2)
+D <- tp$D
+dimnames(D) <- list(`Clase real` = nombres_A, `Clase asignada` = nombres_A)
+D_ord <- D[orden_clases, orden_clases]
+kable(round(D_ord, 3), caption = "Matriz de error de clasificación: P(clase asignada | clase real)")
+
+# Comprobación: las proporciones marginales del paso 3 deben reproducir las del paso 1
+comprobacion <- tibble(clase = nombres_A, paso1 = m_A$P,
+                       paso3 = colMeans(tp$prob_clase(as.vector(tp$coef))))
+kable(comprobacion %>% mutate(across(-clase, ~ round(.x, 3))),
+      caption = "Proporciones de clase: modelo de medida (paso 1) y modelo de tres pasos (paso 3)")
+```
+
+```{r}
+#| label: tres-pasos-coef
+etiqueta_z <- c("SexoMujer" = "Mujer (ref. hombre)", "Edad35-54" = "35-54 (ref. 18-34)",
+                "Edad55 o más" = "55 o más (ref. 18-34)", "NSEC2-C3" = "C2-C3 (ref. ABC1)",
+                "NSED-E" = "D-E (ref. ABC1)")
+ee <- matrix(sqrt(diag(tp$vcov)), nrow = nrow(tp$coef), dimnames = dimnames(tp$coef))
+coef_3p <- expand_grid(termino = rownames(tp$coef), k = seq_len(ncol(tp$coef))) %>%
+  mutate(clase = nombres_A[tp$otras[k]],
+         b = map2_dbl(termino, k, ~ tp$coef[.x, .y]),
+         ee = map2_dbl(termino, k, ~ ee[.x, .y]),
+         OR = exp(b), OR_inf = exp(b - 1.96 * ee), OR_sup = exp(b + 1.96 * ee),
+         z = b / ee, p = 2 * pnorm(-abs(z))) %>%
+  filter(termino != "(Intercept)") %>%
+  mutate(variable = str_extract(termino, "^(Sexo|Edad|NSE)"),
+         termino = etiqueta_z[termino]) %>%
+  select(variable, termino, clase, b, ee, OR, OR_inf, OR_sup, z, p)
+
+coef_3p %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         valor = paste0(format(round(OR, 2), nsmall = 2), " [", format(round(OR_inf, 2), nsmall = 2),
+                        ", ", format(round(OR_sup, 2), nsmall = 2), "]", if_else(p < .05, "*", ""))) %>%
+  select(termino, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  rename(`Variable (categoría de referencia)` = termino) %>%
+  kable(caption = "Razones de odds [IC 95%] de pertenecer a cada clase frente a la clase Intermedio. * p < ,05")
+
+wald_3p <- tibble(variable = c("Sexo", "Edad", "NSE"),
+                  columnas = list("SexoMujer", c("Edad35-54", "Edad55 o más"), c("NSEC2-C3", "NSED-E"))) %>%
+  mutate(res = map(columnas, ~ wald_covariable(tp, .x))) %>%
+  unnest(res) %>% select(-columnas)
+kable(wald_3p %>% mutate(wald = round(wald, 2), p = signif(p, 3)),
+      caption = "Pruebas de Wald conjuntas por variable (todas las clases)")
+```
+
+```{r}
+#| label: tres-pasos-prob
+columnas_var <- list(Sexo = "SexoMujer", Edad = c("Edad35-54", "Edad55 o más"),
+                     NSE = c("NSEC2-C3", "NSED-E"))
+prob_3p <- imap_dfr(columnas_var, function(cols, v) {
+  pp <- prob_predichas(tp, Z, cols, nombres_A, n_sim = 2000, semilla = 20231)
+  niveles <- levels(grupos_df[[v]])
+  map_dfr(seq_along(niveles), function(j)
+    tibble(variable = v, grupo = niveles[j], clase = nombres_A,
+           prob = pp$est[, j], inf = pp$inf[, j], sup = pp$sup[, j]))
+})
+
+prob_3p %>%
+  mutate(valor = paste0(format(round(100 * prob, 1), nsmall = 1), " [",
+                        format(round(100 * inf, 1), nsmall = 1), ", ",
+                        format(round(100 * sup, 1), nsmall = 1), "]"),
+         clase = factor(clase, levels = orden_clases)) %>%
+  select(variable, grupo, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  select(Variable = variable, Grupo = grupo, all_of(orden_clases)) %>%
+  kable(caption = "Probabilidad predicha (%) [IC 95%] de pertenecer a cada clase, corregida por error de clasificación")
+```
+
+```{r}
+#| label: figura-tres-pasos
+#| fig-width: 9
+#| fig-height: 3.5
+prob_3p %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         grupo = factor(grupo, levels = unique(grupo))) %>%
+  ggplot(aes(grupo, 100 * prob, colour = variable)) +
+  geom_pointrange(aes(ymin = 100 * inf, ymax = 100 * sup), size = 0.3) +
+  facet_grid(~ clase) +
+  labs(x = NULL, y = "Probabilidad predicha (%)", colour = NULL) +
+  theme_bw() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5), legend.position = "top")
+```
+
+```{r}
+#| label: comparacion-ingenuo
+# Comparación con el enfoque ingenuo: regresión multinomial sobre la clase asignada,
+# sin corregir el error de clasificación (subestima los efectos)
+ingenuo <- nnet::multinom(relevel(factor(nombres_A[m_A$predclass]), ref = "Intermedio") ~ Sexo + Edad + NSE,
+                          data = grupos_df, trace = FALSE)
+comp_ingenuo <- as_tibble(coef(ingenuo), rownames = "clase") %>%
+  pivot_longer(-clase, names_to = "termino", values_to = "b_ingenuo") %>%
+  filter(termino != "(Intercept)") %>%
+  mutate(termino = etiqueta_z[termino]) %>%
+  left_join(coef_3p %>% select(termino, clase, b_tres_pasos = b), by = c("termino", "clase"))
+kable(comp_ingenuo %>% mutate(across(starts_with("b_"), ~ round(.x, 2))),
+      caption = "Coeficientes (log-odds): enfoque ingenuo vs. tres pasos corregido")
+```
+
+Los coeficientes corregidos son, en general, mayores en valor absoluto que los del enfoque ingenuo. Es lo esperable: asignar a cada persona a su clase más probable introduce error, y ese error atenúa las asociaciones.
+
+# 8. Guardado de resultados
+
+```{r}
+#| label: guardar
+dir_tab <- here("output", "tables")
+write_csv(r$enumeracion, file.path(dir_tab, "lca_enumeracion.csv"))
+write_csv(clasif, file.path(dir_tab, "lca_clasificacion.csv"))
+write_csv(perfil_A %>% mutate(enunciado = etiquetas[str_replace(item, "\\.", "_")]),
+          file.path(dir_tab, "lca_perfiles_items.csv"))
+write_csv(medias_dim(sol$A$modelo) %>% mutate(clase = sol$A$nombres[clase]),
+          file.path(dir_tab, "lca_perfiles_dimensiones.csv"))
+write_csv(imap_dfr(bvr, ~ mutate(.x, modelo = .y)), file.path(dir_tab, "lca_bvr.csv"))
+write_csv(ari, file.path(dir_tab, "lca_concordancia.csv"))
+write_csv(actitudes, file.path(dir_tab, "lca_actitudes_clase.csv"))
+write_csv(dist_grupos, file.path(dir_tab, "lca_distribucion_grupos.csv"))
+write_csv(pruebas_asoc, file.path(dir_tab, "lca_asociacion_grupos.csv"))
+write_csv(comparacion_k, file.path(dir_tab, "lca_comparacion_k.csv"))
+write_csv(perfiles_k, file.path(dir_tab, "lca_perfiles_k.csv"))
+write_csv(transiciones, file.path(dir_tab, "lca_transiciones_k.csv"))
+write_csv(as_tibble(D_ord, rownames = "clase_real"), file.path(dir_tab, "lca_3p_error_clasificacion.csv"))
+write_csv(coef_3p, file.path(dir_tab, "lca_3p_coeficientes.csv"))
+write_csv(wald_3p, file.path(dir_tab, "lca_3p_wald.csv"))
+write_csv(prob_3p, file.path(dir_tab, "lca_3p_probabilidades.csv"))
+write_csv(comp_ingenuo, file.path(dir_tab, "lca_3p_vs_ingenuo.csv"))
+saveRDS(list(sol = sol, k = k_elegido, orden_clases = orden_clases, tres_pasos = tp),
+        here("output", "models", "lca_soluciones.rds"))
+```

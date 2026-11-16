@@ -1,0 +1,27 @@
+factor,item,enunciado,carga,ee,p
+compra_sust,O1_6,Cultiva y cosecha sus propios alimentos,0.39272807161414997,0.04030087754084432,0
+compra_sust,O1_8,Adquiere productos con la etiqueta “comercio justo”,0.4470673710347626,0.03473842160366498,0
+compra_sust,O2_11,Compra productos orgánicos o naturales. ,0.6345243205005118,0.02970223257146382,0
+compra_sust,O2_12,Compra productos hechos con material reciclado. ,0.6761558842855535,0.027507833270596978,0
+compra_sust,O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.7102938612460327,0.025837944900479977,0
+compra_sust,O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.6506500165538915,0.02716564341667682,0
+consumo_pol,O3_2,Intenta influir en lo que consumen otras personas,0.6750917068079838,0.029367106824017913,0
+consumo_pol,O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.8062471466274679,0.024974843080126038,0
+consumo_pol,O3_5,Realiza un reclamo o demanda colectiva en el Sernac,0.5778756628513534,0.034767095587579545,0
+consumo_pol,O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.7387521061458697,0.03485449046973132,0
+consumo_pol,O3_9,Participa en marchas o movilizaciones,0.5946474463653371,0.036028918084393326,0
+ahorro,O2_1,Evita dejar luces prendidas en ambiente desocupados ,0.7343662368171341,0.03278835230163804,0
+ahorro,O2_2,Corta el agua mientras se lava los dientes. ,0.6553365570133746,0.03502471866937968,0
+ahorro,O2_3,Toma duchas cortas,0.6118583729449112,0.03040416564165972,0
+ahorro,O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.5692064081822883,0.03867854945253834,0
+ahorro,O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.6360793794042195,0.031192475591773523,0
+planificacion,O1_9,Compara precios en internet antes de comprar,0.3735668373929865,0.0407107286299982,0
+planificacion,O1_10,Elabora un presupuesto mensual para monitorear mis gastos,0.6461919033181196,0.03158825380511595,0
+planificacion,O2_8,Planifica compra de alimentos. ,0.7550432135880031,0.03143042658542236,0
+planificacion,O2_9,Planifica compras de vestuario. ,0.5381184784392167,0.036865239793902174,0
+facilidad_rec,O4_2,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.36927720720691115,0.040329325253297896,0
+facilidad_rec,O4_3,Es fácil llevar mi reciclaje hasta los centros de acopio,0.873867637791299,0.0472055790156916,0
+facilidad_rec,O4_5,En mi comuna o barrio es fácil reciclar,0.823199119350116,0.04492857320344153,0
+valoracion_rec,O4_1,Es necesario hacerse cargo de las tareas de reciclaje,0.6726119003257157,0.05448603750306928,0
+valoracion_rec,O4_7,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.4287032101190484,0.04861382989206855,0
+valoracion_rec,O4_8,Reciclar es bueno para la economía,0.5170019894392704,0.04917328814663874,0

@@ -1,0 +1,7 @@
+factor1,factor2,r,p
+compra_sust,consumo_pol,0.7136105626051964,0
+compra_sust,ahorro,0.45262297229772686,0
+compra_sust,planificacion,0.5817126114704357,0
+consumo_pol,ahorro,-0.10874097787879333,0.004300223405362846
+consumo_pol,planificacion,0.2327689067811322,8.266720641358916e-13
+ahorro,planificacion,0.5984043809231179,0

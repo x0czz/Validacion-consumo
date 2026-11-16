@@ -1,0 +1,367 @@
+---
+title: "Invarianza de medida de los modelos de consumo responsable"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+Este script evalúa si los dos modelos de medida obtenidos en `analisis_factorial.qmd` miden lo mismo según sexo, tramo de edad y nivel socioeconómico (NSE). Si la invarianza se sostiene, compara las medias latentes entre grupos.
+
+Los modelos evaluados son:
+
+- **Consumo sustentable y político:** compra sustentable (O2.11, O2.12, O3.4, O3.7) y consumo político (O3.2, O3.3, O3.5, O3.8, O3.9).
+- **Prácticas domésticas:** ahorro doméstico (O2.1 a O2.5) y planificación de compras (O1.10, O2.8, O2.9).
+
+Se sigue el procedimiento de Wu y Estabrook (2016) para indicadores ordinales, implementado en `semTools::measEq.syntax()`, con estimador WLSMV y parametrización *theta*. Los niveles se contrastan en secuencia:
+
+1. **Configural:** misma estructura, parámetros libres.
+2. **Umbrales:** umbrales de los ítems iguales entre grupos.
+3. **Métrica:** además, cargas iguales.
+4. **Escalar:** además, interceptos iguales.
+
+Criterio de decisión: un nivel se acepta si, respecto del anterior, el CFI no baja más de 0,010 y el RMSEA no sube más de 0,015 (Chen, 2007). La prueba de diferencia de χ² escalada se reporta, pero no decide, porque con muestras grandes rechaza diferencias triviales.
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(haven)
+library(here)
+library(lavaan)
+library(semTools)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "")
+
+db_proc <- readRDS(here("input", "data", "proc", "db_proc.rds"))
+
+datos <- db_proc %>%
+  mutate(
+    sexo  = factor(as.numeric(SEXO), levels = 1:2, labels = c("Hombre", "Mujer")),
+    edad  = cut(as.numeric(EDADR), breaks = c(1, 3, 5, 7),
+                labels = c("18-34", "35-54", "55 o más")),
+    nse   = cut(as.numeric(NSE), breaks = c(0, 3, 5, 7),
+                labels = c("ABC1", "C2-C3", "D-E")),
+    across(matches("^O[1-4]_\\d+$"), ~ as.numeric(zap_labels(.x)))
+  )
+
+modelos <- list(
+  "Consumo sustentable y político" = '
+    compra_sust =~ O2_11 + O2_12 + O3_4 + O3_7
+    consumo_pol =~ O3_2 + O3_3 + O3_5 + O3_8 + O3_9
+  ',
+  "Prácticas domésticas" = '
+    ahorro        =~ O2_1 + O2_2 + O2_3 + O2_4 + O2_5
+    planificacion =~ O1_10 + O2_8 + O2_9
+  '
+)
+
+grupos <- c("Sexo" = "sexo", "Edad" = "edad", "NSE" = "nse")
+
+etiquetas <- map_chr(db_proc %>% select(matches("^O[1-4]_\\d+$")),
+                     ~ str_remove(attr(.x, "label"), "_[^_]*$"))
+```
+
+# 1. Grupos de comparación
+
+La edad se agrupa en tres tramos y el NSE en tres niveles (ABC1 = AB, C1a y C1b; C2-C3; D-E), para que cada grupo tenga casos suficientes.
+
+```{r}
+#| label: tabla-grupos
+imap_dfr(grupos, ~ datos %>% count(grupo = .data[[.x]]) %>% mutate(variable = .y, .before = 1)) %>%
+  mutate(pct = round(100 * n / nrow(datos), 1)) %>%
+  kable(col.names = c("Variable", "Grupo", "N", "%"),
+        caption = "Tamaño de los grupos de comparación") %>%
+  kable_styling(full_width = FALSE) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+Para estimar los umbrales, cada categoría de respuesta debe tener casos en cada grupo.
+
+```{r}
+#| label: celdas
+items_modelos <- unique(unlist(map(modelos, ~ lavNames(cfa(.x, data = datos), "ov"))))
+
+celdas <- imap_dfr(grupos, function(g, nombre) {
+  map_dfr(items_modelos, function(i) {
+    tab <- table(datos[[g]], datos[[i]])
+    tibble(variable = nombre, item = i, celda_min = min(tab))
+  })
+}) %>%
+  group_by(variable) %>%
+  slice_min(celda_min, n = 1, with_ties = FALSE)
+
+celdas %>%
+  kable(col.names = c("Variable", "Ítem", "Casos en la celda más pequeña"),
+        caption = "Celda más pequeña (grupo × categoría de respuesta) por variable") %>%
+  kable_styling(full_width = FALSE)
+```
+
+No hay categorías vacías en ningún grupo.
+
+# 2. Funciones
+
+```{r}
+#| label: funciones
+niveles <- list(
+  "Configural" = "",
+  "Umbrales"   = "thresholds",
+  "Métrica"    = c("thresholds", "loadings"),
+  "Escalar"    = c("thresholds", "loadings", "intercepts")
+)
+
+indices <- c("chisq.scaled", "df", "cfi.scaled", "tli.scaled", "rmsea.scaled", "srmr")
+
+# Sintaxis de un nivel de invarianza (Wu y Estabrook, 2016)
+# lavaan numera los grupos según el orden en que aparecen en la base. Se ordena
+# la base por la variable de grupo para que el primer nivel del factor sea el
+# grupo 1 (referencia) tanto en la sintaxis como en la estimación.
+datos_por <- function(grupo) datos %>% arrange(.data[[grupo]])
+
+sintaxis_nivel <- function(modelo, grupo, restricciones) {
+  ord <- lavNames(cfa(modelo, data = datos), "ov")
+  as.character(measEq.syntax(
+    configural.model = modelo, data = datos_por(grupo), ordered = ord,
+    parameterization = "theta", ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
+    group = grupo, group.equal = restricciones
+  ))
+}
+
+# Libera el intercepto de un ítem en todos los grupos salvo el de referencia.
+# Se edita la sintaxis directamente porque el argumento group.partial de
+# measEq.syntax() falla con más de un parámetro en algunas versiones de semTools.
+liberar_intercepto <- function(sintaxis, item, n_grupos) {
+  lineas <- strsplit(sintaxis, "\n")[[1]]
+  objetivo <- grepl(paste0("^", item, " ~ c\\("), lineas) & grepl("\\*1", lineas)
+  lineas[objetivo] <- paste0(item, " ~ c(0, ", paste(rep("NA", n_grupos - 1), collapse = ", "), ")*1")
+  paste(lineas, collapse = "\n")
+}
+
+estimar <- function(sintaxis, modelo, grupo) {
+  ord <- lavNames(cfa(modelo, data = datos), "ov")
+  cfa(sintaxis, data = datos_por(grupo), group = grupo, ordered = ord,
+      group.label = levels(datos[[grupo]]),
+      estimator = "WLSMV", parameterization = "theta")
+}
+
+# Estima los cuatro niveles y compara cada uno con el anterior
+secuencia_invarianza <- function(modelo, grupo) {
+  ajustes <- map(niveles, ~ estimar(sintaxis_nivel(modelo, grupo, .x), modelo, grupo))
+  tabla <- map_dfr(ajustes, ~ as_tibble_row(fitMeasures(.x, indices)), .id = "nivel") %>%
+    mutate(across(-nivel, as.numeric))
+  p_dif <- c(NA, map_dbl(2:4, ~ lavTestLRT(ajustes[[.x]], ajustes[[.x - 1]])[2, "Pr(>Chisq)"]))
+  tabla <- tabla %>%
+    mutate(dCFI = cfi.scaled - lag(cfi.scaled),
+           dRMSEA = rmsea.scaled - lag(rmsea.scaled),
+           p_dif = p_dif,
+           cumple = case_when(nivel == "Configural" ~ NA,
+                              dCFI >= -0.010 & dRMSEA <= 0.015 ~ TRUE,
+                              TRUE ~ FALSE))
+  list(tabla = tabla, ajustes = ajustes)
+}
+```
+
+# 3. Secuencia de invarianza
+
+```{r}
+#| label: secuencias
+resultados <- map(modelos, function(m) map(grupos, ~ secuencia_invarianza(m, .x)))
+
+tabla_invarianza <- imap_dfr(resultados, function(por_grupo, nombre_modelo) {
+  imap_dfr(por_grupo, ~ .x$tabla %>% mutate(modelo = nombre_modelo, variable = .y, .before = 1))
+})
+
+mostrar_secuencia <- function(nombre_modelo) {
+  tabla_invarianza %>%
+    filter(modelo == nombre_modelo) %>%
+    mutate(p_dif = case_when(is.na(p_dif) ~ "",
+                             p_dif < 0.001 ~ "< 0,001",
+                             TRUE ~ formatC(p_dif, digits = 3, format = "f")),
+           cumple = case_when(is.na(cumple) ~ "", cumple ~ "Sí", TRUE ~ "No")) %>%
+    select(variable, nivel, chisq.scaled, df, cfi.scaled, rmsea.scaled, srmr,
+           dCFI, dRMSEA, p_dif, cumple) %>%
+    kable(digits = 3,
+          col.names = c("Variable", "Nivel", "χ²", "gl", "CFI", "RMSEA", "SRMR",
+                        "ΔCFI", "ΔRMSEA", "p (Δχ²)", "Se acepta"),
+          caption = paste0("Invarianza de medida: ", nombre_modelo)) %>%
+    kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+    collapse_rows(columns = 1, valign = "top")
+}
+```
+
+## Consumo sustentable y político
+
+```{r}
+#| label: tabla-publico
+mostrar_secuencia("Consumo sustentable y político")
+```
+
+## Prácticas domésticas
+
+```{r}
+#| label: tabla-domestico
+mostrar_secuencia("Prácticas domésticas")
+```
+
+En ambos modelos, la invarianza **configural, de umbrales y métrica** se sostiene para las tres variables. La **escalar** se sostiene para sexo y NSE, pero no para edad.
+
+# 4. Invarianza escalar parcial por edad
+
+Cuando la invarianza escalar completa no se sostiene, se puede buscar **invarianza parcial**: liberar los interceptos de los ítems que funcionan distinto entre grupos, manteniendo los demás iguales. Las medias latentes siguen siendo comparables siempre que cada factor conserve al menos dos ítems invariantes (Byrne, Shavelson y Muthén, 1989).
+
+El procedimiento es iterativo: se identifica el intercepto con el mayor índice de modificación (sumado entre grupos), se libera, se reestima y se repite hasta que el modelo cumple el criterio respecto del modelo métrico.
+
+```{r}
+#| label: parcial-edad
+invarianza_parcial <- function(modelo, grupo, max_libres = 3) {
+  ord <- lavNames(cfa(modelo, data = datos), "ov")
+  n_g <- nlevels(datos[[grupo]])
+  ref <- fitMeasures(resultados[[which(map_chr(modelos, identity) == modelo)]][["Edad"]]$ajustes[["Métrica"]], indices)
+  base <- sintaxis_nivel(modelo, grupo, niveles[["Escalar"]])
+  libres <- character(0)
+  pasos <- tibble()
+  repeat {
+    s <- base
+    for (it in libres) s <- liberar_intercepto(s, it, n_g)
+    f <- estimar(s, modelo, grupo)
+    fm <- fitMeasures(f, indices)
+    cumple <- (fm["cfi.scaled"] - ref["cfi.scaled"] >= -0.010) &&
+              (fm["rmsea.scaled"] - ref["rmsea.scaled"] <= 0.015)
+    pasos <- bind_rows(pasos, tibble(
+      interceptos_libres = if (length(libres)) paste(libres, collapse = ", ") else "Ninguno",
+      CFI = fm["cfi.scaled"], RMSEA = fm["rmsea.scaled"],
+      dCFI = fm["cfi.scaled"] - ref["cfi.scaled"],
+      dRMSEA = fm["rmsea.scaled"] - ref["rmsea.scaled"],
+      cumple = cumple))
+    if (cumple || length(libres) >= max_libres) break
+    mi <- suppressWarnings(modindices(f, op = "~1", free.remove = FALSE)) %>%
+      filter(lhs %in% ord, !lhs %in% libres) %>%
+      group_by(lhs) %>%
+      summarise(mi = sum(mi), .groups = "drop") %>%
+      arrange(desc(mi))
+    libres <- c(libres, mi$lhs[1])
+  }
+  list(pasos = pasos, libres = libres, ajuste = f)
+}
+
+parciales <- map(modelos, ~ invarianza_parcial(.x, "edad"))
+
+tabla_parcial <- imap_dfr(parciales, ~ .x$pasos %>% mutate(modelo = .y, .before = 1))
+
+tabla_parcial %>%
+  mutate(cumple = if_else(cumple, "Sí", "No")) %>%
+  kable(digits = 3,
+        col.names = c("Modelo", "Interceptos liberados", "CFI", "RMSEA",
+                      "ΔCFI vs. métrico", "ΔRMSEA vs. métrico", "Se acepta"),
+        caption = "Búsqueda de invarianza escalar parcial por edad") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+```{r}
+#| label: interceptos-libres
+interceptos_libres <- imap_dfr(parciales, function(p, nombre) {
+  parameterEstimates(p$ajuste) %>%
+    filter(op == "~1", lhs %in% p$libres, group > 1) %>%
+    transmute(modelo = nombre, item = lhs, enunciado = etiquetas[lhs],
+              grupo = lavInspect(p$ajuste, "group.label")[group],
+              intercepto = est, ee = se, p = pvalue)
+})
+
+interceptos_libres %>%
+  mutate(p = if_else(p < 0.001, "< 0,001", formatC(p, digits = 3, format = "f"))) %>%
+  kable(digits = 2,
+        col.names = c("Modelo", "Ítem", "Enunciado", "Tramo de edad", "Intercepto", "EE", "p"),
+        caption = "Interceptos liberados (diferencia respecto del tramo 18-34, en la escala latente del ítem)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1:3, valign = "top")
+```
+
+Un intercepto positivo indica que, a igual nivel en el factor, ese tramo de edad tiende a responder más alto que el grupo de 18 a 34 años en ese ítem.
+
+# 5. Comparación de medias latentes
+
+Con invarianza escalar (completa o parcial), las medias de los factores se pueden comparar entre grupos. En cada comparación, el primer grupo es la referencia: su media se fija en 0 y su varianza en 1. Las medias de los demás grupos se expresan en desviaciones estándar del grupo de referencia, lo que permite leerlas como un tamaño de efecto (similar a una *d* de Cohen).
+
+```{r}
+#| label: medias-latentes
+modelo_final <- function(nombre_modelo, variable) {
+  if (variable == "Edad") parciales[[nombre_modelo]]$ajuste
+  else resultados[[nombre_modelo]][[variable]]$ajustes[["Escalar"]]
+}
+
+medias <- imap_dfr(modelos, function(m, nombre_modelo) {
+  imap_dfr(grupos, function(g, variable) {
+    f <- modelo_final(nombre_modelo, variable)
+    parameterEstimates(f) %>%
+      filter(op == "~1", lhs %in% lavNames(f, "lv"), group > 1) %>%
+      transmute(modelo = nombre_modelo, variable = variable,
+                referencia = lavInspect(f, "group.label")[1],
+                grupo = lavInspect(f, "group.label")[group],
+                factor = lhs, media = est, ee = se,
+                ic_inf = ci.lower, ic_sup = ci.upper, p = pvalue)
+  })
+})
+
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+
+medias %>%
+  mutate(factor = nombres_factor[factor],
+         comparacion = paste(grupo, "vs.", referencia),
+         ic = sprintf("[%.2f; %.2f]", ic_inf, ic_sup),
+         p = if_else(p < 0.001, "< 0,001", formatC(p, digits = 3, format = "f"))) %>%
+  select(factor, variable, comparacion, media, ee, ic, p) %>%
+  kable(digits = 2,
+        col.names = c("Factor", "Variable", "Comparación", "Diferencia de medias (DE)",
+                      "EE", "IC 95%", "p"),
+        caption = "Diferencias de medias latentes entre grupos") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+```{r}
+#| label: fig-medias
+#| fig-cap: "Diferencias de medias latentes respecto del grupo de referencia, con intervalo de confianza de 95%"
+#| fig-height: 7
+medias %>%
+  mutate(factor = factor(nombres_factor[factor], levels = nombres_factor),
+         comparacion = paste(grupo, "vs.", referencia),
+         variable = factor(variable, levels = names(grupos))) %>%
+  ggplot(aes(media, comparacion)) +
+  geom_vline(xintercept = 0, colour = "grey60") +
+  geom_pointrange(aes(xmin = ic_inf, xmax = ic_sup)) +
+  facet_grid(variable ~ factor, scales = "free_y", space = "free_y") +
+  labs(x = "Diferencia de medias latentes (desviaciones estándar del grupo de referencia)",
+       y = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(strip.text = element_text(face = "bold"))
+```
+
+# 6. Guardado
+
+```{r}
+#| label: guardar
+dir.create(here("output", "tables"), recursive = TRUE, showWarnings = FALSE)
+dir.create(here("output", "models"), recursive = TRUE, showWarnings = FALSE)
+
+write_csv(tabla_invarianza, here("output", "tables", "invarianza_secuencia.csv"))
+write_csv(tabla_parcial, here("output", "tables", "invarianza_parcial_edad.csv"))
+write_csv(interceptos_libres, here("output", "tables", "invarianza_interceptos_libres.csv"))
+write_csv(medias, here("output", "tables", "invarianza_medias_latentes.csv"))
+write_csv(imap_dfr(grupos, ~ datos %>% count(grupo = .data[[.x]]) %>% mutate(variable = .y, .before = 1)),
+          here("output", "tables", "invarianza_grupos.csv"))
+
+saveRDS(list(resultados = resultados, parciales = parciales),
+        here("output", "models", "invarianza_modelos.rds"))
+```
+
+Se guardan en `output/tables/` la secuencia de invarianza, la búsqueda de invarianza parcial por edad, los interceptos liberados y las diferencias de medias latentes. Los modelos estimados quedan en `output/models/invarianza_modelos.rds`.

@@ -1,0 +1,86 @@
+item,enunciado,clase,p_alto,umbral
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Amplio,0.7364395913479254,4
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Bajo,0.1956667522461697,4
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Doméstico,0.5504535159121401,4
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Intermedio,0.32899000265222045,4
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,Político,0.27024825108626693,4
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,Amplio,0.9670805380741139,4
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,Bajo,0.720630389469752,4
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,Doméstico,0.9651802759909214,4
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,Intermedio,0.8977497416146167,4
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,Político,0.39064972849755736,4
+O2_11,Compra productos orgánicos o naturales. ,Amplio,0.6049989405926726,4
+O2_11,Compra productos orgánicos o naturales. ,Bajo,0.06044533279694611,4
+O2_11,Compra productos orgánicos o naturales. ,Doméstico,0.18870152686753142,4
+O2_11,Compra productos orgánicos o naturales. ,Intermedio,0.0960108088421058,4
+O2_11,Compra productos orgánicos o naturales. ,Político,0.22741829628208043,4
+O2_12,Compra productos hechos con material reciclado. ,Amplio,0.5985436313491158,4
+O2_12,Compra productos hechos con material reciclado. ,Bajo,0.028317498342632957,4
+O2_12,Compra productos hechos con material reciclado. ,Doméstico,0.18043674682872685,4
+O2_12,Compra productos hechos con material reciclado. ,Intermedio,0.07002681699325071,4
+O2_12,Compra productos hechos con material reciclado. ,Político,0.20088034784705233,4
+O2_2,Corta el agua mientras se lava los dientes. ,Amplio,0.9421929397823077,4
+O2_2,Corta el agua mientras se lava los dientes. ,Bajo,0.5772914036369967,4
+O2_2,Corta el agua mientras se lava los dientes. ,Doméstico,0.9143649380716807,4
+O2_2,Corta el agua mientras se lava los dientes. ,Intermedio,0.7857765867156177,4
+O2_2,Corta el agua mientras se lava los dientes. ,Político,0.42507523075224934,4
+O2_3,Toma duchas cortas,Amplio,0.8566098112863905,4
+O2_3,Toma duchas cortas,Bajo,0.39397296430630185,4
+O2_3,Toma duchas cortas,Doméstico,0.8061685989174814,4
+O2_3,Toma duchas cortas,Intermedio,0.6288281659786891,4
+O2_3,Toma duchas cortas,Político,0.27830498056489206,4
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Amplio,0.9118095760628886,4
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Bajo,0.5849419885611356,4
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Doméstico,0.9129082321755873,4
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Intermedio,0.7795631791822084,4
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,Político,0.41814206446742497,4
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Amplio,0.8860841188884868,4
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Bajo,0.3160663768856063,4
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Doméstico,0.7667710128050259,4
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Intermedio,0.5899732025322486,4
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,Político,0.3110326295150775,4
+O2_8,Planifica compra de alimentos. ,Amplio,0.9538704960007882,4
+O2_8,Planifica compra de alimentos. ,Bajo,0.4058572146802363,4
+O2_8,Planifica compra de alimentos. ,Doméstico,0.8603210609291867,4
+O2_8,Planifica compra de alimentos. ,Intermedio,0.5648808975535493,4
+O2_8,Planifica compra de alimentos. ,Político,0.38628083098181604,4
+O2_9,Planifica compras de vestuario. ,Amplio,0.6335707826440473,4
+O2_9,Planifica compras de vestuario. ,Bajo,0.12125598850252975,4
+O2_9,Planifica compras de vestuario. ,Doméstico,0.38257800328972036,4
+O2_9,Planifica compras de vestuario. ,Intermedio,0.2173924362826107,4
+O2_9,Planifica compras de vestuario. ,Político,0.25324673891896626,4
+O3_2,Intenta influir en lo que consumen otras personas,Amplio,0.6680817180365646,3
+O3_2,Intenta influir en lo que consumen otras personas,Bajo,0.12793045004282866,3
+O3_2,Intenta influir en lo que consumen otras personas,Doméstico,0.18111029416212568,3
+O3_2,Intenta influir en lo que consumen otras personas,Intermedio,0.34730151602773063,3
+O3_2,Intenta influir en lo que consumen otras personas,Político,0.8283017878041175,3
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Amplio,0.3312564032603951,4
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Bajo,0.02554325468843926,4
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Doméstico,0.05062757250276422,4
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Intermedio,0.049754948443761667,4
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,Político,0.24502055123128672,4
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Amplio,0.5267490774326364,4
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Bajo,0.03798660211810107,4
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Doméstico,0.1257509087712777,4
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Intermedio,0.09531638692746051,4
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",Político,0.2434621643969664,4
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Amplio,0.4446638627467147,3
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Bajo,0.08307355058527495,3
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Doméstico,0.1510892856774547,3
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Intermedio,0.1745146321782242,3
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,Político,0.7071040402141956,3
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Amplio,0.5997110809337308,4
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Bajo,0.04609950264826192,4
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Doméstico,0.24786575751755455,4
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Intermedio,0.1159280877026598,4
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",Político,0.2867028700996998,4
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Amplio,0.24990779104159458,3
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Bajo,0.01500363875363183,3
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Doméstico,0.04017407569147698,3
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Intermedio,0.05289335468942733,3
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",Político,0.6587689069946328,3
+O3_9,Participa en marchas o movilizaciones,Amplio,0.39979115376803126,3
+O3_9,Participa en marchas o movilizaciones,Bajo,0.07736908003524329,3
+O3_9,Participa en marchas o movilizaciones,Doméstico,0.06796576053011445,3
+O3_9,Participa en marchas o movilizaciones,Intermedio,0.19311697313547516,3
+O3_9,Participa en marchas o movilizaciones,Político,0.6566794370635359,3

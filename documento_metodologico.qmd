@@ -1,0 +1,366 @@
+---
+title: "Validación de las escalas de consumo responsable"
+subtitle: "Documento metodológico: análisis factorial de las baterías O1–O4, Encuesta Sociedad de Consumo 2023"
+author: "Nicolás Outerbridge"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    number-sections: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "", OutDec = ",")
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+colapso       <- leer("colapso_10_resumen.csv")
+pruebas       <- leer("pruebas_previas_conjuntos.csv")
+msa           <- leer("pruebas_previas_msa_items.csv")
+n_factores    <- leer("afe_numero_factores.csv")
+soluciones    <- leer("afe_comparacion_soluciones.csv")
+eliminados    <- leer("afe_items_eliminados.csv")
+ajuste_m      <- leer("afc_ajuste_modelos.csv")
+ajuste_red    <- leer("afc_reducidos_ajuste.csv")
+estabilidad   <- leer("afc_reducidos_estabilidad.csv")
+cargas_red    <- leer("afc_reducidos_cargas.csv")
+conf_red      <- leer("afc_reducidos_confiabilidad.csv")
+conj_ajuste   <- leer("afc_conjunto_ajuste.csv")
+conj_cor      <- leer("afc_conjunto_correlaciones.csv")
+conj_res      <- leer("afc_conjunto_residuos.csv")
+
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+tabla <- function(df, ...) {
+  kable(df, ...) %>% kable_styling(bootstrap_options = c("striped", "condensed"),
+                                   full_width = FALSE)
+}
+```
+
+# Resumen
+
+Este documento describe cómo se obtuvieron los modelos de medida de consumo responsable a partir de las 46 preguntas de las baterías O1–O4 de la Encuesta Sociedad de Consumo 2023 (N = 1.623).
+
+El resultado son **dos modelos de medida**, cada uno con dos factores correlacionados, con buen ajuste y confiabilidad aceptable en ambas mitades de la muestra y en la muestra completa:
+
+| Modelo | Factor | Ítems | Omega |
+|---|---|---|---|
+| Consumo sustentable y político | Compra sustentable | O2.11, O2.12, O3.4, O3.7 | `r f2(conf_red$omega[conf_red$factor == "compra_sust"])` |
+| | Consumo político | O3.2, O3.3, O3.5, O3.8, O3.9 | `r f2(conf_red$omega[conf_red$factor == "consumo_pol"])` |
+| Prácticas domésticas | Ahorro doméstico | O2.1, O2.2, O2.3, O2.4, O2.5 | `r f2(conf_red$omega[conf_red$factor == "ahorro"])` |
+| | Planificación de compras | O1.10, O2.8, O2.9 | `r f2(conf_red$omega[conf_red$factor == "planificacion"])` |
+
+: Modelos de medida finales {.striped}
+
+Las actitudes hacia el reciclaje (batería O4) no lograron un factor confiable con los ítems disponibles.
+
+# Datos
+
+- **Fuente:** Encuesta Sociedad de Consumo 2023 (Fondecyt 11200893), aplicada entre el 18 y el 25 de julio de 2023.
+- **Muestra:** 1.623 casos completos, sin valores perdidos en las baterías O1–O4 y sin ponderadores.
+- **Ítems:** 46 preguntas tipo Likert de cinco puntos:
+    - O1 (10 ítems): prácticas de consumo, frecuencia de "Nunca" a "Siempre".
+    - O2 (14 ítems): prácticas cotidianas de ahorro y compra, misma escala.
+    - O3 (10 ítems): consumo crítico y político, misma escala.
+    - O4 (12 ítems): actitudes hacia el reciclaje, de "Muy en desacuerdo" a "Muy de acuerdo".
+
+# Flujo del análisis
+
+```{mermaid}
+flowchart TD
+  A["Base original<br/>46 ítems, N = 1.623"] --> B["Preparación<br/>Inversión de O4 y colapso<br/>de categorías extremas &lt; 10%"]
+  B --> C["Pruebas previas (muestra completa)<br/>Bartlett y KMO"]
+  C --> D["División aleatoria de la muestra"]
+  D --> E["Mitad 1 (n = 811)<br/>Análisis factorial exploratorio"]
+  D --> F["Mitad 2 (n = 812)<br/>Análisis factorial confirmatorio"]
+  E --> E1["Número de factores<br/>Análisis paralelo y MAP"]
+  E1 --> E2["Depuración con carga ≥ 0,40<br/>5 factores, 27 ítems"]
+  E2 --> F1["AFC de modelos M1 a M4<br/>Mejor modelo: CFI 0,91"]
+  F --> F1
+  E2 --> E3["Depuración estricta con carga ≥ 0,50<br/>Tres núcleos de ítems"]
+  E3 --> F2["AFC de modelos reducidos R1 a R6"]
+  F --> F2
+  F2 --> G["Estabilidad<br/>Mitad 1, mitad 2 y muestra completa"]
+  G --> H["Dos modelos de medida finales"]
+  G --> I["Modelo conjunto<br/>Relaciones entre bloques"]
+```
+
+El análisis se realiza en dos scripts del repositorio, que deben ejecutarse en orden:
+
+1. `processing/prep_colapso_10.qmd`: preparación de la base y exportación de `input/data/proc/db_proc.rds`.
+2. `processing/analisis_factorial.qmd`: pruebas previas, análisis exploratorio y confirmatorio, y exportación de las tablas que usa este documento.
+
+# Preparación de los datos
+
+## Dirección de la escala
+
+En la base, O1–O3 van de 1 = "Nunca" a 5 = "Siempre", pero O4 va de 1 = "Muy de acuerdo" a 5 = "Muy en desacuerdo". Se invirtió O4 para que en todas las baterías un valor alto signifique más frecuencia o más acuerdo.
+
+Los ítems redactados en negativo (O4.4, O4.7 y O4.10) no se invirtieron en esta etapa. O4.7 se invirtió después, al estimar los modelos confirmatorios, para que todos los indicadores de su factor apuntaran en el mismo sentido.
+
+## Colapso de categorías extremas
+
+Para reducir el efecto suelo y techo, toda categoría extrema (la más baja o la más alta) con menos de 10% de las respuestas se fusionó con la categoría adyacente. La regla es **iterativa**: si la categoría fusionada seguía bajo 10%, se fusionaba con la siguiente. Las categorías resultantes se renumeraron de forma consecutiva.
+
+```{r}
+#| label: tabla-colapso
+colapso %>%
+  count(categorias, name = "items") %>%
+  mutate(categorias = paste(categorias, "categorías")) %>%
+  tabla(col.names = c("Categorías tras el colapso", "N° de ítems"),
+        caption = "Ítems según número de categorías tras el colapso")
+```
+
+Los colapsos más fuertes afectan a prácticas casi universales, como el ahorro de luz y agua (efecto techo), y a prácticas muy minoritarias, como participar en cooperativas o marchas (efecto suelo).
+
+# Pertinencia del análisis factorial
+
+Las pruebas se hicieron sobre la **matriz de correlaciones policóricas** de la muestra completa, porque los ítems son ordinales con tres a cinco categorías.
+
+```{r}
+#| label: tabla-pruebas
+pruebas %>%
+  transmute(conjunto, n_items,
+            bartlett = paste0(format(round(bartlett_chi2, 1), big.mark = "."),
+                              " (gl = ", bartlett_gl, ")"),
+            p = "< 0,001",
+            kmo = f3(kmo_global),
+            msa_min = paste0(f2(msa_min), " (", item_msa_min, ")")) %>%
+  tabla(col.names = c("Conjunto", "Ítems", "Bartlett χ²", "p", "KMO global", "MSA mínimo (ítem)"),
+        caption = "Prueba de esfericidad de Bartlett y KMO")
+```
+
+La prueba de Bartlett rechaza en todos los casos que la matriz sea de identidad, y el KMO global de los 46 ítems es `r f2(pruebas$kmo_global[1])`, "muy bueno" según la escala de Kaiser. El análisis factorial es pertinente.
+
+Las baterías O1 y O4 tienen, por separado, un KMO "mediocre" (`r f2(pruebas$kmo_global[3])` y `r f2(pruebas$kmo_global[6])`), coherente con que mezclan contenidos distintos. El único ítem con MSA bajo 0,60 en el conjunto completo es O4.9 ("Consumir menos es mejor que reciclar").
+
+# Estrategia de estimación
+
+```{r}
+#| label: tabla-estrategia
+tribble(
+  ~Decisión, ~Opción, ~Justificación,
+  "Correlaciones", "Policóricas", "Los ítems son ordinales con pocas categorías; Pearson subestima las asociaciones.",
+  "Validación", "Dos mitades aleatorias (semilla 20231)", "Explorar en una mitad y confirmar en otra evita evaluar un modelo con los mismos datos que lo generaron.",
+  "Extracción (AFE)", "Residuos mínimos (minres)", "Robusta con matrices policóricas y sin supuesto de normalidad multivariada.",
+  "Rotación (AFE)", "Oblicua (oblimin)", "Se esperan factores correlacionados; una rotación ortogonal los forzaría a ser independientes.",
+  "Estimador (AFC)", "WLSMV con ítems ordinales", "Estándar para indicadores categóricos ordenados.",
+  "Ajuste (AFC)", "CFI y TLI ≥ 0,95; RMSEA ≤ 0,06; SRMR ≤ 0,08", "Criterios convencionales de buen ajuste (índices escalados).",
+  "Confiabilidad", "Omega ≥ 0,70; AVE", "Confiabilidad compuesta calculada desde las cargas estandarizadas."
+) %>%
+  tabla(caption = "Decisiones de estimación") %>%
+  column_spec(3, width = "50%")
+```
+
+La rotación fue **oblicua** en todos los análisis exploratorios. La decisión se confirmó con los datos: las correlaciones entre factores llegan a 0,71.
+
+# Análisis factorial exploratorio (mitad 1)
+
+## Número de factores
+
+```{r}
+#| label: tabla-nfactores
+n_factores %>%
+  tabla(col.names = c("Criterio", "Factores sugeridos"),
+        caption = "Criterios para el número de factores")
+```
+
+Los criterios discrepan mucho. Con muestras grandes y muchos ítems, el análisis paralelo tiende a sobrestimar el número de factores y la prueba MAP a subestimarlo. Por eso se compararon las soluciones intermedias.
+
+```{r}
+#| label: tabla-soluciones
+soluciones %>%
+  tabla(digits = 3,
+        col.names = c("Factores", "TLI", "RMSEA", "RMSR",
+                      "Ítems con carga ≥ 0,40", "Ítems con cargas cruzadas"),
+        caption = "Soluciones exploratorias con los 46 ítems")
+```
+
+Ninguna solución con los 46 ítems ajusta bien, y en todas entre `r 46 - max(soluciones$items_carga_040)` y `r 46 - min(soluciones$items_carga_040)` ítems no cargan al menos 0,40 en ningún factor. Se eligió la **solución de cinco factores** por interpretabilidad y cercanía con las dimensiones teóricas de la propuesta. Esta es una decisión de juicio, que ninguno de los dos criterios formales indicaba.
+
+## Depuración de ítems
+
+Se eliminó un ítem por vez, reestimando el modelo en cada paso. Se eliminaba el ítem con la carga máxima más baja entre los que no cumplían dos criterios: carga de al menos 0,40 y ausencia de cargas cruzadas (0,30 o más en dos factores).
+
+```{r}
+#| label: tabla-eliminados
+eliminados %>%
+  mutate(carga_max = f2(carga_max)) %>%
+  select(paso, item, carga_max, motivo) %>%
+  tabla(col.names = c("Paso", "Ítem", "Carga máxima", "Motivo"),
+        caption = "Ítems eliminados en la depuración exploratoria")
+```
+
+Se eliminaron `r nrow(eliminados)` ítems y quedaron `r 46 - nrow(eliminados)` en cinco factores. Con esos ítems, el análisis paralelo sugirió `r n_factores$factores[3]` factores, lo que motivó probar una separación adicional en el análisis confirmatorio.
+
+# Análisis factorial confirmatorio inicial (mitad 2)
+
+Se compararon cuatro modelos con los ítems retenidos:
+
+- **M1:** un factor general de consumo responsable, el supuesto de los índices sumativos.
+- **M2:** los cinco factores del exploratorio.
+- **M3:** seis factores, separando el primer factor exploratorio en compra sustentable y consumo político, como distingue la literatura entre consumo verde y consumo político.
+- **M4:** M3 sin el ítem O4.6 ("En mi hogar, todos/as reciclamos"), que describe una práctica y no una condición para reciclar, y concentraba los mayores índices de modificación.
+
+```{r}
+#| label: tabla-m
+ajuste_m %>%
+  transmute(modelo, n_items, CFI = f3(cfi.scaled), TLI = f3(tli.scaled),
+            RMSEA = f3(rmsea.scaled), SRMR = f3(srmr)) %>%
+  tabla(col.names = c("Modelo", "Ítems", "CFI", "TLI", "RMSEA", "SRMR"),
+        caption = "Ajuste de los modelos confirmatorios iniciales (mitad 2)")
+```
+
+El modelo unidimensional se descarta. Separar compra sustentable y consumo político mejora significativamente el ajuste (prueba de diferencia de χ² escalada, p < 0,001). Sin embargo, el mejor modelo (M4) no alcanza un CFI de 0,95 y dos de sus factores, valoración del reciclaje y planificación, tienen confiabilidad bajo 0,70.
+
+# Modelos de medida reducidos
+
+Con el objetivo de obtener modelos que midan bien algunas dimensiones, aunque se pierdan ítems, se repitió la depuración en la mitad 1 con criterios más exigentes:
+
+- carga mínima de 0,50,
+- sin cargas cruzadas,
+- y al menos tres ítems por factor.
+
+En las soluciones de tres a cinco factores se repitieron tres núcleos de ítems: **consumo crítico y político** (O3), **ahorro doméstico** (O2.1 a O2.5) y **planificación de compras** (O1.10, O2.8, O2.9). Las dimensiones de reciclaje solo retuvieron dos ítems cada una.
+
+## Modelos candidatos (mitad 2)
+
+```{r}
+#| label: tabla-red
+ajuste_red %>%
+  transmute(modelo, n_items, CFI = f3(CFI), TLI = f3(TLI), RMSEA = f3(RMSEA),
+            SRMR = f3(SRMR), omega_min = f2(omega_min)) %>%
+  tabla(col.names = c("Modelo", "Ítems", "CFI", "TLI", "RMSEA", "SRMR", "Omega mínimo"),
+        caption = "Ajuste y confiabilidad de los modelos reducidos (mitad 2)") %>%
+  row_spec(c(3, 5), bold = TRUE)
+```
+
+Dos modelos cumplen los criterios: **R3** (compra sustentable y consumo político) y **R5** (ahorro doméstico y planificación). Tratar los nueve ítems de R3 como un solo factor (R2) ajusta mal, por lo que compra sustentable y consumo político son dimensiones distintas, aunque correlacionadas.
+
+## Estabilidad
+
+```{r}
+#| label: tabla-estabilidad
+estabilidad %>%
+  transmute(modelo, muestra, n, CFI = f3(CFI), TLI = f3(TLI),
+            RMSEA = f3(RMSEA), RMSEA_ic, SRMR = f3(SRMR)) %>%
+  tabla(col.names = c("Modelo", "Muestra", "N", "CFI", "TLI", "RMSEA", "IC 90% RMSEA", "SRMR"),
+        caption = "Ajuste de los modelos finales en distintas muestras") %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+El ajuste se mantiene en la mitad 1, en la mitad 2 y en la muestra completa.
+
+## Cargas y confiabilidad (muestra completa)
+
+```{r}
+#| label: tabla-cargas
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+
+cargas_red %>%
+  transmute(factor = nombres_factor[factor], item, enunciado, carga = f2(carga)) %>%
+  tabla(col.names = c("Factor", "Ítem", "Enunciado", "Carga estandarizada"),
+        caption = "Cargas factoriales estandarizadas de los modelos finales") %>%
+  collapse_rows(columns = 1, valign = "top")
+
+conf_red %>%
+  transmute(factor = nombres_factor[factor], n_items, omega = f2(omega),
+            AVE = f2(AVE), carga_min = f2(carga_min)) %>%
+  tabla(col.names = c("Factor", "Ítems", "Omega", "AVE", "Carga mínima"),
+        caption = "Confiabilidad de los factores")
+```
+
+Todos los factores alcanzan un omega de al menos 0,70. La planificación de compras es el más frágil: tiene solo tres ítems y uno de ellos (O2.9) carga bajo 0,50.
+
+# ¿Dos modelos o uno?
+
+## El modelo conjunto
+
+Al estimar los cuatro factores en un solo modelo, el ajuste es estable pero solo aceptable:
+
+```{r}
+#| label: tabla-conjunto
+conj_ajuste %>%
+  transmute(muestra, n, CFI = f3(CFI), TLI = f3(TLI), RMSEA = f3(RMSEA), SRMR = f3(SRMR)) %>%
+  tabla(col.names = c("Muestra", "N", "CFI", "TLI", "RMSEA", "SRMR"),
+        caption = "Ajuste del modelo conjunto de cuatro factores (17 ítems)")
+
+conj_cor %>%
+  mutate(factor = nombres_factor[factor]) %>%
+  rename_with(~ nombres_factor[.x], -factor) %>%
+  mutate(across(-factor, f2)) %>%
+  tabla(col.names = c("", nombres_factor),
+        caption = "Correlaciones entre factores en el modelo conjunto (muestra completa)")
+```
+
+El desajuste se concentra en las relaciones **entre** bloques, no dentro de ellos:
+
+```{r}
+#| label: tabla-residuos
+conj_res %>%
+  mutate(residuo_medio_abs = f3(residuo_medio_abs)) %>%
+  tabla(col.names = c("Pares de ítems", "N° de pares", "Residuo medio (abs.)", "Residuos > 0,10"),
+        caption = "Correlaciones residuales del modelo conjunto")
+```
+
+Los mayores índices de modificación piden que la planificación de compras de alimentos y vestuario cargue también en los factores públicos. Los dos bloques se relacionan de una forma más compleja que la que permiten cuatro factores con cargas exclusivas.
+
+## Justificación
+
+Se optó por dos modelos de medida separados por tres razones:
+
+1. **Teórica.** La propuesta distingue el consumo de la esfera privada (ahorro y gestión del hogar) del de la esfera pública (mercado y acción colectiva).
+2. **Empírica.** Cada bloque por separado ajusta muy bien; el modelo conjunto solo es aceptable, y su desajuste está entre los bloques.
+3. **De uso.** Para relacionar estas dimensiones con otras variables, dos instrumentos breves y bien validados son más sólidos que uno largo con desajuste.
+
+Hay que reconocer un límite de este argumento. La comparación de ajuste entre modelos separados y un modelo conjunto no es una prueba formal, porque un modelo separado no pone a prueba las restricciones entre bloques: simplemente no las modela. La justificación descansa en que la estructura interna de cada bloque es sólida y en que la relación entre bloques no se reduce a correlaciones entre factores.
+
+Por eso se reportan ambos: los dos modelos como **instrumentos de medida** y el modelo conjunto como **evidencia sustantiva** de cómo se relacionan las dimensiones. El consumo político es prácticamente independiente del ahorro doméstico (r = `r f2(conj_cor$ahorro[conj_cor$factor == "consumo_pol"])`), mientras la compra sustentable se relaciona con ambos bloques y funciona como puente entre la esfera doméstica y la pública.
+
+# Decisiones guiadas por la teoría
+
+La selección de ítems se basó en criterios empíricos, pero tres decisiones se apoyaron en la teoría:
+
+```{r}
+#| label: tabla-teoria
+tribble(
+  ~Etapa, ~Decisión, ~Fundamento,
+  "AFE", "Elegir cinco factores entre las soluciones de 3 a 8", "Interpretabilidad y cercanía con las dimensiones de la propuesta; ningún criterio formal lo indicaba.",
+  "AFC inicial", "Separar compra sustentable y consumo político", "Distinción de la literatura entre consumo verde y consumo político; el análisis paralelo sobre los ítems depurados sugería un factor más.",
+  "Modelos reducidos", "Sumar O2.11 y O2.12 a compra sustentable", "Cargaban en ese factor en el AFE con corte 0,40 y son prácticas de consumo verde, aunque no superaron el corte de 0,50."
+) %>%
+  tabla(caption = "Decisiones apoyadas en la teoría") %>%
+  column_spec(3, width = "45%")
+```
+
+# Limitaciones
+
+- **La mitad 2 no fue una muestra de validación intacta.** En ella se estimaron cuatro modelos iniciales y seis reducidos, y la exclusión de O4.6 se basó en sus índices de modificación. Esto constituye reespecificación. Lo atenúa que los modelos finales ajustan igual de bien en la mitad 1, donde no se tomó ninguna decisión de reespecificación. El análisis debe presentarse como exploratorio-confirmatorio, y conviene replicarlo en una muestra independiente.
+- **La depuración paso a paso depende de los datos.** El orden de eliminación de ítems podría variar con otra división de la muestra. Una prueba de robustez sería repetir la división con varias semillas.
+- **El número de factores inicial fue una decisión de juicio** entre criterios formales muy discrepantes (de 3 a 11 factores).
+- **La planificación de compras es un factor frágil**, con solo tres ítems y omega cercano a 0,70.
+- **Las actitudes hacia el reciclaje (O4) no se lograron medir de forma confiable.** Sus factores retuvieron solo dos ítems con criterios estrictos.
+- **La muestra no tiene ponderadores**, por lo que los resultados describen la estructura de las respuestas en la muestra y no necesariamente en la población.
+
+# Reproducibilidad
+
+- **Semilla:** 20231, usada en la división de la muestra y en el análisis paralelo.
+- **Software:** R con los paquetes `haven`, `psych` y `GPArotation` (exploratorio), y `lavaan` (confirmatorio). Documento generado con Quarto.
+- **Archivos:** la base procesada está en `input/data/proc/db_proc.rds`; las tablas en `output/tables/` y los modelos estimados en `output/models/`.
+
+Para regenerar este documento, primero se renderizan `processing/prep_colapso_10.qmd` y `processing/analisis_factorial.qmd`, en ese orden, y luego este archivo.

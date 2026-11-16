@@ -1,0 +1,47 @@
+item,enunciado,msa_total,msa_bateria,clasificacion
+O1_1,"Compra algún producto en Amazon, Ali Express, E-Bay, Wish u otra tienda fuera del país",0.7322670483888208,0.6657463040230582,Aceptable
+O1_2,Viaja fuera del país en avión,0.8256665844382138,0.6112815615493359,Muy bueno
+O1_3,"Ve alguna serie o película en Netflix, Youtube o similar",0.6847467621272915,0.6730238207437504,Mediocre
+O1_4,"Usa Uber, Rappi o Pedidos Ya",0.7539509338164154,0.6280544645331385,Aceptable
+O1_5,Compra ropa de segunda mano,0.7554268478411134,0.6094711737818208,Aceptable
+O1_6,Cultiva y cosecha sus propios alimentos,0.8780910336328641,0.6579979195165798,Muy bueno
+O1_7,"Repara su ropa, accesorios y/o electrodomésticos",0.8643667850421237,0.6509668791171189,Muy bueno
+O1_8,Adquiere productos con la etiqueta “comercio justo”,0.9225996454796377,0.6892823325844866,Excelente
+O1_9,Compara precios en internet antes de comprar,0.7924611767249055,0.628426750446017,Aceptable
+O1_10,Elabora un presupuesto mensual para monitorear mis gastos,0.8838563688035472,0.6567193862417675,Muy bueno
+O2_1,Evita dejar luces prendidas en ambiente desocupados ,0.8892439613482392,0.8641737905314653,Muy bueno
+O2_2,Corta el agua mientras se lava los dientes. ,0.8861523451902482,0.8962384843698449,Muy bueno
+O2_3,Toma duchas cortas,0.9137914577191111,0.9100489937647811,Excelente
+O2_4,Espera que los alimentos se enfríen antes de guardarlos en el refrigerador. ,0.9056435556950903,0.8974136490482156,Excelente
+O2_5,Desenchufa aparatos eléctricos cuando no los está ocupando. ,0.9043973482739475,0.9031395279884606,Excelente
+O2_6,Separa la basura de su hogar para reciclaje. ,0.8906382567447457,0.9157532684174592,Muy bueno
+O2_7,Re-utiliza papel en la impresión de documentos. ,0.9360578621715434,0.9126910599645969,Excelente
+O2_8,Planifica compra de alimentos. ,0.8810956158150459,0.8850134030375114,Muy bueno
+O2_9,Planifica compras de vestuario. ,0.8987532591196269,0.8367239719661026,Muy bueno
+O2_10,Lee la etiqueta de los productos antes de decidir compra. ,0.9498637200269707,0.9180680435728109,Excelente
+O2_11,Compra productos orgánicos o naturales. ,0.935117147711564,0.876608627533982,Excelente
+O2_12,Compra productos hechos con material reciclado. ,0.9550144374896159,0.8771094010312358,Excelente
+O2_13,Comenta información sobre los productos y empresas. ,0.9341967266191445,0.8957413327175083,Excelente
+O2_14,Pide la boleta de los productos que compra ,0.8827692458828361,0.9162586752204638,Muy bueno
+O3_1,"Deja de comprar un producto porque se ha enterado de que daña el medioambiente, aunque sea más barato.",0.9107616721959719,0.7728932026077082,Excelente
+O3_2,Intenta influir en lo que consumen otras personas,0.9149107517785529,0.8926185104920624,Excelente
+O3_3,Uso mis redes sociales para promover productos o empresas que considero éticas o sostenibles,0.9171190099759775,0.8682734386990547,Excelente
+O3_4,"Compra un producto exclusivamente porque no daña el medioambiente en desmedro de otro, aunque sea más caro.",0.9091612744100099,0.8167335131898419,Excelente
+O3_5,Realiza un reclamo o demanda colectiva en el Sernac,0.8727033138321099,0.8425465337257987,Muy bueno
+O3_6,Realiza un reclamo en el lugar de venta cuando un producto o servicio no lo satisface,0.853130935485667,0.7839104604486623,Muy bueno
+O3_7,"Se informa respecto de dónde viene la ropa, alimentos y otros productos que consume",0.941167025653476,0.8989075833395713,Excelente
+O3_8,"Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores",0.8444875531113736,0.780437073345491,Muy bueno
+O3_9,Participa en marchas o movilizaciones,0.8410771802917884,0.8292438023474051,Muy bueno
+O3_10,Compra en pequeños negocios,0.7316256619495316,0.4470348286826802,Aceptable
+O4_1,Es necesario hacerse cargo de las tareas de reciclaje,0.8271479217895524,0.71269538317883,Muy bueno
+O4_2,Es fácil entender el etiquetado de los envases para separar el reciclaje,0.7656495625713451,0.8106013851784293,Aceptable
+O4_3,Es fácil llevar mi reciclaje hasta los centros de acopio,0.6905438967134329,0.6367758687148972,Mediocre
+O4_4,No tengo tiempo para hacerme cargo de todo lo que implica reciclar,0.89410312355131,0.696576776830815,Muy bueno
+O4_5,En mi comuna o barrio es fácil reciclar,0.690153037166351,0.6538592689523431,Mediocre
+O4_6,"En mi hogar, todos/as reciclamos",0.8534699050481745,0.7677974047793212,Muy bueno
+O4_7,Me cuesta creer que un envase reciclado sirva de algo para el medioambiente,0.78755392637306,0.6774086349934405,Aceptable
+O4_8,Reciclar es bueno para la economía,0.8084404060121804,0.7003579155467051,Muy bueno
+O4_9,Consumir menos es mejor que reciclar,0.5416087070015094,0.4694932865299015,Bajo
+O4_10,"Con la vida apurada de hoy, es mejor comprar algo nuevo que reparar algo que no funciona",0.8107315835506225,0.6638500334926608,Muy bueno
+O4_11,Lo que compramos o dejamos de comprar es un problema de cada persona,0.7404972560279575,0.4983490190047229,Aceptable
+O4_12,Me considero más un ciudadano que un consumidor,0.74943957634744085,0.6456727018580711,Aceptable

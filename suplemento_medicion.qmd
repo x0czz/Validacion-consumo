@@ -1,0 +1,553 @@
+---
+title: "Material suplementario"
+subtitle: "Medición de prácticas de consumo socioambientales en Chile: evidencia psicométrica preliminar de dos escalas breves"
+lang: es
+date: ""
+format:
+  typst:
+    citeproc: true
+    papersize: a4
+    margin:
+      x: 3cm
+      y: 3cm
+    fontsize: 12pt
+    mainfont: "Times New Roman"
+    fig-format: png
+    fig-dpi: 300
+  docx:
+    reference-doc: input/templates/psicothema.docx
+    toc: false
+    number-sections: false
+  html:
+    toc: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+options(knitr.kable.NA = "", OutDec = ",", warn = -1)
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+apa <- function(x) sub("^-", "−", sub("^(-?)0,", "\\1,", trimws(x)))
+a2 <- function(x) apa(f2(x))
+a3 <- function(x) apa(f3(x))
+s2 <- function(x) sub("^-", "−", trimws(f2(x)))
+miles <- function(x, d = 2) trimws(format(round(x, d), big.mark = ".", decimal.mark = ",", nsmall = d))
+tabla_md <- function(df, anchos, alinea) {
+  sep <- map2_chr(anchos, alinea, function(w, a) {
+    d <- strrep("-", w)
+    switch(a, l = paste0(":", d), r = paste0(d, ":"), c = paste0(":", d, ":"))
+  })
+  cuerpo <- apply(df, 1, function(f) paste0("| ", paste(f, collapse = " | "), " |"))
+  cat(paste0("| ", paste(names(df), collapse = " | "), " |"), "\n",
+      paste0("|", paste(sep, collapse = "|"), "|"), "\n",
+      paste(cuerpo, collapse = "\n"), "\n", sep = "")
+}
+cod <- function(x) str_replace(x, "_", ".")
+desc <- leer("revision_descriptivos_items.csv")
+enun <- setNames(str_trim(desc$enunciado), desc$item)
+```
+
+::: {custom-style="Titulo tabla"}
+**Tabla S1**
+
+*Estadísticos Descriptivos de los 46 Ítems tras el Colapso de Categorías Extremas (N = 1.623)*
+:::
+
+```{r}
+#| label: s1
+#| results: asis
+desc %>%
+  transmute(`Ítem` = cod(item), Enunciado = str_trim(enunciado), Cat. = categorias,
+            M = f2(media), DE = f2(de), Asim. = s2(asimetria), Curt. = s2(curtosis),
+            `% modal` = format(round(pct_modal, 1), nsmall = 1)) %>%
+  tabla_md(c(6, 50, 5, 6, 6, 6, 6, 7), c("l", "l", rep("r", 6)))
+```
+
+*Nota.* Cat. = número de categorías tras fusionar las categorías extremas con menos del 10% de las respuestas; M y DE en la escala tras el colapso (1 = categoría más baja; el máximo es el número de categorías); Asim. = asimetría; Curt. = curtosis (exceso); % modal = porcentaje de respuestas en la categoría más frecuente. Ningún ítem tuvo valores perdidos. Los ítems de O4 están recodificados para que un valor alto indique mayor acuerdo.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S2**
+
+*Comparación de Soluciones Exploratorias de Tres a Ocho Factores (Mitad Exploratoria, n = 811)*
+:::
+
+```{r}
+#| label: s2
+#| results: asis
+contenido <- c(
+  "3" = "Consumo crítico y político; ahorro y planificación fusionados; facilidad para reciclar",
+  "4" = "Igual que tres, más un factor de valoración del reciclaje",
+  "5" = "Ahorro y planificación aún fusionados; factor de dos ítems (compras en línea)",
+  "6" = "Factores de dos ítems: compras en línea; reparación y ropa de segunda mano",
+  "7" = "Un factor sin cargas salientes; factor de dos ítems (reparación)",
+  "8" = "Tres factores de dos o tres ítems")
+leer("afe_comparacion_soluciones.csv") %>%
+  transmute(Factores = factores, TLI = a3(TLI), RMSEA = a3(RMSEA), RMSR = a3(RMSR),
+            `Ítems con carga ≥ ,40` = items_carga_040, `Ítems con cargas cruzadas` = items_cruzados,
+            Contenido = contenido[as.character(factores)]) %>%
+  tabla_md(c(7, 6, 6, 6, 9, 9, 44), c("c", rep("r", 5), "l"))
+```
+
+*Nota.* AFE con extracción por residuos mínimos y rotación oblimin sobre correlaciones policóricas de los 46 ítems. Cargas cruzadas: ≥ ,30 en dos o más factores. El análisis paralelo sugirió 11 factores y la prueba MAP, 3.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S3**
+
+*Ítems Eliminados en la Depuración Exploratoria, en Orden de Eliminación*
+:::
+
+```{r}
+#| label: s3
+#| results: asis
+leer("afe_items_eliminados.csv") %>%
+  transmute(Paso = paso, `Ítem` = cod(item), Enunciado = enun[item],
+            `Carga máx.` = a2(carga_max), Motivo = str_replace_all(motivo, "0,", ",")) %>%
+  tabla_md(c(5, 6, 50, 8, 22), c("c", "l", "l", "r", "l"))
+```
+
+*Nota.* En cada paso se eliminó un solo ítem y se reestimó el AFE de cinco factores con los ítems restantes.
+
+{{< pagebreak >}}
+
+```{r}
+#| label: afe-datos
+afe_c <- leer("revision_afe_coeficientes.csv")
+orden_f <- c("Compra sustentable y consumo político", "Ahorro doméstico", "Planificación de compras",
+             "Facilidad para reciclar", "Valoración del reciclaje")
+abrev <- c("CSP", "AH", "PL", "FR", "VR")
+tabla_coef <- function(tipo_sel) {
+  afe_c %>% filter(tipo == tipo_sel) %>%
+    mutate(factor = factor(factor, levels = orden_f, labels = abrev)) %>%
+    select(item, h2, factor, valor) %>%
+    pivot_wider(names_from = factor, values_from = valor) %>%
+    mutate(principal = abrev[apply(across(all_of(abrev)), 1, function(v) which.max(abs(v)))]) %>%
+    arrange(factor(principal, levels = abrev), item)
+}
+```
+
+::: {custom-style="Titulo tabla"}
+**Tabla S4**
+
+*Coeficientes de Patrón y Comunalidades de la Solución Exploratoria Final (27 Ítems, n = 811)*
+:::
+
+```{r}
+#| label: s4
+#| results: asis
+tabla_coef("Patrón") %>%
+  transmute(`Ítem` = cod(item), across(all_of(abrev), ~ if_else(abs(.x) >= .40, paste0("**", a2(.x), "**"), a2(.x))),
+            h2 = a2(h2)) %>%
+  rename(`*h*²` = h2) %>%
+  tabla_md(c(8, 9, 9, 9, 9, 9, 8), c("l", rep("r", 6)))
+```
+
+*Nota.* CSP = compra sustentable y consumo político; AH = ahorro doméstico; PL = planificación de compras; FR = facilidad para reciclar; VR = valoración del reciclaje. En negrita, coeficientes ≥ |,40|. *h*² = comunalidad. Los coeficientes de patrón expresan la relación única de cada factor con el ítem, controlando los demás factores. Enunciados en la Tabla S1.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S5**
+
+*Coeficientes de Estructura de la Solución Exploratoria Final (27 Ítems, n = 811)*
+:::
+
+```{r}
+#| label: s5
+#| results: asis
+tabla_coef("Estructura") %>%
+  transmute(`Ítem` = cod(item), across(all_of(abrev), ~ if_else(abs(.x) >= .40, paste0("**", a2(.x), "**"), a2(.x)))) %>%
+  tabla_md(c(8, 9, 9, 9, 9, 9), c("l", rep("r", 5)))
+```
+
+*Nota.* Los coeficientes de estructura son las correlaciones simples entre cada ítem y cada factor. En negrita, coeficientes ≥ |,40|. Abreviaturas como en la Tabla S4.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S6**
+
+*Correlaciones entre Factores y Varianza Asociada a Cada Factor en la Solución Exploratoria Final*
+:::
+
+```{r}
+#| label: s6
+#| results: asis
+phi <- leer("revision_afe_phi.csv")
+var_f <- leer("revision_afe_varianza.csv")
+m <- as.matrix(phi[, orden_f]); rownames(m) <- phi$factor; m <- m[orden_f, orden_f]
+celdas <- matrix("", 5, 5)
+celdas[lower.tri(celdas)] <- a2(m[lower.tri(m)])
+diag(celdas) <- "—"
+tibble(Factor = paste0(abrev, " ", orden_f)) %>%
+  bind_cols(as_tibble(celdas, .name_repair = ~ abrev)) %>%
+  mutate(`Σ estructura²` = f2(var_f$suma_estructura2[match(orden_f, var_f$factor)])) %>%
+  tabla_md(c(36, 6, 6, 6, 6, 6, 10), c("l", rep("r", 6)))
+```
+
+*Nota.* Σ estructura² = suma de los coeficientes de estructura al cuadrado de cada factor. Con rotación oblicua estas sumas no son aditivas, porque los factores comparten varianza. La suma de las comunalidades fue `r f2(var_f$suma_estructura2[6])`, equivalente al `r format(round(100 * var_f$prop_estructura2[6], 1), nsmall = 1)`% de la varianza total de los 27 ítems.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S7**
+
+*Cargas Factoriales No Estandarizadas, Errores Estándar y Cargas Estandarizadas de las Escalas Finales (N = 1.623)*
+:::
+
+```{r}
+#| label: s7
+#| results: asis
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+leer("revision_afc_parametros.csv") %>%
+  transmute(Escala = escala, Factor = nombres_factor[lhs], `Ítem` = cod(rhs),
+            B = s2(est), EE = if_else(se < 1e-8, "—", a2(se)), `λ` = a2(std), `*R*²` = a2(R2)) %>%
+  mutate(Escala = str_remove(Escala, ", dos factores"),
+         Escala = if_else(duplicated(Escala), "", Escala),
+         Factor = if_else(duplicated(Factor), "", Factor)) %>%
+  tabla_md(c(22, 20, 7, 7, 7, 7, 7), c("l", "l", "l", rep("r", 4)))
+```
+
+*Nota.* Estimación WLSMV con parametrización delta; la carga del primer ítem de cada factor se fija en 1 para identificar la escala del factor (sin error estándar, —). B = carga no estandarizada; EE = error estándar; λ = carga estandarizada; *R*² = varianza del ítem explicada por el factor. Todas las cargas fueron significativas (*p* < ,001).
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S8**
+
+*Índices de Ajuste y Diferencias de χ² de la Secuencia de Invarianza de Medida*
+:::
+
+```{r}
+#| label: s8
+#| results: asis
+leer("invarianza_secuencia.csv") %>%
+  mutate(variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         nivel = factor(nivel, levels = c("Configural", "Umbrales", "Métrica", "Escalar"))) %>%
+  arrange(modelo, variable, nivel) %>%
+  transmute(Escala = modelo, Variable = as.character(variable), Nivel = as.character(nivel),
+            `χ²` = miles(chisq.scaled), gl = df, CFI = a3(cfi.scaled), RMSEA = a3(rmsea.scaled),
+            SRMR = a3(srmr), `ΔCFI` = if_else(is.na(dCFI), "", a3(dCFI)),
+            `ΔRMSEA` = if_else(is.na(dRMSEA), "", a3(dRMSEA)),
+            `*p* Δχ²` = case_when(is.na(p_dif) ~ "", p_dif < .001 ~ "< ,001", TRUE ~ a3(p_dif))) %>%
+  mutate(Variable = if_else(duplicated(paste(Escala, Variable)), "", Variable),
+         Escala = if_else(duplicated(Escala), "", Escala)) %>%
+  tabla_md(c(18, 7, 9, 8, 4, 6, 6, 6, 6, 6, 7), c("l", "l", "l", rep("r", 8)))
+```
+
+*Nota.* Índices escalados (WLSMV, parametrización theta). ΔCFI y ΔRMSEA respecto del nivel anterior, calculados con valores sin redondear. *p* Δχ² = valor *p* de la prueba de diferencia de χ² escalada respecto del nivel anterior. La decisión se basó en ΔCFI y ΔRMSEA (Chen, 2007), porque con este tamaño muestral la prueba de χ² detecta diferencias triviales. NSE = nivel socioeconómico.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S9**
+
+*Medias y Desviaciones Estándar de los Ítems de las Escalas Finales por Grupo*
+:::
+
+```{r}
+#| label: s9
+#| results: asis
+library(haven)
+db <- readRDS(here("input", "data", "proc", "db_proc.rds"))
+items_fin <- c("O2_11", "O2_12", "O3_4", "O3_7", "O3_2", "O3_3", "O3_5", "O3_8", "O3_9",
+               "O2_1", "O2_2", "O2_3", "O2_4", "O2_5", "O1_10", "O2_8", "O2_9")
+g <- db %>%
+  transmute(Sexo = factor(as.numeric(SEXO), levels = 1:2, labels = c("Hombre", "Mujer")),
+            Edad = cut(as.numeric(EDADR), breaks = c(1, 3, 5, 7), labels = c("18-34", "35-54", "55+")),
+            NSE = cut(as.numeric(NSE), breaks = c(0, 3, 5, 7), labels = c("ABC1", "C2-C3", "D-E")),
+            across(all_of(items_fin), ~ as.numeric(zap_labels(.x))))
+res <- map_dfr(c("Sexo", "Edad", "NSE"), function(v) {
+  g %>% group_by(grupo = .data[[v]]) %>%
+    summarise(across(all_of(items_fin), ~ paste0(f2(mean(.x)), " (", f2(sd(.x)), ")")), n = n(), .groups = "drop") %>%
+    mutate(grupo = paste0(as.character(grupo), " (", n, ")")) %>% select(-n)
+})
+t_res <- as.data.frame(t(res[, -1]))
+names(t_res) <- res$grupo
+t_res %>% rownames_to_column("Ítem") %>% mutate(`Ítem` = cod(`Ítem`)) %>%
+  tabla_md(c(6, rep(9, 8)), c("l", rep("r", 8)))
+```
+
+*Nota.* Media (desviación estándar) en la escala tras el colapso de categorías extremas (1 = categoría más baja). Entre paréntesis en el encabezado, el número de casos de cada grupo. Edad en años. NSE = nivel socioeconómico. Las matrices de correlaciones policóricas y los umbrales de los 17 ítems, en la muestra completa y por grupo, se comparten junto con el código de análisis, de modo que los modelos pueden reproducirse sin acceder a los microdatos.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S10**
+
+*Selección de los Ítems de las Escalas Breves: Depuración con Carga Mínima de ,50 en la Mitad Exploratoria*
+:::
+
+```{r}
+#| label: s10
+#| results: asis
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+reg <- leer("informe_breve_registro.csv")
+fin <- leer("informe_breve_final.csv")
+nucleos <- fin %>% group_by(factores, factor) %>%
+  summarise(items = paste0(cod(item), " (", a2(carga), ")", collapse = ", "), n = n(), .groups = "drop")
+bind_rows(
+  reg %>% group_by(factores) %>%
+    summarise(Etapa = "Ítems eliminados, en orden",
+              Detalle = paste0(cod(item), if_else(motivo == "Carga cruzada", "ᶜ", ""), collapse = ", "),
+              .groups = "drop"),
+  nucleos %>% transmute(factores, Etapa = paste0("Factor retenido (", n, " ítems)"), Detalle = items)
+) %>%
+  arrange(factores, Etapa != "Ítems eliminados, en orden") %>%
+  transmute(`Solución` = paste(factores, "factores"), Etapa, Detalle) %>%
+  mutate(`Solución` = if_else(duplicated(`Solución`), "", `Solución`)) %>%
+  tabla_md(c(10, 18, 60), c("l", "l", "l"))
+```
+
+*Nota.* Análisis factorial exploratorio (residuos mínimos, rotación *oblimin*) sobre correlaciones policóricas de los 46 ítems en la mitad exploratoria. En cada paso se eliminó el ítem con la carga máxima más baja entre los que no alcanzaban ,50 o tenían cargas ≥ ,30 en dos o más factores (ᶜ = eliminado por carga cruzada). Entre paréntesis, la carga en el factor retenido. Ningún factor se repitió exactamente en las tres soluciones. Se retuvieron los factores de al menos tres ítems cuyo contenido coincidía con un factor de la depuración inicial, con los ítems que superaron ,50 en al menos una solución: consumo crítico y político (O3.2, O3.3, O3.5, O3.8 y O3.9 en las tres soluciones; O3.4 y O3.7 en las de cuatro y cinco), ahorro doméstico (O2.1 a O2.5; O2.3 y O2.4 solo en la de tres factores, fusionados con O2.8) y planificación de compras (O1.10, O2.8 y O2.9, en las de cuatro y cinco). En la escala final, O3.4 y O3.7 se asignaron a la compra sustentable junto con O2.11 y O2.12, que no alcanzaron ,50 pero en la depuración inicial con carga mínima de ,40 cargaban en el mismo factor. Los factores de reciclaje retuvieron solo dos ítems y se descartaron.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Figura S1**
+
+*Secuencia de Decisiones del Análisis*
+:::
+
+```{r}
+#| label: figura-s1
+#| fig-width: 6
+#| fig-height: 7.5
+pasos <- tibble(
+  y = 10:1,
+  fase = c(rep("Mitad exploratoria (n = 811)", 4), rep("Mitad de prueba (n = 812)", 4), rep("Muestra completa (N = 1.623)", 2)),
+  txt = c("46 ítems; categorías extremas con < 10% fusionadas",
+          "Análisis paralelo (11 factores) y MAP (3): se retiene una solución de 5 factores",
+          "Depuración con carga ≥ ,40: 19 ítems eliminados; 27 ítems en 5 factores",
+          "Depuración con carga ≥ ,50 (3 a 5 factores): tres núcleos estables",
+          "AFC de los modelos iniciales (27 ítems): CFI < ,95; reciclaje poco confiable",
+          "AFC de modelos breves: uno y dos factores por bloque",
+          "Escalas finales: consumo sustentable y político (9) y prácticas domésticas (8)",
+          "Modelo conjunto (CFA) y, posteriormente, ESEM de 17 ítems",
+          "Cargas, confiabilidad, validez discriminante y con variables externas",
+          "Invarianza por sexo, edad y NSE; DIF por ítem; medias latentes con corrección de Holm"))
+ggplot(pasos, aes(x = 0, y = y)) +
+  geom_tile(aes(fill = fase), width = 1.9, height = 0.78, colour = "grey30", linewidth = 0.3) +
+  geom_text(aes(label = str_wrap(txt, 55)), size = 3, family = "serif", lineheight = 0.9) +
+  geom_segment(data = tibble(y = 10:2), aes(x = 0, xend = 0, y = y - 0.39, yend = y - 0.61),
+               arrow = arrow(length = unit(0.12, "cm")), linewidth = 0.3) +
+  scale_fill_manual(values = c("Mitad exploratoria (n = 811)" = "grey95",
+                               "Mitad de prueba (n = 812)" = "grey85",
+                               "Muestra completa (N = 1.623)" = "grey72"), breaks = unique(pasos$fase)) +
+  coord_cartesian(xlim = c(-1, 1)) +
+  labs(fill = NULL) +
+  theme_void(base_family = "serif", base_size = 8) +
+  theme(legend.position = "top")
+```
+
+*Nota.* AFC = análisis factorial confirmatorio; ESEM = modelo exploratorio de ecuaciones estructurales; DIF = funcionamiento diferencial de los ítems; NSE = nivel socioeconómico. El ESEM, el análisis de DIF, las anclas alternativas, la corrección por comparaciones múltiples y los análisis de sensibilidad se agregaron después de los análisis originales. La Tabla S16 indica qué decisiones se especificaron antes de estimar los modelos en la mitad de prueba y cuáles después.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S11**
+
+*Funcionamiento Diferencial de los Interceptos por Nivel Socioeconómico y Sexo*
+:::
+
+```{r}
+#| label: s11
+#| results: asis
+dif <- leer("informe_dif_interceptos.csv")
+difm <- leer("informe_dif_medias.csv")
+fac_de <- c(O2_11 = "compra_sust", O2_12 = "compra_sust", O3_4 = "compra_sust", O3_7 = "compra_sust",
+            O3_2 = "consumo_pol", O3_3 = "consumo_pol", O3_5 = "consumo_pol", O3_8 = "consumo_pol", O3_9 = "consumo_pol",
+            O2_1 = "ahorro", O2_2 = "ahorro", O2_3 = "ahorro", O2_4 = "ahorro", O2_5 = "ahorro",
+            O1_10 = "planificacion", O2_8 = "planificacion", O2_9 = "planificacion")
+media_libre <- function(it, grp) {
+  m <- difm$media[difm$item_libre == it & difm$factor == fac_de[[it]] & difm$grupo == grp]
+  b <- difm$media[difm$item_libre == "Ninguno" & difm$factor == fac_de[[it]] & difm$grupo == grp & difm$modelo == difm$modelo[difm$item_libre == it][1]]
+  paste0(s2(b[1]), " → ", s2(m[1]))
+}
+nse <- dif %>% filter(variable == "nse") %>% rowwise() %>%
+  transmute(Escala = modelo, `Ítem` = cod(item), MI = f1(MI), `ΔCFI` = a3(dCFI),
+            `dMACS C2-C3` = a2(`dMACS_C2-C3`), `dMACS D-E` = a2(`dMACS_D-E`),
+            `Media D-E` = media_libre(item, "D-E")) %>% ungroup()
+sexo <- dif %>% filter(variable == "sexo") %>% rowwise() %>%
+  transmute(`Ítem` = cod(item), `MI sexo` = f1(MI), `dMACS mujer` = a2(dMACS_Mujer),
+            `Media mujer` = media_libre(item, "Mujer")) %>% ungroup()
+left_join(nse, sexo, by = "Ítem") %>% select(-Escala) %>%
+  tabla_md(c(7, 6, 7, 8, 8, 15, 6, 8, 15), c("l", rep("r", 8)))
+```
+
+*Nota.* Los nueve primeros ítems pertenecen a la escala de consumo sustentable y político, y los ocho restantes, a la de prácticas domésticas. Para cada ítem se liberó su intercepto en todos los grupos salvo el de referencia (ABC1; hombres), partiendo del modelo escalar. MI = suma de los índices de modificación del intercepto en el modelo escalar. ΔCFI = cambio en el CFI al liberarlo (NSE). dMACS = diferencia media en la puntuación esperada del ítem entre el grupo focal y el de referencia, a igual nivel del factor, ponderada por la distribución latente del grupo focal y dividida por la desviación estándar combinada del ítem; incluye las diferencias en las varianzas residuales, que el modelo escalar deja libres. Media = diferencia de medias latentes del factor del ítem (D-E vs. ABC1; mujeres vs. hombres) en el modelo escalar → al liberar el intercepto, en desviaciones estándar.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S12**
+
+*Diferencias de Medias Latentes por Edad según los Ítems Usados como Anclas*
+:::
+
+```{r}
+#| label: s12
+#| results: asis
+nfac <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+          ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+pub <- leer("invarianza_medias_latentes.csv") %>% filter(variable == "Edad")
+leer("informe_edad_anclas.csv") %>%
+  group_by(factor, grupo) %>%
+  summarise(rango = paste0(s2(min(media)), " a ", s2(max(media))),
+            sig = paste0(sum(p < .05), " de ", n()), .groups = "drop") %>%
+  left_join(pub %>% select(factor, grupo, media), by = c("factor", "grupo")) %>%
+  mutate(factor = factor(nfac[factor], levels = nfac)) %>% arrange(factor, grupo) %>%
+  transmute(Factor = as.character(factor), Tramo = paste(grupo, "vs. 18-34"),
+            `Modelo publicado` = s2(media), `Rango con anclas alternativas` = rango,
+            `Significativas (p < ,05)` = sig) %>%
+  mutate(Factor = if_else(duplicated(Factor), "", Factor)) %>%
+  tabla_md(c(20, 18, 12, 22, 14), c("l", "l", "r", "r", "r"))
+```
+
+*Nota.* En cada modelo, solo un par de ítems del factor mantuvo interceptos iguales entre tramos de edad (anclas) y se liberaron los demás; el otro factor de la escala conservó la especificación del modelo escalar parcial publicado. Diferencias en desviaciones estándar del tramo de 18 a 34 años.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S13**
+
+*Cargas Estandarizadas del Modelo Exploratorio de Ecuaciones Estructurales de 17 Ítems (Mitad de Prueba)*
+:::
+
+```{r}
+#| label: s13
+#| results: asis
+leer("informe_esem_cargas.csv") %>%
+  mutate(valor = if_else(principal, paste0("**", a2(carga), "**"), a2(carga)),
+         factor = nfac[factor]) %>%
+  select(item, factor, valor) %>%
+  pivot_wider(names_from = factor, values_from = valor) %>%
+  mutate(item = cod(item)) %>% rename(`Ítem` = item) %>%
+  tabla_md(c(8, 14, 14, 14, 14), c("l", rep("r", 4)))
+cor_esem <- leer("informe_esem_cor.csv")
+```
+
+*Nota.* Estimación WLSMV con rotación objetivo: las cargas cruzadas se orientaron hacia 0 y las principales (en negrita) quedaron libres. Correlaciones entre factores: compra sustentable con consumo político, `r a2(cor_esem$r[1])`; con ahorro, `r a2(cor_esem$r[2])`; con planificación, `r a2(cor_esem$r[3])`; consumo político con ahorro, `r a2(cor_esem$r[4])`; con planificación, `r a2(cor_esem$r[5])`; ahorro con planificación, `r a2(cor_esem$r[6])`.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S14**
+
+*Análisis de Sensibilidad: Calidad de las Respuestas y Categorías sin Colapsar*
+:::
+
+```{r}
+#| label: s14
+#| results: asis
+leer("informe_sensibilidad.csv") %>%
+  transmute(`Análisis` = analisis, Escala = escala, n, CFI = a3(cfi.scaled), TLI = a3(tli.scaled),
+            RMSEA = a3(rmsea.scaled), SRMR = a3(srmr), `λ mín.` = a2(carga_min), `r factores` = a2(r_factores)) %>%
+  mutate(`Análisis` = if_else(duplicated(`Análisis`), "", `Análisis`)) %>%
+  tabla_md(c(24, 18, 6, 6, 6, 6, 6, 7, 8), c("l", "l", rep("r", 7)))
+```
+
+*Nota.* Casos de baja calidad: duración menor que un tercio de la mediana o respuesta en línea recta en dos o más de las baterías O1, O2 y O3 (`r leer("informe_calidad.csv")$valor[8]` casos). Sin colapsar: ítems con sus cinco categorías originales. λ mín. = carga estandarizada mínima; r factores = correlación entre los dos factores de la escala.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S15**
+
+*Correlaciones de los Factores con Indicadores de Situación Económica y Sensibilidad de la Posición Política*
+:::
+
+```{r}
+#| label: s15
+#| results: asis
+leer("informe_validez_economica.csv") %>%
+  mutate(variable = recode(variable, ingreso = "Ingreso del hogar",
+                           deuda_alimentos = "Deuda para comprar alimentos",
+                           mas_endeudado = "Más endeudado que hace tres años",
+                           `M9_l (sin M9 = 5)` = "Posición política (derecha), sin el valor 5",
+                           `C3_14_l (sin M9 = 5)` = "Consumo como postura política, sin el valor 5 de posición política"),
+         factor = factor(nfac[factor], levels = nfac),
+         valor = paste0(a2(r), " [", a2(ic_inf), ", ", a2(ic_sup), "]", if_else(p < .05, "\\*", ""))) %>%
+  arrange(variable, factor) %>%
+  transmute(Variable = paste0(variable, " (n = ", n, ")"), factor, valor) %>%
+  pivot_wider(names_from = factor, values_from = valor) %>%
+  tabla_md(c(30, 15, 15, 15, 15), c("l", rep("r", 4)))
+```
+
+*Nota.* Correlaciones [IC 95%] entre cada factor y la variable externa, estimadas con WLSMV en un modelo que incluye la escala correspondiente. Ingreso: cinco tramos, tratado como continuo; se excluyó a quienes prefirieron no responder. Deuda para comprar alimentos: indicó "Supermercado/Alimentos" como primer o segundo motivo de sus deudas. Más endeudado: se declara más endeudado que tres años atrás. Ambas binarias, tratadas como ordinales. \* *p* < ,05.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S16**
+
+*Registro de Decisiones del Análisis: Momento, Muestra y Carácter Confirmatorio o Exploratorio*
+:::
+
+| Paso | Decisión | Base de la decisión | Muestra | Carácter |
+|:---|:-------------------------|:-------------------------|:---------|:-------------|
+| 1 | Fusionar categorías extremas con menos del 10% de las respuestas | Distribución de las respuestas | Completa, antes de dividirla | Previa; filtración menor entre mitades |
+| 2 | Dividir la muestra al azar en dos mitades | Validación cruzada | Completa | Previa |
+| 3 | Retener cinco factores y depurar ítems con carga < ,40 o cargas cruzadas | Análisis paralelo, MAP e interpretabilidad | Exploratoria | Exploratoria |
+| 4 | Comparar el modelo unidimensional (M1), la estructura exploratoria (M2) y su separación en compra sustentable y consumo político (M3) | Estructura exploratoria e hipótesis de la literatura | Prueba | **Especificada antes de estimar en la mitad de prueba** |
+| 5 | Eliminar el ítem O4.6 (M4) | Índices de modificación de M3 | Prueba | Posterior a los resultados |
+| 6 | Buscar escalas breves con carga ≥ ,50 | Ajuste insuficiente de M4 en la mitad de prueba | Exploratoria | Posterior; motivada por la mitad de prueba |
+| 7 | Agregar O2.11 y O2.12 a la compra sustentable | Cargas en la solución exploratoria inicial | Exploratoria | Posterior |
+| 8 | Elegir dos escalas de dos factores entre seis modelos breves | Ajuste en la mitad de prueba | Prueba | Posterior; selección en la mitad de prueba |
+| 9 | Estimar el modelo conjunto y el ESEM | Desajuste del modelo conjunto | Prueba | Posterior |
+| 10 | Evaluar la invarianza (configural, umbrales, métrica y escalar) con los criterios de Chen | Procedimiento estándar | Completa | Planificada, aplicada a escalas ya seleccionadas |
+| 11 | Liberar los interceptos de O3.9, O2.2 y O2.5 por edad | Índices de modificación | Completa | Posterior a los resultados |
+| 12 | Correlaciones con la lectura política del consumo, la posición política y la educación | Hipótesis de la literatura | Completa | Especificada tras seleccionar las escalas |
+| 13 | Funcionamiento diferencial por ítem, corrección de Holm, anclas alternativas, indicadores económicos, correlaciones con covariables según AFC y ESEM, y análisis de sensibilidad | Revisión del manuscrito | Completa | Posterior a los resultados |
+
+*Nota.* Reconstruido a partir del código de análisis, en el orden en que se ejecutaron los análisis. No hubo un plan de análisis registrado previamente. Muestra exploratoria: n = 811; muestra de prueba: n = 812. Solo el paso 4 constituye una comparación confirmatoria en sentido estricto: sus modelos se definieron antes de estimarlos en la mitad de prueba. Como los pasos 5 a 9 usaron la mitad de prueba para seleccionar y modificar modelos, la estructura final no se ha evaluado en datos independientes de su selección.
+
+{{< pagebreak >}}
+
+::: {custom-style="Titulo tabla"}
+**Tabla S17**
+
+*Correlaciones entre Factores y con Variables Externas Estimadas con el AFC y con el ESEM (Muestra Completa)*
+:::
+
+```{r}
+#| label: s17
+#| results: asis
+nf <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+        ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+nv <- c(C3_14_l = "Consumo como postura política", M9_l = "Posición política (derecha)",
+        M4_l = "Nivel educacional", ingreso_l = "Ingreso del hogar", deuda_alimentos_l = "Deuda para comprar alimentos",
+        mas_endeudado_l = "Más endeudado que hace tres años", mujer_l = "Mujer", edad3_l = "Tramo de edad",
+        nse3_l = "NSE (mayor valor = más bajo)")
+fac <- leer("sensibilidad_esem_factores.csv")
+cov <- leer("sensibilidad_esem_covariables.csv")
+marca <- function(r, p) paste0(a2(r), if_else(p < .05, "\\*", ""))
+bind_rows(
+  fac %>% transmute(Factor = paste(nf[factor1], "–", nf[factor2]), Variable = "Correlación entre factores",
+                    `AFC por escala` = "", `AFC conjunto` = a2(`AFC conjunto`), ESEM = a2(ESEM)),
+  cov %>% mutate(valor = marca(r, p)) %>% select(modelo, factor, variable, valor) %>%
+    pivot_wider(names_from = modelo, values_from = valor) %>%
+    mutate(factor = factor(factor, levels = names(nf)), variable = factor(variable, levels = names(nv))) %>%
+    arrange(variable, factor) %>%
+    transmute(Factor = nf[as.character(factor)], Variable = nv[as.character(variable)],
+              `AFC por escala`, `AFC conjunto`, ESEM)
+) %>% rename(`AFC-E` = `AFC por escala`, `AFC-C` = `AFC conjunto`) %>%
+  tabla_md(c(30, 30, 8, 8, 8), c("l", "l", "r", "r", "r"))
+```
+
+*Nota.* Muestra completa (N = 1.623; ingreso con n menor por respuestas "prefiero no responder"). AFC-E: AFC de dos factores de cada escala, como en la Tabla 5 del artículo. AFC-C: AFC conjunto, con los cuatro factores en un mismo modelo con cargas cruzadas fijadas en cero. ESEM: los mismos cuatro factores con rotación objetivo, estimado en dos pasos (modelo de medida del ESEM sin covariables, fijado al estimar las correlaciones con cada covariable). Las variables continuas entran como indicadores únicos sin error de medida; las binarias (deuda, endeudamiento, mujer) como ordinales. Tramo de edad (18-34, 35-54, 55 o más) y NSE (ABC1, C2-C3, D-E) se tratan como continuos de tres valores. \* *p* < ,05.
+

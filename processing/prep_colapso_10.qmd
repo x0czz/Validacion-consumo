@@ -1,0 +1,206 @@
+---
+title: "Preparación de las baterías O1–O4: colapso de categorías extremas (umbral 10%)"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+Este script prepara las 46 variables de las baterías O1 a O4 de la Encuesta Sociedad de Consumo 2023 para el análisis factorial. Hace dos cosas:
+
+1. **Alinea la dirección de O4.** En la base, O1–O3 van de 1 = "Nunca" a 5 = "Siempre", pero O4 va de 1 = "Muy de acuerdo" a 5 = "Muy en desacuerdo". Se invierte O4 para que en todas las baterías un valor más alto signifique más frecuencia o más acuerdo. Los ítems redactados en negativo (O4.4, O4.7, O4.10) **no** se invierten aquí; eso se decide en el análisis factorial.
+2. **Reduce el efecto suelo y techo.** Si una categoría extrema (la más baja o la más alta) tiene menos de 10% de las respuestas, se fusiona con la categoría adyacente. La regla se aplica de forma iterativa: si la categoría fusionada sigue bajo 10%, se fusiona con la siguiente. Las categorías resultantes se renumeran de forma consecutiva (1, 2, 3…).
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(haven)
+library(here)
+library(knitr)
+library(kableExtra)
+
+umbral <- 0.10   # proporción mínima para una categoría extrema
+options(knitr.kable.NA = "")
+
+datos_orig <- read_sav(here("input", "data", "original",
+                            "Encuesta Sociedad de Consumo 2023.sav"))
+
+vars_baterias <- datos_orig %>%
+  select(matches("^O[1-4]_\\d+$")) %>%
+  names()
+
+baterias <- datos_orig %>% select(all_of(vars_baterias))
+```
+
+La base tiene `r nrow(baterias)` casos y `r length(vars_baterias)` ítems, con `r sum(is.na(baterias))` valores perdidos.
+
+# 1. Dirección de O4
+
+```{r}
+#| label: invertir-o4
+etiquetas_o4 <- c("Muy en desacuerdo" = 1, "En desacuerdo" = 2,
+                  "Ni de acuerdo ni en desacuerdo" = 3,
+                  "De acuerdo" = 4, "Muy de acuerdo" = 5)
+
+baterias <- baterias %>%
+  mutate(across(starts_with("O4_"),
+                ~ labelled(6 - as.numeric(.x), labels = etiquetas_o4,
+                           label = attr(.x, "label"))))
+
+# Control: O4_1 original vs invertida
+table(original = as.numeric(datos_orig$O4_1),
+      invertida = as.numeric(baterias$O4_1))
+```
+
+# 2. Distribución original
+
+```{r}
+#| label: frecuencias-originales
+tabla_frecuencias <- function(df) {
+  df %>%
+    mutate(across(everything(), as.numeric)) %>%
+    pivot_longer(everything(), names_to = "item", values_to = "valor") %>%
+    count(item, valor) %>%
+    group_by(item) %>%
+    mutate(pct = round(100 * n / sum(n), 1)) %>%
+    ungroup() %>%
+    select(-n) %>%
+    pivot_wider(names_from = valor, values_from = pct) %>%
+    mutate(item = factor(item, levels = vars_baterias)) %>%
+    arrange(item)
+}
+
+frec_orig <- tabla_frecuencias(baterias)
+
+frec_orig %>%
+  kable(caption = "Porcentaje por categoría, antes del colapso (O4 ya invertida)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+# 3. Colapso de categorías extremas
+
+La función agrupa los códigos originales en bloques. Por el extremo inferior, mientras el primer bloque tenga menos de `r umbral * 100`% se une al siguiente; luego hace lo mismo por el extremo superior. Nunca deja menos de dos categorías.
+
+```{r}
+#| label: funcion-colapso
+colapsar_extremos <- function(x, umbral = 0.10) {
+  etiquetas <- labelled::val_labels(x)
+  valores   <- as.numeric(x)
+  codigos   <- sort(unique(c(etiquetas, valores[!is.na(valores)])))
+
+  # cada bloque es un vector de códigos originales
+  bloques <- as.list(codigos)
+  prop_bloque <- function(b) mean(valores %in% b, na.rm = FALSE)
+
+  # extremo inferior
+  while (length(bloques) > 2 && prop_bloque(bloques[[1]]) < umbral) {
+    bloques[[2]] <- c(bloques[[1]], bloques[[2]])
+    bloques[[1]] <- NULL
+  }
+  # extremo superior
+  while (length(bloques) > 2 && prop_bloque(bloques[[length(bloques)]]) < umbral) {
+    k <- length(bloques)
+    bloques[[k - 1]] <- c(bloques[[k - 1]], bloques[[k]])
+    bloques[[k]] <- NULL
+  }
+
+  # nuevo código consecutivo y etiqueta combinada
+  nuevo  <- rep(NA_real_, length(valores))
+  nuevas_etiquetas <- c()
+  for (i in seq_along(bloques)) {
+    nuevo[valores %in% bloques[[i]]] <- i
+    nombres <- names(etiquetas)[match(sort(bloques[[i]]), etiquetas)]
+    nuevas_etiquetas[paste(nombres, collapse = " / ")] <- i
+  }
+
+  out <- labelled(nuevo, labels = nuevas_etiquetas, label = attr(x, "label"))
+  attr(out, "bloques") <- map_chr(bloques, ~ paste(sort(.x), collapse = "+"))
+  out
+}
+
+baterias_col <- baterias %>%
+  mutate(across(everything(), ~ colapsar_extremos(.x, umbral = umbral)))
+```
+
+## Resumen de recodificaciones
+
+```{r}
+#| label: resumen-colapso
+resumen <- tibble(
+  item = vars_baterias,
+  enunciado = map_chr(vars_baterias,
+                      ~ str_remove(attr(baterias[[.x]], "label"), "_[^_]*$")),
+  categorias = map_int(vars_baterias, ~ length(attr(baterias_col[[.x]], "bloques"))),
+  agrupacion = map_chr(vars_baterias,
+                       ~ paste(attr(baterias_col[[.x]], "bloques"), collapse = " ; ")),
+  colapsado = categorias < 5
+)
+
+resumen %>%
+  count(categorias, name = "n_items") %>%
+  kable(caption = "Ítems según número de categorías tras el colapso") %>%
+  kable_styling(full_width = FALSE)
+
+resumen %>%
+  kable(caption = "Agrupación de códigos originales por ítem (\"1+2\" = códigos 1 y 2 fusionados)") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed")) %>%
+  row_spec(which(resumen$colapsado), bold = TRUE)
+```
+
+## Distribución tras el colapso
+
+```{r}
+#| label: frecuencias-colapsadas
+frec_col <- tabla_frecuencias(baterias_col)
+
+frec_col %>%
+  kable(caption = "Porcentaje por categoría, después del colapso") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+## Control
+
+Ninguna categoría extrema queda bajo el umbral, salvo que el ítem ya tenga solo dos categorías.
+
+```{r}
+#| label: control
+control <- map_dfr(vars_baterias, function(v) {
+  p <- prop.table(table(as.numeric(baterias_col[[v]])))
+  tibble(item = v, k = length(p), min_extremo = min(p[1], p[length(p)]))
+})
+
+stopifnot(all(control$min_extremo >= umbral | control$k == 2))
+control %>% arrange(min_extremo) %>% head(5) %>%
+  kable(digits = 3, caption = "Cinco ítems con la categoría extrema más pequeña") %>%
+  kable_styling(full_width = FALSE)
+```
+
+# 4. Guardado
+
+```{r}
+#| label: guardar
+dir.create(here("input", "data", "proc"), recursive = TRUE, showWarnings = FALSE)
+dir.create(here("output", "tables"), recursive = TRUE, showWarnings = FALSE)
+
+# Base procesada: identificador, variables de agrupación (para invarianza)
+# y los 46 ítems recodificados
+db_proc <- datos_orig %>%
+  select(key, SEXO, EDADR, NSE) %>%
+  bind_cols(baterias_col)
+
+saveRDS(db_proc, here("input", "data", "proc", "db_proc.rds"))
+write_csv(resumen, here("output", "tables", "colapso_10_resumen.csv"))
+```
+
+Se guardan:
+
+- `input/data/proc/db_proc.rds`: el identificador (`key`), sexo, tramo de edad y NSE, más los 46 ítems recodificados como variables `haven_labelled`, con etiquetas que indican las categorías fusionadas.
+- `output/tables/colapso_10_resumen.csv`: la agrupación aplicada a cada ítem.

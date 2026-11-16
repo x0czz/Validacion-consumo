@@ -1,0 +1,451 @@
+---
+title: "Perfiles de prácticas de consumo socioambientales en Chile: un análisis de clases latentes"
+
+
+lang: es
+date: ""
+
+bibliography:
+  - "input/bib/akatu.bib"
+  - "input/bib/metodologia.bib"
+  - "input/bib/preprints.bib"
+csl: "input/bib/apa.csl"
+
+# Fuente y formato global (aplica a PDF)
+fontsize: 12pt
+mainfont: Times New Roman
+linestretch: 2          # doble espacio — Psicothema
+link-citations: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+
+format:
+
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-title: Contenidos
+    number-sections: false
+    theme: cosmo
+    code-fold: true
+    code-link: true
+    title-block-banner: true
+    include-in-header:
+      text: |
+        <style>
+          body {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            line-height: 2 !important;
+            text-align: left !important;
+          }
+          p { text-indent: 1.25cm; margin-bottom: 0; }
+          h1, h2, h3 {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            font-weight: bold;
+            text-indent: 0;
+          }
+          table, figure { line-height: 1.2 !important; }
+          h1.title, .subtitle { color: #ffffff !important; }
+        </style>
+
+  docx:
+    reference-doc: input/templates/psicothema.docx
+    toc: false
+    number-sections: false
+    highlight-style: none
+    fig-dpi: 300
+
+  typst:
+    citeproc: true
+    papersize: a4
+    margin:
+      x: 3cm
+      y: 3cm
+    fontsize: 12pt
+    mainfont: "Times New Roman"
+    fig-format: png
+    fig-dpi: 300
+
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+options(knitr.kable.NA = "", OutDec = ",", warn = -1)
+
+# Número de palabras del manuscrito sin referencias (incluye título, resúmenes,
+# texto, tablas y figuras). Se actualiza tras renderizar.
+n_palabras <- 5720
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+enum      <- leer("lca_enumeracion.csv") %>% mutate(modelo = str_extract(modelo, "^[ABC]"))
+clasif    <- leer("lca_clasificacion.csv")
+perfiles  <- leer("lca_perfiles_items.csv")
+dims      <- leer("lca_perfiles_dimensiones.csv")
+bvr       <- leer("lca_bvr.csv")
+coef3p    <- leer("lca_3p_coeficientes.csv")
+wald3p    <- leer("lca_3p_wald.csv")
+prob3p    <- leer("lca_3p_probabilidades.csv")
+err3p     <- leer("lca_3p_error_clasificacion.csv")
+comp_k    <- leer("lca_comparacion_k.csv")
+perf_k    <- leer("lca_perfiles_k.csv")
+trans_k   <- leer("lca_transiciones_k.csv")
+grupos    <- leer("invarianza_grupos.csv")
+p_alto    <- leer("revision_lca_prob_alto.csv")
+diag_lca  <- leer("revision_lca_diagnostico.csv")
+enum_dic  <- leer("revision_lca_dicotomico_enumeracion.csv")
+ari_dic   <- leer("revision_lca_dicotomico_ari.csv")
+perf_dic  <- leer("revision_lca_dicotomico_perfiles.csv")
+val3p     <- leer("revision_lca_validez_externa.csv")
+valw      <- leer("revision_lca_validez_wald.csv")
+limite    <- leer("revision_lca_limite.csv")
+ver_lca   <- readLines(here("output", "tables", "revision_lca_versiones.txt"))
+
+orden_clases <- c("Amplio", "Intermedio", "Doméstico", "Político", "Bajo")
+orden_dim <- c("Compra sustentable", "Consumo político", "Ahorro doméstico", "Planificación")
+
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+# Formato APA: sin cero inicial para valores acotados en [-1, 1]
+apa <- function(x) sub("^-", "−", sub("^(-?)0,", "\\1,", trimws(x)))
+a2 <- function(x) apa(f2(x))
+a3 <- function(x) apa(f3(x))
+miles <- function(x, d = 1) trimws(format(round(x, d), big.mark = ".", decimal.mark = ",", nsmall = d))
+
+# Tabla Markdown con anchos relativos de columna (controla el ancho en Word)
+tabla_md <- function(df, anchos, alinea) {
+  sep <- map2_chr(anchos, alinea, function(w, a) {
+    d <- strrep("-", w)
+    switch(a, l = paste0(":", d), r = paste0(d, ":"), c = paste0(":", d, ":"))
+  })
+  cuerpo <- apply(df, 1, function(f) paste0("| ", paste(f, collapse = " | "), " |"))
+  cat(paste0("| ", paste(names(df), collapse = " | "), " |"), "\n",
+      paste0("|", paste(sep, collapse = "|"), "|"), "\n",
+      paste(cuerpo, collapse = "\n"), "\n", sep = "")
+}
+
+n_total <- sum(grupos$n[grupos$variable == "Sexo"])
+pct <- function(var, grp) f1(100 * grupos$n[grupos$variable == var & grupos$grupo == grp] / n_total)
+pc  <- function(cl, mod = "A") f1(100 * clasif$proporcion[clasif$modelo == mod & clasif$clase == cl])
+pp  <- function(cl, mod = "A") a2(clasif$AvePP[clasif$modelo == mod & clasif$clase == cl])
+dm  <- function(cl, d) a2(dims[[d]][dims$clase == cl])
+pr  <- function(v, g, cl) f1(100 * prob3p$prob[prob3p$variable == v & prob3p$grupo == g & prob3p$clase == cl])
+orr <- function(t, cl) { x <- coef3p[coef3p$termino == t & coef3p$clase == cl, ]; paste0("*OR* = ", f2(x$OR), ", IC 95% [", f2(x$OR_inf), ", ", f2(x$OR_sup), "]") }
+wd  <- function(v) { x <- wald3p[wald3p$variable == v, ]; paste0("Wald(", x$gl, ") = ", f2(x$wald), ", *p* ", if_else(x$p < .001, "< ,001", paste("=", a3(x$p)))) }
+e   <- function(mod, k, col) enum[[col]][enum$modelo == mod & enum$clases == k]
+ck  <- function(k, col) comp_k[[col]][comp_k$clases == k]
+bvr_n <- function(mod) sum(bvr$BVR[bvr$modelo == mod] > 3.84)
+bvr_max <- function(mod) f1(max(bvr$BVR[bvr$modelo == mod]))
+pa  <- function(it, cl) a2(p_alto$p_alto[p_alto$item == it & p_alto$clase == cl])
+orv <- function(t, cl) { x <- val3p[val3p$termino == t & val3p$clase == cl, ]; paste0("*OR* = ", f2(x$OR), ", IC 95% [", f2(x$OR_inf), ", ", f2(x$OR_sup), "]") }
+wdv <- function(v) { x <- valw[valw$variable == v, ]; paste0("Wald(", x$gl, ") = ", f2(x$wald), ", *p* ", if_else(x$p < .001, "< ,001", paste("=", a3(x$p)))) }
+version_r <- str_extract(ver_lca[1], "[0-9]+\\.[0-9]+\\.[0-9]+")
+version_polca <- str_extract(ver_lca[2], "[0-9.]+$")
+k_dic <- enum_dic$clases[which.min(enum_dic$BIC)]
+pdic <- function(k, princ, col) perf_dic[[col]][perf_dic$clases == k & perf_dic$clase_principal == princ]
+```
+
+**Alejandro Marambio-Tapia**^1^ (ORCID: https://orcid.org/0000-0002-8598-8817) y **Nicolás Outerbridge Ortega**^2^ (ORCID: https://orcid.org/0009-0009-1943-6182)
+
+^1^ Escuela de Trabajo Social, Universidad de Chile, Santiago, Chile.
+
+^2^ Departamento de Sociología, Universidad de Chile, Santiago, Chile.
+
+**Autor de correspondencia:** Nicolás Outerbridge Ortega, nicolas.outerbridge@ug.uchile.cl
+
+**Preprint** publicado en SocArXiv bajo licencia CC BY 4.0. Esta versión no ha sido revisada por pares.
+
+{{< pagebreak >}}
+
+**Resumen**
+
+**Antecedentes:** Las tipologías de consumidores "conscientes" o "responsables" usadas en América Latina se construyen sumando prácticas declaradas, lo que supone que las personas difieren solo en cuánto hacen y no en qué hacen. Este estudio identifica perfiles de prácticas de consumo socioambientales en Chile y evalúa si forman un continuo o combinaciones cualitativamente distintas. **Método:** Se aplicó un análisis de clases latentes a 17 ítems de prácticas de la Encuesta Sociedad de Consumo 2023 (N = `r miles(n_total, 0)`). La relación de las clases con sexo, edad y nivel socioeconómico se estimó con un enfoque de tres pasos corregido por error de clasificación. **Resultados:** La solución de cinco clases fue la mejor según BIC y CAIC. Tres clases formaron una gradiente (Amplio, Intermedio y Bajo), pero `r f1(as.numeric(sub(",", ".", pc("Doméstico"))) + as.numeric(sub(",", ".", pc("Político"))))`% de la muestra perteneció a perfiles opuestos: uno doméstico, con ahorro alto y poco consumo político, y uno político, con el ahorro más bajo. La clase política fue más probable entre jóvenes y hombres y entre quienes ven el consumo como una postura política; la doméstica, entre personas mayores y de nivel socioeconómico bajo. **Conclusiones:** Las tipologías sumativas confunden perfiles cualitativamente distintos.
+
+**Palabras clave:** prácticas de consumo, consumo político, clases latentes, tipologías de consumidores, Chile.
+
+**Abstract**
+
+**Background:** Typologies of "conscious" or "responsible" consumers used in Latin America are built by summing self-reported practices, which assumes that people differ only in how much they do, not in what they do. This study identifies profiles of socio-environmental consumption practices in Chile and tests whether they form a continuum or qualitatively distinct combinations. **Method:** Latent class analysis was applied to 17 practice items from the 2023 Consumer Society Survey (N = `r format(n_total, big.mark = ",")`). Associations with sex, age, and socioeconomic status were estimated with a bias-adjusted three-step approach. **Results:** The five-class solution was the best according to BIC and CAIC. Three classes formed a gradient (Broad, Intermediate, and Low), but `r sub(",", ".", f1(as.numeric(sub(",", ".", pc("Doméstico"))) + as.numeric(sub(",", ".", pc("Político")))))`% of the sample belonged to opposite profiles: a household profile, with high saving and little political consumption, and a political profile, with the lowest saving. The political class was more likely among young people, men, and those who see consumption as a political stance; the household class, among older and lower-status people. **Conclusions:** Summative typologies conflate qualitatively distinct profiles.
+
+**Keywords:** consumption practices, political consumerism, latent class analysis, consumer typologies, Chile.
+
+{{< pagebreak >}}
+
+En Chile, el consumo ocupa un lugar central en la vida social. Desde la década de 1990, la expansión del consumo y del crédito ha sido interpretada como un mecanismo de integración social que desplazó a la participación política [@moulian_chile_1997], y el endeudamiento de los hogares se normalizó como un pilar del modelo socioeconómico [@marambio_normalizacion_2022]. En ese contexto, las prácticas mediante las cuales las personas incorporan consideraciones ambientales o políticas a su consumo son un espacio relevante para estudiar la relación entre ciudadanía y mercado.
+
+Estas prácticas suelen agruparse bajo las nociones de consumo consciente o responsable. Esas nociones han sido criticadas porque trasladan al consumidor individual la responsabilidad por problemas que se originan en la producción, y porque no cuestionan el proceso productivo [@barros_consumo_2008; @yoshizato_ideologizacao_2016]. En Chile se ha advertido, por ejemplo, que los llamados a acortar la ducha para cuidar el agua omiten que la industria concentra la mayor parte de su consumo [@marambio_consumo_2024]. Por eso, en este estudio se habla de *prácticas de consumo socioambientales*: prácticas cotidianas de compra, uso y organización del consumo con implicancias ambientales o políticas, sin suponer que expresen una responsabilidad o una virtud individual.
+
+La forma más extendida de clasificar a las personas según estas prácticas proviene del Instituto Akatu. Su tipología suma el número de conductas que cada persona declara realizar y, con puntos de corte, ordena a la población en indiferentes, iniciantes, comprometidos y conscientes; estos últimos rondan el 5% de la población brasileña [@akatu_pesquisa_2007]. La adaptación chilena de ese índice estimó que solo el 6,5% de la población podía clasificarse como "consumidora responsable" [@ariztia_nuevo_2010]. Otros estudios chilenos clasifican a los consumidores según el promedio de sus respuestas en escalas tipo Likert, con cortes fijos que distinguen consumidores indiferentes, principiantes, comprometidos y responsables [@acunamoraga_sustentabilidad_2018]. En todos estos casos, los tipos son tramos de un mismo puntaje: las personas difieren en cuánto hacen, no en qué hacen.
+
+Hay razones para dudar de ese supuesto. Al analizar las prácticas del índice chileno, @ariztia_nuevo_2010 encontraron dimensiones con bases sociales opuestas: la compra consciente se concentraba en sectores de mayores recursos y educación, mientras que el ahorro doméstico era masivo, transversal y más frecuente en mujeres, personas mayores y sectores medios bajos y bajos. Los propios autores advirtieron que el índice "aglutina prácticas muy disímiles, lo cual tiende a esconder la distribución del consumo responsable en términos de nivel socioeconómico" [@ariztia_nuevo_2010, p. 107]. En la misma línea, un estudio psicométrico previo con los datos que aquí se analizan encontró que la compra sustentable, el consumo político, el ahorro doméstico y la planificación de compras son dimensiones distintas; que la compra sustentable es menos frecuente en los niveles socioeconómicos medio y bajo, y que el ahorro doméstico aumenta con la edad pero no se asocia con el ingreso ni con indicadores de presión financiera [@marambio_medicion_2026]. La literatura sobre consumo político también muestra que prácticas aparentemente cercanas, como el boicot y la compra deliberada o *buycott*, se combinan en tipos distintos de personas, con normas de ciudadanía diferentes [@copeland_conceptualizing_2014].
+
+Esos análisis, sin embargo, se centran en variables: muestran qué prácticas tienden a ir juntas en la población, pero no cómo se combinan en cada persona. Que el ahorro y la compra sustentable sean dimensiones distintas no dice si existen personas que ahorran mucho sin comprar de forma sustentable, ni cuántas son. Para responder esa pregunta se requiere un enfoque centrado en personas. El análisis de clases latentes (LCA) identifica subgrupos no observados a partir de los patrones de respuesta [@collins_latent_2010]. A diferencia de las tipologías por puntos de corte, el número de grupos se elige comparando modelos con criterios de ajuste, cada persona tiene una probabilidad de pertenecer a cada grupo y no se supone de antemano que los grupos estén ordenados [@weller_latent_2020]. Si la población se ordena en un continuo, el LCA debería recuperar clases ordenadas, de más a menos en todas las prácticas. Si existen combinaciones cualitativamente distintas, debería recuperar clases que no caben en ese orden.
+
+Esta distinción tiene consecuencias sustantivas. Si una persona ahorra agua y energía por necesidad económica y otra compra productos orgánicos porque puede pagarlos, un índice sumativo puede asignarles el mismo puntaje y la misma etiqueta de "consumidor consciente". La tipología resultante atribuiría a disposiciones individuales lo que en parte refleja condiciones materiales, que es justamente lo que la crítica a la individualización señala.
+
+El objetivo de este estudio es identificar perfiles de prácticas de consumo socioambientales en población chilena mediante un análisis de clases latentes. Se plantean dos preguntas: (a) ¿cuántos perfiles existen y forman un continuo o combinaciones cualitativamente distintas?; y (b) ¿cómo se distribuyen los perfiles según sexo, edad y nivel socioeconómico?
+
+Respecto de la segunda pregunta, a partir de @ariztia_nuevo_2010 se esperaba que un perfil centrado en el ahorro doméstico fuera más frecuente en mujeres, personas mayores y sectores de menor NSE, y que la compra sustentable se concentrara en el NSE alto. Para el consumo político la evidencia es mixta: estudios europeos lo asocian a personas mayores, con más educación e ingresos [@ackermann_psychological_2020p], aunque sus formas digitales y de movilización podrían ser más frecuentes entre jóvenes. También se esperaba que un eventual perfil político se asociara con una lectura política del consumo, lo que serviría como evidencia de validez de su interpretación [@samuelsen_latent_2010].
+
+# Método
+
+## Participantes
+
+Participaron `r miles(n_total, 0)` personas mayores de 18 años, residentes en las 16 regiones de Chile (el 40,5% en la Región Metropolitana), que respondieron la Encuesta Sociedad de Consumo 2023 [@marambio_encuesta_2023]. El `r pct("Sexo", "Mujer")`% eran mujeres. Por tramo de edad, el `r pct("Edad", "18-34")`% tenía entre 18 y 34 años, el `r pct("Edad", "35-54")`% entre 35 y 54, y el `r pct("Edad", "55 o más")`% 55 o más. Según el nivel socioeconómico (NSE), el `r pct("NSE", "ABC1")`% pertenecía al grupo alto (ABC1), el `r pct("NSE", "C2-C3")`% al medio (C2-C3) y el `r pct("NSE", "D-E")`% al bajo (D-E); el NSE corresponde a la clasificación de siete grupos (AB a E) del perfil de cada panelista en Netquest, agrupada en tres. La encuesta fue realizada por Netquest, empresa certificada según la norma ISO 20252:2019, con su panel en línea, que en Chile reúne a cerca de 300.000 personas registradas para responder encuestas. Netquest invitó a integrantes del panel mediante correos personalizados y aplicó cuotas por sexo, edad (seis tramos), NSE (siete grupos) y zona (Región Metropolitana y resto del país), definidas por el equipo de investigación para una meta de 1.600 casos. De 6.775 panelistas invitados, 2.135 iniciaron la encuesta, lo que da una tasa de participación de 31,5% (calculada por la empresa como la proporción de invitados que iniciaron su participación), y 1.623 la completaron y superaron los controles de calidad de la empresa. Esos controles excluyeron 76 casos: 28 por incongruencias entre sus respuestas y su perfil en el panel, 28 por fallar preguntas de atención, 14 por no superar un captcha, 4 por participación duplicada y 2 por edad o NSE fuera de los rangos requeridos. Se trata de una muestra no probabilística por cuotas de personas que responden habitualmente encuestas en línea: su composición por sexo, edad, NSE y zona se ajusta a las cuotas, pero los resultados no pueden generalizarse a la población chilena.
+
+## Instrumentos
+
+Se usaron 17 ítems de prácticas de consumo que, en un estudio previo con la misma muestra, conformaron dos escalas con ajuste adecuado, confiabilidad aceptable e invarianza escalar por sexo y NSE, y escalar parcial por edad [@marambio_medicion_2026]. Esa estructura se seleccionó y evaluó con los mismos datos, por lo que es provisional hasta su replicación independiente. Los ítems miden cuatro dimensiones: compra sustentable (cuatro ítems; por ejemplo, "Compra productos orgánicos o naturales"), consumo político (cinco ítems; por ejemplo, "Participa en asociaciones de consumidores, cooperativas o grupos organizados de compradores"), ahorro doméstico (cinco ítems; por ejemplo, "Corta el agua mientras se lava los dientes") y planificación de compras (tres ítems; por ejemplo, "Planifica compra de alimentos"). Se responden con la pregunta "¿Qué tan seguido usted…?" en una escala de cinco puntos (1 = *Nunca*; 5 = *Siempre*). Los enunciados completos se presentan en la Figura 1.
+
+Para evaluar la validez de la interpretación de las clases se usaron dos preguntas de la misma encuesta: el acuerdo con la afirmación "La forma en que uno consume algunos bienes tiene que ver con la postura política de uno" (1 = *Muy en desacuerdo*; 5 = *Muy de acuerdo*) y la posición política (1 = *Izquierda*; 10 = *Derecha*).
+
+## Procedimiento
+
+La encuesta fue autoadministrada en línea entre el 18 y el 25 de julio de 2023. El 80,2% de las personas respondió desde un teléfono móvil, y la mediana de duración fue de 19,8 minutos. El orden de los ítems se rotó aleatoriamente dentro de cada batería. El proyecto contó con la aprobación del Comité de Ética de la Universidad Católica del Maule. Al inscribirse en el panel, cada participante accede a la información legal de Netquest y firma un consentimiento informado incluido en su perfil de usuario, que se rige por las condiciones de uso del panel. Netquest no entregó premios por participar en esta encuesta. Este estudio es un análisis secundario de datos anonimizados, levantados en el marco de los proyectos Fondecyt N.º 11200893 y N.º 1212677, con objetivos más amplios que los de este artículo. La base no cuenta con ponderadores.
+
+## Análisis de datos
+
+No hubo valores perdidos en los ítems analizados. Para reducir el efecto suelo y techo, las categorías extremas con menos del 10% de las respuestas se fusionaron de forma iterativa con la categoría adyacente, de modo que los ítems quedaron con entre tres y cinco categorías, todas con respuestas, como recomiendan @samuelsen_latent_2010. Los ítems se analizaron como indicadores categóricos, sin agregarlos en puntajes.
+
+El modelo de clases latentes supone que la probabilidad de un patrón de respuestas **y** es una mezcla de *T* clases, dentro de las cuales los ítems son independientes (independencia local):
+
+$$
+P(\mathbf{y}) = \sum_{t=1}^{T} \pi_t \prod_{j=1}^{17} \prod_{r=1}^{R_j} \rho_{jr \mid t}^{\, I(y_j = r)}
+$$
+
+donde π~*t*~ es la proporción de la clase *t* y ρ~*jr*|*t*~ la probabilidad de que una persona de esa clase responda la categoría *r* del ítem *j*. No se impusieron restricciones a estos parámetros. Se estimaron modelos de una a ocho clases por máxima verosimilitud con el algoritmo EM, en el paquete `poLCA` `r version_polca` de R `r version_r` [@linzer_polca_2011], con un criterio de convergencia de 10^−10^ en el cambio de la log-verosimilitud y un máximo de 5.000 iteraciones. Cada modelo se estimó con 100 conjuntos de valores iniciales aleatorios; se retuvo la solución de mayor verosimilitud y se registró cuántos inicios la replicaban, como evidencia de haber alcanzado el máximo global [@samuelsen_latent_2010]. También se verificó que todos los parámetros tuvieran errores estándar finitos, condición compatible con un modelo identificado, y se identificaron las probabilidades estimadas en los límites de 0 o 1.
+
+El número de clases se eligió priorizando el BIC y el CAIC, que muestran el mejor desempeño en estudios de simulación [@nylund_deciding_2007], junto con la entropía relativa, la probabilidad posterior media de asignación a cada clase (AvePP; aceptable sobre ,70), el tamaño de la clase más pequeña (sobre 5%) y la interpretabilidad [@weller_latent_2020]; el AIC y el aBIC, que penalizan menos la complejidad, se informan como referencia. Las pruebas de ajuste absoluto (G² y χ²) no son interpretables con tablas de contingencia dispersas [@samuelsen_latent_2010], como en este caso, en que se observaron `r miles(diag_lca$patrones_observados, 0)` patrones de respuesta distintos en `r miles(n_total, 0)` personas, por lo que se informan solo de forma descriptiva. Como análisis de robustez, se comparó la solución elegida con las de tres y cuatro clases, siguiendo cómo se reasignaban las personas de una solución a otra.
+
+Dos decisiones de modelamiento requieren justificación. Primero, `poLCA` trata las categorías de cada ítem como nominales, sin imponer orden. Esto permite perfiles no monótonos y no supone distancias entre categorías, a costa de estimar más parámetros. Para evaluar si los resultados dependían de esa decisión, se reestimó el modelo con ítems dicotomizados, que distinguen solo entre responder *La mayoría de las veces* o *Siempre* y el resto, con 50 inicios aleatorios por modelo. Segundo, los ítems se seleccionaron porque forman factores correlacionados, lo que anticipa cierta dependencia entre ítems de una misma dimensión dentro de cada clase: las clases resumen combinaciones de prácticas, pero dentro de ellas las personas pueden seguir variando de forma continua. Por eso la independencia local se evaluó con los residuos bivariados (BVR), considerando problemáticos los valores sobre 3,84, y su cumplimiento se trata como aproximado.
+
+La relación entre la pertenencia a las clases y el sexo, la edad (18-34, 35-54 y 55 o más) y el NSE (ABC1, C2-C3 y D-E) se estimó con el enfoque de tres pasos corregido por máxima verosimilitud [@vermunt_latent_2010; @bakk_estimating_2013]. En el primer paso se estimó el modelo de medida sin covariables, de modo que estas no modificaran la definición de las clases. En el segundo, cada persona se asignó a su clase más probable y se calculó la matriz de error de clasificación, es decir, la probabilidad de ser asignado a cada clase según la clase real. En el tercero se estimó una regresión logística multinomial de la clase latente sobre las tres variables simultáneamente, tratando la clase asignada como un indicador imperfecto de la clase real, con los errores fijados en esa matriz. Este procedimiento corrige la atenuación de las asociaciones que se produce al usar directamente la clase asignada. Se usó como referencia la clase Intermedio, la más grande y de perfil medio. Los efectos de cada variable se evaluaron con pruebas de Wald conjuntas para todas las clases, y para facilitar la interpretación se calcularon las probabilidades predichas de pertenecer a cada clase en cada grupo, promediando sobre la muestra con las demás variables en sus valores observados, con intervalos de confianza del 95% obtenidos por simulación de los coeficientes.
+
+No se incluyeron interacciones entre las variables sociodemográficas, porque no había hipótesis sobre ellas y fragmentarían los grupos más pequeños. Como evidencia de validez de la interpretación de las clases, se estimó un segundo modelo de tres pasos que agregaba la lectura política del consumo y la posición política, ambas estandarizadas, controlando por sexo, edad y NSE.
+
+# Resultados
+
+## Número de clases
+
+El BIC y el CAIC alcanzaron su mínimo con cinco clases (Tabla 1). El BIC de las soluciones de cinco y seis clases fue prácticamente igual (`r miles(e("A", 5, "BIC"))` y `r miles(e("A", 6, "BIC"))`), pero la de seis clases incluyó una clase de menos del 5% de la muestra y su máximo de verosimilitud se replicó solo en `r e("A", 6, "replicas")` de 100 inicios. La solución de cinco clases replicó su máximo en `r e("A", 5, "replicas")` de 100 inicios, tuvo una entropía de `r a3(e("A", 5, "entropia"))` y ninguna clase fue menor al `r f1(100 * e("A", 5, "clase_min"))`% de la muestra. La probabilidad posterior media de asignación varió entre `r a2(min(clasif$AvePP[clasif$modelo == "A"]))` y `r a2(max(clasif$AvePP[clasif$modelo == "A"]))`. Todos los parámetros tuvieron errores estándar finitos, y solo `r nrow(limite)` de las 305 probabilidades condicionales quedó en el límite: la probabilidad de la categoría más baja de planificación de la compra de alimentos en la clase Amplio, que es sustantivamente plausible. Como era esperable con una tabla tan dispersa, G²(`r miles(diag_lca$gl_residuales, 0)`) = `r miles(diag_lca$G2)` no es interpretable como prueba de ajuste (Tabla S3 del material suplementario). Se retuvo la solución de cinco clases.
+
+::: {custom-style="Titulo tabla"}
+**Tabla 1**
+
+*Índices de Ajuste de los Modelos de Clases Latentes con Una a Ocho Clases*
+:::
+
+```{r}
+#| label: tabla-enumeracion
+#| results: asis
+enum %>% filter(modelo == "A") %>%
+  transmute(Clases = clases, LL = sub("^-", "\u2212", miles(LL)), npar = npar, BIC = miles(BIC), CAIC = miles(CAIC),
+            aBIC = miles(aBIC), AIC = miles(AIC), `Entropía` = if_else(is.na(entropia), "", a3(entropia)),
+            `Clase mín.` = a3(clase_min), `Réplicas` = paste0(replicas, "/", inicios)) %>%
+  tabla_md(c(5, 12, 5, 9, 9, 9, 9, 7, 7, 10), c("c", rep("r", 9)))
+```
+
+*Nota.* LL = log-verosimilitud; npar = número de parámetros; BIC = criterio de información bayesiano; CAIC = criterio de información de Akaike consistente; aBIC = BIC ajustado por tamaño muestral; AIC = criterio de información de Akaike; Clase mín. = proporción de la clase más pequeña; Réplicas = inicios aleatorios, de 100, que alcanzaron la misma log-verosimilitud máxima.
+
+## Perfiles de las clases
+
+La Tabla 2 y la Figura 1 describen las cinco clases. Tres de ellas forman una gradiente con el mismo orden en las cuatro dimensiones. La clase **Amplio** (`r pc("Amplio")`%) presentó niveles altos en todas las prácticas y fue la única con compra sustentable alta. La clase **Intermedio** (`r pc("Intermedio")`%), la más grande, presentó niveles medios en todas. La clase **Bajo** (`r pc("Bajo")`%) presentó niveles bajos en todo, salvo un ahorro doméstico medio-bajo.
+
+Las otras dos clases, que suman el `r f1(as.numeric(sub(",", ".", pc("Doméstico"))) + as.numeric(sub(",", ".", pc("Político"))))`% de la muestra, no encajan en esa gradiente. La clase **Doméstico** (`r pc("Doméstico")`%) presentó un ahorro doméstico tan alto como la clase Amplio (`r dm("Doméstico", "Ahorro doméstico")` y `r dm("Amplio", "Ahorro doméstico")`, respectivamente) y planificación alta, pero poco consumo político (`r dm("Doméstico", "Consumo político")`) y compra sustentable media. La clase **Político** (`r pc("Político")`%) presentó el perfil inverso: el consumo político más alto de todas las clases (`r dm("Político", "Consumo político")`), compra sustentable media y el ahorro doméstico más bajo (`r dm("Político", "Ahorro doméstico")`), inferior incluso al de la clase Bajo (`r dm("Bajo", "Ahorro doméstico")`).
+
+Las probabilidades condicionales de respuesta de cada ítem, con sus errores estándar, se presentan en las Tablas S1 y S2. Por ejemplo, la probabilidad de participar al menos a veces en asociaciones de consumidores o cooperativas fue de `r pa("O3_8", "Político")` en la clase Político y de `r pa("O3_8", "Amplio")` o menos en las demás, mientras que la probabilidad de evitar casi siempre dejar luces prendidas fue de `r pa("O2_1", "Político")` en la clase Político y de `r pa("O2_1", "Bajo")` o más en las otras.
+
+::: {custom-style="Titulo tabla"}
+**Tabla 2**
+
+*Tamaño de las Clases, Calidad de Clasificación y Respuesta Media Esperada por Dimensión*
+:::
+
+```{r}
+#| label: tabla-clases
+#| results: asis
+dims %>%
+  mutate(clase = factor(clase, levels = orden_clases)) %>% arrange(clase) %>%
+  left_join(clasif %>% filter(modelo == "A") %>% select(clase, proporcion, n_modal, AvePP), by = "clase") %>%
+  transmute(Clase = as.character(clase), `%` = f1(100 * proporcion), n = n_modal, AvePP = a2(AvePP),
+            `Compra sustentable` = a2(`Compra sustentable`), `Consumo político` = a2(`Consumo político`),
+            `Ahorro doméstico` = a2(`Ahorro doméstico`), `Planificación` = a2(`Planificación`)) %>%
+  tabla_md(c(12, 6, 6, 7, 12, 12, 12, 12), c("l", rep("r", 7)))
+```
+
+*Nota.* % = proporción estimada por el modelo; n = personas asignadas a cada clase según su probabilidad posterior más alta; AvePP = probabilidad posterior media de las personas asignadas a la clase. Las dimensiones muestran la respuesta media esperada en la clase, reescalada de 0 (categoría más baja) a 1 (categoría más alta) y promediada entre los ítems de cada dimensión.
+
+::: {custom-style="Titulo tabla"}
+**Figura 1**
+
+*Respuesta Media Esperada en Cada Ítem según Clase Latente*
+:::
+
+```{r}
+#| label: figura-perfiles
+#| fig-width: 6.5
+#| fig-height: 4.6
+colores <- c(Amplio = "#E41A1C", Intermedio = "#377EB8", "Doméstico" = "#4DAF4A",
+             "Político" = "#984EA3", Bajo = "#FF7F00")
+formas <- c(Amplio = 16, Intermedio = 17, "Doméstico" = 15, "Político" = 18, Bajo = 1)
+perfiles %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         dim = factor(dim, levels = orden_dim)) %>%
+  ggplot(aes(item, media01, group = clase, colour = clase, shape = clase)) +
+  geom_line(linewidth = 0.4) + geom_point(size = 1.6) +
+  facet_grid(~ dim, scales = "free_x", space = "free_x",
+             labeller = labeller(dim = label_wrap_gen(12))) +
+  scale_colour_manual(values = colores) + scale_shape_manual(values = formas) +
+  scale_y_continuous(limits = c(0, 1), labels = function(x) sub("^0,", ",", format(x, decimal.mark = ","))) +
+  labs(x = NULL, y = "Respuesta media esperada", colour = NULL, shape = NULL) +
+  theme_bw(base_size = 8, base_family = "serif") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5), legend.position = "top",
+        panel.grid.minor = element_blank())
+```
+
+*Nota.* 0 = categoría de respuesta más baja; 1 = más alta. Compra sustentable: O2.11 compra productos orgánicos o naturales; O2.12 compra productos hechos con material reciclado; O3.4 compra un producto porque no daña el medioambiente, aunque sea más caro; O3.7 se informa de dónde vienen los productos que consume. Consumo político: O3.2 intenta influir en lo que consumen otras personas; O3.3 usa redes sociales para promover empresas éticas o sostenibles; O3.5 realiza reclamos o demandas colectivas en el Sernac; O3.8 participa en asociaciones de consumidores o cooperativas; O3.9 participa en marchas o movilizaciones. Ahorro doméstico: O2.1 evita dejar luces prendidas; O2.2 corta el agua al lavarse los dientes; O2.3 toma duchas cortas; O2.4 espera que los alimentos se enfríen antes de refrigerarlos; O2.5 desenchufa aparatos eléctricos. Planificación: O1.10 elabora un presupuesto mensual; O2.8 planifica la compra de alimentos; O2.9 planifica la compra de vestuario.
+
+El supuesto de independencia local se cumplió de forma aproximada. `r bvr_n("A")` de los 136 pares de ítems (`r f1(100 * bvr_n("A") / 136)`%) tuvieron residuos bivariados sobre 3,84, con un máximo de `r bvr_max("A")`. Esos pares correspondieron a ítems de una misma dimensión, como la participación en asociaciones y en marchas, lo que indica que dentro de cada clase persiste algo de variación continua en cada dimensión.
+
+## Robustez de la solución
+
+La mayor parte de la mejora del BIC ocurrió hasta las tres clases: de la reducción total, el paso de dos a tres clases aportó el `r f1(ck(3, "mejora_pct"))`%, el de tres a cuatro el `r f1(ck(4, "mejora_pct"))`% y el de cuatro a cinco el `r f1(ck(5, "mejora_pct"))`%. Por eso se compararon las soluciones de tres, cuatro y cinco clases (Figura 2). La solución de tres clases distinguió una clase Amplio, una Bajo y un grupo con el consumo político más alto y el ahorro doméstico más bajo, mezclado con personas de nivel medio. Con cuatro clases, ese grupo se separó en una clase Político más nítida y una clase Intermedio. Con cinco, parte de la clase Bajo y parte de la Amplio formaron la clase Doméstico.
+
+El perfil político, con alto consumo político y bajo ahorro doméstico, apareció en las tres soluciones. El perfil doméstico, en cambio, solo se distinguió con cinco clases. Las soluciones más simples dejaron más dependencia local sin explicar (`r ck(3, "bvr_n")` pares con BVR sobre 3,84 con tres clases y `r ck(4, "bvr_n")` con cuatro, frente a `r ck(5, "bvr_n")` con cinco), y la de cuatro clases replicó su máximo de verosimilitud solo en `r ck(4, "replicas")` de 100 inicios.
+
+El análisis con ítems dicotomizados prefirió `r if (k_dic == 6) "seis" else k_dic` clases según el BIC (Tabla S4). Su concordancia con la clasificación principal fue baja (índice de Rand ajustado = `r a2(ari_dic$ARI[ari_dic$clases == 5])` con cinco clases), porque al perder la gradación de las respuestas la zona intermedia se repartió de otra forma. Los perfiles no ordenados, sin embargo, reaparecieron (Tabla S5): una clase pequeña (`r f1(100 * min(pdic(5, "Político", "proporcion")))`%) con consumo político moderado (,54) y ahorro doméstico casi nulo (,05), formada en un `r round(max(pdic(5, "Político", "pct_clase_principal")))`% por personas de la clase Político, y una clase con ahorro doméstico alto y poco consumo político, correspondiente a la clase Doméstico. Las clases Amplio y Bajo también se reprodujeron.
+
+::: {custom-style="Titulo tabla"}
+**Figura 2**
+
+*Perfiles por Dimensión en las Soluciones de Tres, Cuatro y Cinco Clases*
+:::
+
+```{r}
+#| label: figura-robustez
+#| fig-width: 6.5
+#| fig-height: 2.8
+perf_k %>%
+  mutate(dim = factor(dim, levels = orden_dim),
+         clase = factor(clase, levels = orden_clases),
+         k = paste(k, "clases")) %>%
+  ggplot(aes(dim, media01, group = clase, colour = clase, shape = clase)) +
+  geom_line(linewidth = 0.4) + geom_point(size = 1.6) +
+  facet_wrap(~ k) +
+  scale_colour_manual(values = colores) + scale_shape_manual(values = formas) +
+  scale_y_continuous(limits = c(0, 1), labels = function(x) sub("^0,", ",", format(x, decimal.mark = ","))) +
+  scale_x_discrete(labels = function(x) str_wrap(x, 10)) +
+  labs(x = NULL, y = "Respuesta media esperada", colour = NULL, shape = NULL) +
+  theme_bw(base_size = 8, base_family = "serif") +
+  theme(legend.position = "top", panel.grid.minor = element_blank())
+```
+
+*Nota.* Respuesta media esperada por dimensión (0 = categoría más baja; 1 = más alta). Las clases se nombran con la misma regla en las tres soluciones; la clase Doméstico solo se distingue con cinco clases.
+
+## Relación con sexo, edad y nivel socioeconómico
+
+La clasificación de las personas fue precisa: la probabilidad de ser asignado a la propia clase varió entre `r a2(min(diag(as.matrix(err3p[, -1]))))` y `r a2(max(diag(as.matrix(err3p[, -1]))))`. Controlando mutuamente las tres variables, la pertenencia a las clases se asoció con la edad (`r wd("Edad")`), el sexo (`r wd("Sexo")`) y el NSE (`r wd("NSE")`). La Tabla 3 presenta las razones de odds frente a la clase Intermedio y la Figura 3, las probabilidades predichas.
+
+La clase Político fue la más asociada a la edad y al sexo. Su probabilidad fue de `r pr("Edad", "18-34", "Político")`% entre personas de 18 a 34 años y de `r pr("Edad", "55 o más", "Político")`% entre las de 55 o más (`r orr("55 o más (ref. 18-34)", "Político")`), y de `r pr("Sexo", "Hombre", "Político")`% en hombres frente a `r pr("Sexo", "Mujer", "Político")`% en mujeres (`r orr("Mujer (ref. hombre)", "Político")`). No se asoció con el NSE. La clase Doméstico, en cambio, aumentó con la edad, de `r pr("Edad", "18-34", "Doméstico")`% a `r pr("Edad", "55 o más", "Doméstico")`% (`r orr("55 o más (ref. 18-34)", "Doméstico")`), y fue más probable en el NSE bajo que en el alto (`r pr("NSE", "D-E", "Doméstico")`% frente a `r pr("NSE", "ABC1", "Doméstico")`%; `r orr("D-E (ref. ABC1)", "Doméstico")`). La clase Amplio fue más probable entre mujeres (`r orr("Mujer (ref. hombre)", "Amplio")`) y personas de 55 o más años (`r orr("55 o más (ref. 18-34)", "Amplio")`), y menos probable en el NSE medio que en el alto (`r orr("C2-C3 (ref. ABC1)", "Amplio")`). La clase Bajo fue más probable entre jóvenes: su probabilidad fue de `r pr("Edad", "18-34", "Bajo")`% entre los 18 y 34 años y de `r pr("Edad", "55 o más", "Bajo")`% desde los 55.
+
+::: {custom-style="Titulo tabla"}
+**Tabla 3**
+
+*Razones de Odds de Pertenecer a Cada Clase frente a la Clase Intermedio (Modelo de Tres Pasos)*
+:::
+
+```{r}
+#| label: tabla-tres-pasos
+#| results: asis
+coef3p %>%
+  mutate(clase = factor(clase, levels = c("Amplio", "Doméstico", "Político", "Bajo")),
+         valor = paste0(f2(OR), " [", f2(OR_inf), ", ", f2(OR_sup), "]", if_else(p < .05, "\\*", ""))) %>%
+  select(termino, clase, valor) %>%
+  pivot_wider(names_from = clase, values_from = valor) %>%
+  select(`Variable (referencia)` = termino, Amplio, `Doméstico`, `Político`, Bajo) %>%
+  tabla_md(c(15, 17, 17, 17, 17), c("l", rep("r", 4)))
+```
+
+*Nota.* Razones de odds [IC 95%] de una regresión logística multinomial de la clase latente sobre sexo, edad y NSE, estimadas simultáneamente y corregidas por error de clasificación. La categoría de referencia de cada variable se indica entre paréntesis. NSE = nivel socioeconómico. \* *p* < ,05.
+
+::: {custom-style="Titulo tabla"}
+**Figura 3**
+
+*Probabilidad Predicha de Pertenecer a Cada Clase según Sexo, Edad y Nivel Socioeconómico*
+:::
+
+```{r}
+#| label: figura-tres-pasos
+#| fig-width: 6.5
+#| fig-height: 3
+prob3p %>%
+  mutate(clase = factor(clase, levels = orden_clases),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         grupo = factor(grupo, levels = unique(grupo))) %>%
+  ggplot(aes(grupo, 100 * prob)) +
+  geom_pointrange(aes(ymin = 100 * inf, ymax = 100 * sup), size = 0.15, linewidth = 0.4) +
+  geom_vline(xintercept = c(2.5, 5.5), colour = "grey70", linetype = "dashed", linewidth = 0.3) +
+  facet_grid(~ clase) +
+  labs(x = NULL, y = "Probabilidad predicha (%)") +
+  theme_bw(base_size = 8, base_family = "serif") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
+```
+
+*Nota.* Probabilidad predicha de pertenecer a cada clase en cada grupo, promediando sobre la muestra con las demás variables en sus valores observados, e intervalos de confianza del 95% obtenidos por simulación de los coeficientes. Las líneas punteadas separan sexo, edad y NSE. NSE = nivel socioeconómico.
+
+## Evidencia de validez de la interpretación
+
+Al agregar la lectura política del consumo y la posición política al modelo de tres pasos, ambas se asociaron con la pertenencia a las clases (`r wdv("Consumo como postura política")` y `r wdv("Posición política")`; Tabla S6). Por cada desviación estándar de acuerdo con que el consumo expresa una postura política, aumentó la probabilidad de pertenecer a la clase Político (`r orv("ConsumoPolitico", "Político")`) y disminuyó la de pertenecer a las clases Doméstico (`r orv("ConsumoPolitico", "Doméstico")`) y Bajo (`r orv("ConsumoPolitico", "Bajo")`), frente a la clase Intermedio. La posición política no distinguió a la clase Político (`r orv("Derecha", "Político")`), pero las personas más de derecha tuvieron mayor probabilidad de pertenecer a la clase Doméstico (`r orv("Derecha", "Doméstico")`).
+
+# Discusión
+
+Este estudio buscó identificar perfiles de prácticas de consumo socioambientales en Chile y evaluar si forman un continuo, como suponen las tipologías sumativas, o combinaciones cualitativamente distintas. El resultado principal es que ambas cosas ocurren. Una parte de la población se ordena en una gradiente de más a menos prácticas, pero cerca de un tercio pertenece a dos perfiles que combinan las prácticas de forma opuesta: uno doméstico, centrado en el ahorro y la planificación, y uno político, con el consumo político más alto y el ahorro doméstico más bajo.
+
+Este hallazgo cuestiona el supuesto central de las tipologías de tipo Akatu [@akatu_pesquisa_2007; @ariztia_nuevo_2010] y de las clasificaciones por promedio [@acunamoraga_sustentabilidad_2018]. En un índice sumativo, una persona de la clase Doméstico y una de la clase Político pueden obtener puntajes similares, porque ambas realizan muchas prácticas en una esfera y pocas en la otra. Esas personas quedarían en el mismo tramo de la tipología, aunque sus prácticas sean casi opuestas. El resultado extiende lo que @ariztia_nuevo_2010 observaron a nivel de variables: las prácticas que ellos identificaron como dimensiones distintas no solo se separan en la población, sino que definen tipos distintos de personas. También es coherente con la evidencia de que el consumo político se combina en tipos diferenciados [@copeland_conceptualizing_2014], aunque aquí la distinción relevante no es entre boicot y *buycott*, sino entre la esfera doméstica y la pública.
+
+La clase Político merece atención. Es la que más practica formas colectivas de consumo, como participar en asociaciones, cooperativas o movilizaciones, y a la vez la que menos ahorra en el hogar, incluso menos que la clase Bajo. Una lectura posible es que este grupo no adhiere a las formas individualizadas de acción ambiental, como acortar la ducha o desenchufar aparatos, y privilegia las colectivas. Esa lectura es coherente con la crítica a la responsabilización del consumidor [@barros_consumo_2008; @marambio_consumo_2024] y con definiciones de consumo crítico orientadas a lo colectivo [@marambio_consumo_2025]. La evidencia de validez la respalda en parte: quienes pertenecen a esta clase ven más el consumo como una postura política, mientras que la clase Doméstico lo ve menos así. La posición en el eje izquierda-derecha, en cambio, no distinguió a la clase Político, lo que sugiere que su rasgo distintivo es politizar el consumo más que una orientación ideológica particular. El diseño, sin embargo, no permite identificar motivaciones, por lo que esta interpretación requiere confirmación con instrumentos que midan las razones de cada práctica.
+
+La clase Doméstico, por su parte, es más probable entre personas mayores y en el NSE bajo, aun controlando por sexo y edad. Este perfil coincide con lo que @ariztia_nuevo_2010 describieron como un estilo de vida ahorrativo, masivo y transversal, más frecuente en personas mayores y en sectores medios bajos y bajos. Que el ahorro doméstico se separe del consumo político y de la compra sustentable se ha interpretado como señal de que estas prácticas responden en parte a condiciones materiales y no necesariamente a una orientación ambiental [@silva_indicadores_2013]. Sin embargo, con estos mismos datos, el factor de ahorro doméstico no se asoció con el ingreso del hogar ni con indicadores de presión financiera [@marambio_medicion_2026], por lo que esa interpretación requiere evidencia directa. Aun así, clasificar a estas personas como "consumidores conscientes" o "comprometidos" atribuiría a una disposición ambiental prácticas que pueden responder a hábitos o a la economía del hogar.
+
+Las bases sociales de los perfiles también difieren de lo esperado. La clase Político es joven y masculina, y no se asocia con el NSE. Este resultado contrasta con estudios que asocian el consumo político a personas mayores, con más educación e ingresos, y a mujeres [@ackermann_psychological_2020p], y con tipologías que asocian el consumo consciente a mujeres y mayores de 45 años [@akatu_pesquisa_2007]. Puede reflejar formas de participación más recientes, como el uso de redes sociales para promover empresas o la participación en movilizaciones, y el hecho de que aquí el consumo político aparece separado de las prácticas domésticas, en las que las mujeres y las personas mayores tienen más presencia. El NSE, en cambio, distingue sobre todo entre las clases Amplio y Doméstico: en el NSE alto, la frecuencia de prácticas tiende a acompañarse de compra sustentable; en el bajo, de ahorro doméstico sin consumo político. Esto es compatible con el gradiente socioeconómico de la compra sustentable observado en el análisis factorial [@marambio_medicion_2026] y refuerza la idea de que una misma cantidad de prácticas puede tener contenidos socialmente distintos.
+
+El estudio tiene limitaciones. Persistió algo de dependencia local entre ítems de una misma dimensión, esperable porque los ítems se seleccionaron por formar factores: dentro de cada clase hay variación continua. Un modelo de mezcla factorial, que combina clases y factores, permitiría evaluar esa alternativa. Las categorías se trataron como nominales; el análisis con ítems dicotomizados reprodujo los perfiles no ordenados, pero repartió de otra forma la zona intermedia, por lo que el tamaño de las clases Intermedio y Doméstico depende del tratamiento de las respuestas. El perfil doméstico solo se distinguió con cinco clases, de modo que su existencia depende de esa elección, aunque fue la mejor respaldada por los criterios de información y la estabilidad de la estimación. No se aplicó la prueba bootstrap de razón de verosimilitudes, que el paquete utilizado no implementa. El modelo de tres pasos supone que las variables sociodemográficas se relacionan con las respuestas solo a través de la clase; no se evaluó si algún ítem funciona distinto según sexo, edad o NSE dentro de cada clase, aunque el estudio previo mostró invarianza escalar por sexo y NSE en el modelo factorial de estos ítems [@marambio_medicion_2026]. Las asociaciones son transversales y no permiten inferir causalidad, y la evidencia de validez se basa en dos ítems únicos. Por último, la muestra proviene de un panel en línea y es no probabilística y sin ponderadores; aunque las cuotas aseguran su composición por sexo, edad, NSE y zona, subrepresenta a quienes no usan internet o no participan en paneles de encuestas, por lo que las proporciones describen la muestra y no necesariamente a la población chilena; además, como toda encuesta a individuos, el estudio registra prácticas declaradas sin vincularlas con las condiciones de producción y de oferta que las hacen posibles.
+
+En conclusión, las prácticas de consumo socioambientales en Chile no se distribuyen en un único continuo de compromiso. Junto a una gradiente de más a menos prácticas existen perfiles doméstico y político con prácticas y bases sociales distintas. Las tipologías sumativas ocultan esos perfiles, y con ellos la diferencia entre un ahorro doméstico cuyas motivaciones están por establecer y una participación política a través del consumo.
+
+# Contribución de los autores
+
+Alejandro Marambio-Tapia: Conceptualización, Investigación, Metodología, Análisis formal, Redacción – borrador original. Nicolás Outerbridge Ortega: Curación de datos, Análisis formal, Visualización, Redacción – borrador original, Redacción – revisión y edición.
+
+# Financiación
+
+Este trabajo fue financiado por la Agencia Nacional de Investigación y Desarrollo de Chile (ANID), proyectos Fondecyt N.º 11200893, "El consumo y las formas de lo político", y N.º 1212677. La fuente de financiación no ha participado en el diseño del estudio, la recogida de datos, el análisis o interpretación de estos, la redacción del manuscrito o en la decisión de enviarlo para su publicación.
+
+# Conflicto de intereses
+
+Los investigadores declaran no tener conflictos de interés.
+
+# Declaración de disponibilidad de datos
+
+Los datos pertenecen a los proyectos Fondecyt N.º 11200893 y N.º 1212677 y no están disponibles públicamente. El material suplementario (Tablas S1 a S6) se incluye al final de este documento. Ese material y el código de análisis en R están disponibles en https://github.com/x0czz/Validacion-consumo.
+
+# Declaración de uso de inteligencia artificial
+
+En la preparación de este trabajo se usó Claude (Anthropic; modelo Claude Opus 5.5, 2026) para pulir la redacción, limpiar y generar código de análisis en R y gestionar las referencias. Los autores revisaron y verificaron todo el código, los resultados y las referencias, y escribieron la versión final del texto, de cuyo contenido son responsables.
+
+# Referencias
+
+::: {#refs}
+:::

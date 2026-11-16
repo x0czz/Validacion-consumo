@@ -1,0 +1,74 @@
+==========================================================================================
+Solución exploratoria final de cinco factores (residuos mínimos, oblimin), mitad exploratoria
+==========================================================================================
+
+Factor Analysis using method =  minres
+Call: fa(r = R[vars, vars], nfactors = k, n.obs = n_obs, rotate = "oblimin", 
+    fm = "minres")
+Standardized loadings (pattern matrix) based upon correlation matrix
+      item    MR1    MR2    MR5    MR3    MR4    h2    u2  com
+O3_8    19  0.785 -0.079 -0.038 -0.031 -0.237 0.678 0.322 1.21
+O3_3    15  0.660  0.002  0.024  0.039  0.015 0.455 0.545 1.01
+O3_4    16  0.646  0.198 -0.046  0.058  0.176 0.511 0.489 1.38
+O3_9    20  0.641 -0.182 -0.050 -0.098  0.037 0.420 0.580 1.23
+O3_5    17  0.600 -0.023 -0.008 -0.040 -0.130 0.372 0.628 1.11
+O3_2    14  0.565 -0.204  0.067 -0.020  0.196 0.377 0.623 1.55
+O3_7    18  0.555  0.085  0.198  0.023  0.122 0.472 0.528 1.42
+O2_11   12  0.505  0.199  0.165  0.148  0.071 0.479 0.521 1.79
+O2_12   13  0.479  0.227  0.123  0.106  0.121 0.437 0.563 1.85
+O1_8     2  0.440  0.064  0.107  0.090 -0.023 0.262 0.738 1.26
+O1_6     1  0.422  0.056  0.024  0.027 -0.040 0.194 0.806 1.07
+O2_1     5 -0.117  0.665  0.074 -0.102  0.085 0.564 0.436 1.17
+O2_5     9  0.107  0.601  0.094  0.084 -0.111 0.416 0.584 1.23
+O2_2     6 -0.052  0.551  0.042 -0.034  0.103 0.385 0.615 1.11
+O2_3     7  0.085  0.543  0.043 -0.056 -0.009 0.328 0.672 1.08
+O2_4     8 -0.011  0.485  0.095 -0.079  0.153 0.378 0.622 1.34
+O2_8    10 -0.105  0.142  0.747 -0.009 -0.014 0.648 0.352 1.11
+O1_10    4  0.059 -0.057  0.657  0.046  0.029 0.437 0.563 1.05
+O2_9    11  0.177 -0.021  0.601 -0.028 -0.082 0.417 0.583 1.22
+O1_9     3 -0.015 -0.083  0.422 -0.089  0.105 0.171 0.829 1.31
+O4_3    23 -0.003  0.003 -0.053  0.913 -0.035 0.823 0.177 1.01
+O4_5    24 -0.031 -0.112  0.078  0.740  0.008 0.557 0.443 1.07
+O4_6    25  0.153  0.192 -0.036  0.439  0.156 0.327 0.673 1.96
+O4_2    22 -0.092 -0.099  0.120  0.405  0.137 0.201 0.799 1.68
+O4_1    21 -0.047  0.068 -0.047  0.013  0.667 0.473 0.527 1.04
+O4_8    27  0.031  0.024  0.038  0.033  0.550 0.332 0.668 1.03
+O4_7    26 -0.037  0.077 -0.096  0.132 -0.419 0.185 0.815 1.40
+
+                        MR1   MR2   MR5   MR3   MR4
+SS loadings           3.953 2.178 1.945 1.890 1.336
+Proportion Var        0.146 0.081 0.072 0.070 0.049
+Cumulative Var        0.146 0.227 0.299 0.369 0.419
+Proportion Explained  0.350 0.193 0.172 0.167 0.118
+Cumulative Proportion 0.350 0.543 0.715 0.882 1.000
+
+ With factor correlations of 
+      MR1   MR2   MR5   MR3   MR4
+MR1 1.000 0.023 0.263 0.157 0.001
+MR2 0.023 1.000 0.510 0.030 0.384
+MR5 0.263 0.510 1.000 0.092 0.236
+MR3 0.157 0.030 0.092 1.000 0.096
+MR4 0.001 0.384 0.236 0.096 1.000
+
+Mean item complexity =  1.3
+Test of the hypothesis that 5 factors are sufficient.
+
+df null model =  351  with the objective function =  8.748 with Chi Square =  6999.772
+df of  the model are 226  and the objective function was  0.943 
+
+The root mean square of the residuals (RMSR) is  0.029 
+The df corrected root mean square of the residuals is  0.037 
+
+The harmonic n.obs is  811 with the empirical chi square  488.59  with prob <  2.08e-21 
+The total n.obs was  811  with Likelihood Chi Square =  751.687  with prob <  1.08e-57 
+
+Tucker Lewis Index of factoring reliability =  0.8767
+RMSEA index =  0.0535  and the 90 % confidence intervals are  0.0494 0.0579
+BIC =  -762.122
+Fit based upon off diagonal values = 0.982
+Measures of factor score adequacy             
+                                                    MR1   MR2   MR5   MR3   MR4
+Correlation of (regression) scores with factors   0.941 0.896 0.894 0.934 0.835
+Multiple R square of scores with factors          0.885 0.802 0.800 0.873 0.697
+Minimum correlation of possible factor scores     0.771 0.604 0.599 0.746 0.393
+

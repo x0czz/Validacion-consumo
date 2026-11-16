@@ -1,0 +1,441 @@
+---
+title: "Medición de prácticas de consumo socioambientales en Chile: evidencia psicométrica preliminar de dos escalas breves"
+
+
+lang: es
+date: ""
+
+bibliography:
+  - "input/bib/akatu.bib"
+  - "input/bib/metodologia.bib"
+  - "input/bib/preprints.bib"
+csl: "input/bib/apa.csl"
+
+# Fuente y formato global (aplica a PDF)
+fontsize: 12pt
+mainfont: Times New Roman
+linestretch: 2          # doble espacio — Psicothema
+link-citations: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+
+format:
+
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-title: Contenidos
+    number-sections: false
+    theme: cosmo
+    code-fold: true
+    code-link: true
+    title-block-banner: true
+    include-in-header:
+      text: |
+        <style>
+          body {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            line-height: 2 !important;
+            text-align: left !important;
+          }
+          p { text-indent: 1.25cm; margin-bottom: 0; }
+          h1, h2, h3 {
+            font-family: "Times New Roman", Times, serif !important;
+            font-size: 12pt !important;
+            font-weight: bold;
+            text-indent: 0;
+          }
+          table, figure { line-height: 1.2 !important; }
+          h1.title, .subtitle { color: #ffffff !important; }
+        </style>
+
+  docx:
+    reference-doc: input/templates/psicothema.docx
+    toc: false
+    number-sections: false
+    highlight-style: none
+    fig-dpi: 300
+
+  typst:
+    citeproc: true
+    papersize: a4
+    margin:
+      x: 3cm
+      y: 3cm
+    fontsize: 12pt
+    mainfont: "Times New Roman"
+    fig-format: png
+    fig-dpi: 300
+
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(knitr)
+options(knitr.kable.NA = "", OutDec = ",", warn = -1)
+
+# Número de palabras del manuscrito sin referencias (incluye título, resúmenes,
+# texto, tablas y figuras). Se actualiza tras renderizar.
+n_palabras <- 8000
+
+leer <- function(archivo) read_csv(here("output", "tables", archivo), show_col_types = FALSE)
+
+pruebas      <- leer("pruebas_previas_conjuntos.csv")
+n_factores   <- leer("afe_numero_factores.csv")
+eliminados   <- leer("afe_items_eliminados.csv")
+ajuste_m     <- leer("afc_ajuste_modelos.csv")
+ajuste_red   <- leer("afc_reducidos_ajuste.csv")
+estabilidad  <- leer("afc_reducidos_estabilidad.csv")
+confiab      <- leer("afc_reducidos_confiabilidad.csv")
+conj_ajuste  <- leer("afc_conjunto_ajuste.csv")
+conj_cor     <- leer("afc_conjunto_correlaciones.csv")
+inv_sec      <- leer("invarianza_secuencia.csv")
+inv_parcial  <- leer("invarianza_parcial_edad.csv")
+inv_medias   <- leer("invarianza_medias_latentes.csv")
+inv_grupos   <- leer("invarianza_grupos.csv")
+desc         <- leer("revision_descriptivos_items.csv")
+afe_v        <- leer("revision_afe_varianza.csv")
+afe_phi      <- leer("revision_afe_phi.csv")
+rev_aj       <- leer("revision_afc_ajuste.csv")
+rev_dif      <- leer("revision_afc_dif_chi.csv")
+conj_res     <- leer("revision_afc_conjunto_residuos.csv")
+conj_cor2    <- leer("revision_afc_conjunto_cor.csv")
+cr  <- function(g, col) conj_res[[col]][conj_res$grupo == g]
+cc2 <- function(a, b) a2(conj_cor2$r[conj_cor2$factor1 == a & conj_cor2$factor2 == b])
+n_entre  <- cr("Entre escalas", "mayores_010"); p_entre <- cr("Entre escalas", "pares")
+n_dentro <- sum(conj_res$mayores_010[conj_res$grupo %in% c("Mismo factor", "Misma escala, distinto factor")])
+p_dentro <- sum(conj_res$pares[conj_res$grupo %in% c("Mismo factor", "Misma escala, distinto factor")])
+pct2 <- function(a, b) round(100 * a / b)
+rev_par      <- leer("revision_afc_parametros.csv")
+rev_cor      <- leer("revision_afc_cor_factores.csv")
+val_ext      <- leer("revision_validez_externa.csv")
+comp_sol     <- leer("afe_comparacion_soluciones.csv")
+versiones    <- readLines(here("output", "tables", "revision_versiones.txt"))
+inf_dif   <- leer("informe_dif_interceptos.csv")
+inf_difm  <- leer("informe_dif_medias.csv")
+inf_holm  <- leer("informe_medias_holm.csv")
+inf_anc   <- leer("informe_edad_anclas.csv")
+inf_esem  <- leer("informe_esem_ajuste.csv")
+inf_esemc <- leer("informe_esem_cargas.csv")
+inf_esemr <- leer("informe_esem_cor.csv")
+inf_htmt  <- leer("informe_htmt.csv")
+inf_det   <- leer("informe_determinacion.csv")
+inf_cal   <- leer("informe_calidad.csv")
+inf_sens  <- leer("informe_sensibilidad.csv")
+inf_cuc   <- leer("informe_cargas_sin_colapsar.csv")
+inf_eco   <- leer("informe_validez_economica.csv")
+inf_celd  <- leer("informe_celdas_minimas.csv")
+inf_m9    <- leer("informe_m9_distribucion.csv")
+
+f1 <- function(x) format(round(x, 1), nsmall = 1)
+f2 <- function(x) format(round(x, 2), nsmall = 2)
+f3 <- function(x) format(round(x, 3), nsmall = 3)
+# Formato APA: sin cero inicial para valores acotados en [-1, 1]; signo menos tipográfico
+apa <- function(x) sub("^-", "−", sub("^(-?)0,", "\\1,", trimws(x)))
+a2 <- function(x) apa(f2(x))
+a3 <- function(x) apa(f3(x))
+s2 <- function(x) sub("^-", "−", trimws(f2(x)))   # con cero inicial (no acotados)
+miles <- function(x, d = 2) trimws(format(round(x, d), big.mark = ".", decimal.mark = ",", nsmall = d))
+version_de <- function(p) str_extract(versiones[str_detect(versiones, paste0("^", p, " "))], "[0-9.]+$")
+version_r <- str_extract(versiones[1], "[0-9]+\\.[0-9]+\\.[0-9]+")
+
+# Tabla Markdown con anchos relativos de columna (controla el ancho en Word)
+tabla_md <- function(df, anchos, alinea) {
+  sep <- map2_chr(anchos, alinea, function(w, a) {
+    d <- strrep("-", w)
+    switch(a, l = paste0(":", d), r = paste0(d, ":"), c = paste0(":", d, ":"))
+  })
+  cuerpo <- apply(df, 1, function(f) paste0("| ", paste(f, collapse = " | "), " |"))
+  cat(paste0("| ", paste(names(df), collapse = " | "), " |"), "\n",
+      paste0("|", paste(sep, collapse = "|"), "|"), "\n",
+      paste(cuerpo, collapse = "\n"), "\n", sep = "")
+}
+
+nombres_factor <- c(compra_sust = "Compra sustentable", consumo_pol = "Consumo político",
+                    ahorro = "Ahorro doméstico", planificacion = "Planificación de compras")
+
+est <- function(mod, muestra, ind) {
+  estabilidad[[ind]][str_detect(estabilidad$modelo, mod) & estabilidad$muestra == muestra]
+}
+media <- function(fac, var, grp, col = "media") {
+  inv_medias[[col]][inv_medias$factor == fac & inv_medias$variable == var & inv_medias$grupo == grp]
+}
+cor_conj <- function(a, b) a2(conj_cor[[b]][conj_cor$factor == a])
+dcfi <- function(mod, var, niv) inv_sec$dCFI[inv_sec$modelo == mod & inv_sec$variable == var & inv_sec$nivel == niv]
+ra <- function(mod, mu, col) rev_aj[[col]][rev_aj$modelo == mod & rev_aj$muestra == mu]
+rmsea_ic <- function(mod, mu) paste0("RMSEA = ", a3(ra(mod, mu, "rmsea.scaled")), ", IC 90% [",
+                                     a3(ra(mod, mu, "rmsea.ci.lower.scaled")), ", ",
+                                     a3(ra(mod, mu, "rmsea.ci.upper.scaled")), "]")
+rc <- function(esc) { x <- rev_cor[rev_cor$escala == esc, ]; paste0("*r* = ", a2(x$r), ", IC 95% [", a2(x$ic_inf), ", ", a2(x$ic_sup), "]") }
+ve <- function(fa, va, col = "r") a2(val_ext[[col]][val_ext$factor == fa & val_ext$variable == va])
+
+n_total <- sum(inv_grupos$n[inv_grupos$variable == "Sexo"])
+pct <- function(var, grp) f1(100 * inv_grupos$n[inv_grupos$variable == var & inv_grupos$grupo == grp] / n_total)
+n_r2_bajo <- sum(rev_par$R2 < .5)
+n_resid <- function(mod) ra(mod, "Mitad 2", "resid_mayor_010")
+# Respuesta al informe de revisión
+esem_lbl <- "ESEM de cuatro factores (rotación objetivo)"
+esem <- function(col, mod = esem_lbl) inf_esem[[col]][inf_esem$modelo == mod]
+esem_cruz <- inf_esemc %>% filter(!principal) %>% arrange(desc(abs(carga)))
+esem_prin <- inf_esemc %>% filter(principal)
+esr <- function(a, b) a2(inf_esemr$r[(inf_esemr$factor1 == a & inf_esemr$factor2 == b) |
+                                       (inf_esemr$factor1 == b & inf_esemr$factor2 == a)])
+cruz <- function(it, fac) a2(inf_esemc$carga[inf_esemc$item == it & inf_esemc$factor == fac])
+ph <- function(p) if (p < .001) "< ,001" else paste("=", a3(p))
+holm <- function(fac, var, grp) ph(inf_holm$p_holm[inf_holm$factor == fac & inf_holm$variable == var & inf_holm$grupo == grp])
+difm <- function(item, fac, grp, col = "media") inf_difm[[col]][inf_difm$item_libre == item & inf_difm$factor == fac & inf_difm$grupo == grp]
+anc <- inf_anc %>% group_by(factor, grupo) %>% summarise(min = min(media), max = max(media), pmax = max(p), .groups = "drop")
+ancr <- function(fac, grp, col) s2(anc[[col]][anc$factor == fac & anc$grupo == grp])
+eco <- function(fac, var, col = "r") inf_eco[[col]][inf_eco$factor == fac & inf_eco$variable == var]
+cal <- function(ind) inf_cal$valor[startsWith(inf_cal$indicador, ind)]
+pv <- function(p) if (p < .001) "< ,001" else a3(p)
+hp <- function(fac, var, grp) pv(inf_holm$p_holm[inf_holm$factor == fac & inf_holm$variable == var & inf_holm$grupo == grp])
+n_modelos_afc <- nrow(ajuste_m) + 6
+dmacs_nse <- max(c(inf_dif$`dMACS_C2-C3`, inf_dif$`dMACS_D-E`), na.rm = TRUE)
+dmacs_sexo <- max(inf_dif$dMACS_Mujer, na.rm = TRUE)
+dcfi_libre <- max(abs(inf_dif$dCFI))
+r_cp <- rev_cor$r[rev_cor$escala == "Consumo sustentable y político, dos factores"]
+ic_cp <- rev_cor$ic_sup[rev_cor$escala == "Consumo sustentable y político, dos factores"]
+htmt_cp <- inf_htmt$consumo_pol[inf_htmt$factor == "compra_sust"]
+sens <- function(an, esc, col) inf_sens[[col]][inf_sens$analisis == an & inf_sens$escala == esc]
+n_m9 <- inf_m9$n[inf_m9$M9 == "5"]
+pct_ingreso_nr <- f1(100 * (n_total - eco("ahorro", "ingreso", "n")) / n_total)
+```
+
+```{r}
+#| label: setup-divulgativo
+uni <- ajuste_m %>% filter(str_detect(modelo, "Unidimensional"))
+r_esem <- function(a, b) esr(a, b)
+r_ext <- function(fa, va) {
+  x <- val_ext %>% filter(factor == fa, variable == va)
+  paste0(a2(x$r), if_else(x$p < .05, "\\*", ""))
+}
+r_eco <- function(fa) {
+  x <- inf_eco %>% filter(factor == fa, variable == "ingreso")
+  paste0(a2(x$r), if_else(x$p < .05, "\\*", ""))
+}
+```
+
+**Alejandro Marambio-Tapia**^1^ (ORCID: https://orcid.org/0000-0002-8598-8817) y **Nicolás Outerbridge Ortega**^2^ (ORCID: https://orcid.org/0009-0009-1943-6182)
+
+^1^ Escuela de Trabajo Social, Universidad de Chile, Santiago, Chile.
+
+^2^ Departamento de Sociología, Universidad de Chile, Santiago, Chile.
+
+**Autor de correspondencia:** Nicolás Outerbridge Ortega, nicolas.outerbridge@ug.uchile.cl
+
+**Preprint** publicado en SocArXiv bajo licencia CC BY 4.0. Esta versión no ha sido revisada por pares.
+
+{{< pagebreak >}}
+
+**Resumen**
+
+En América Latina, las prácticas de consumo con implicancias ambientales y políticas suelen medirse con índices que suman conductas muy distintas en un solo puntaje de "consumo consciente" o "responsable". Este estudio propone un instrumento breve para medir por separado cuatro dimensiones de estas prácticas en Chile, a partir de la Encuesta Sociedad de Consumo 2023 (N = `r miles(n_total, 0)`). De 46 preguntas, 17 formaron cuatro dimensiones: compra sustentable, consumo político, ahorro doméstico y planificación de compras, organizadas en dos escalas breves. Las escalas miden lo mismo en hombres y mujeres y en distintos niveles socioeconómicos, y casi lo mismo en distintos grupos de edad. El consumo político y el ahorro doméstico prácticamente no se relacionan, por lo que sumarlos en un solo puntaje mezcla perfiles muy distintos. La compra sustentable es más frecuente en el nivel socioeconómico alto y el ahorro doméstico aumenta con la edad, pero no se asocia con el ingreso del hogar. El consumo político se asocia con entender el consumo como una postura política y con una posición de izquierda. Se propone usar las cuatro dimensiones por separado, y se entregan las preguntas y la forma de calcular los puntajes. La estructura es provisional hasta que se confirme con una muestra independiente.
+
+**Palabras clave:** consumo político, consumo sustentable, prácticas de consumo, medición, Chile.
+
+{{< pagebreak >}}
+
+# Introducción
+
+En Chile, el consumo ocupa un lugar central en la vida social. Desde la década de 1990, la expansión del consumo y del crédito ha sido interpretada como un mecanismo de integración social que desplazó a la participación política [@moulian_chile_1997]. Esa expansión fue liderada por las grandes tiendas y supermercados, que masificaron el crédito hasta normalizar el endeudamiento de los hogares [@marambio_normalizacion_2022]. En este contexto, la pregunta por cómo las personas incorporan consideraciones éticas, ambientales o políticas en su consumo se refiere a uno de los principales espacios en que se juega la relación entre ciudadanía y mercado.
+
+Esa relación se ha estudiado con nombres diversos, como consumo consciente, sustentable, responsable, ético o político, cuyos límites se superponen [@portilho_consumo_2005]. Los nombres no son neutros. Las nociones de consumo consciente y responsable, difundidas en la región por organizaciones vinculadas al sector empresarial, han sido criticadas porque trasladan al consumidor individual una responsabilidad que corresponde también a las empresas y al Estado [@barros_consumo_2008; @yoshizato_ideologizacao_2016]. En Chile se ha advertido, por ejemplo, que los llamados a acortar la ducha para cuidar el agua omiten que la industria, y sobre todo la minería, concentra la mayor parte de su consumo [@marambio_consumo_2024]. Por eso, en este estudio no se habla de consumo responsable, sino de *prácticas de consumo socioambientales*: prácticas cotidianas de compra, uso y organización del consumo que tienen implicancias ambientales o políticas, sin suponer que expresen una virtud individual. Van desde ahorrar agua y energía en el hogar hasta participar en cooperativas o en movilizaciones [@ariztia_nuevo_2010; @micheletti_political_2003].
+
+La forma más extendida de medir estas prácticas en América Latina proviene del Instituto Akatu: se suman las prácticas que declara cada persona y, según el total, se la clasifica en una tipología de consumidores más o menos "conscientes" [@akatu_pesquisa_2007]. La adaptación chilena de ese índice estimó que solo el 6,5% de la población era "consumidora responsable". Sus propios autores advirtieron, sin embargo, que el índice "aglutina prácticas muy disímiles, lo cual tiende a esconder la distribución del consumo responsable en términos de nivel socioeconómico" [@ariztia_nuevo_2010, p. 107]. Otros instrumentos aplicados en Chile y Brasil también promedian prácticas heterogéneas en un solo puntaje sin comprobar si miden una misma cosa [@santos_atitudes_2022; @silva_indicadores_2013; @acuna_consumo_2020].
+
+Hay buenas razones para sospechar que no la miden. La literatura sobre consumo político muestra que el boicot, el *buycott* (comprar a empresas por razones éticas) y la acción colectiva responden a lógicas distintas [@copeland_conceptualizing_2014; @micheletti_political_2003], y que el consumo político se distingue de las prácticas privadas por su intención pública. Prácticas consideradas sustentables, como ahorrar agua y energía, podrían responder más a la economía del hogar que a motivaciones ambientales [@ariztia_nuevo_2010; @silva_indicadores_2013]. Si es así, un puntaje único mezcla motivaciones distintas y puede ocultar diferencias entre grupos sociales.
+
+Este estudio busca responder tres preguntas. ¿Las prácticas de consumo socioambientales forman una sola dimensión o varias? ¿Miden lo mismo en distintos grupos sociales, de modo que se puedan comparar? ¿Y cómo se relacionan con la política y con la situación económica? A partir de la literatura se esperaba que estas prácticas no formaran una sola dimensión, que el ahorro doméstico se separara de la compra sustentable y del consumo político, y que estos dos últimos también se distinguieran entre sí.
+
+# Método
+
+## Datos
+
+Se usó la Encuesta Sociedad de Consumo 2023 [@marambio_encuesta_2023], respondida por `r miles(n_total, 0)` personas mayores de 18 años, residentes en las 16 regiones de Chile (el 40,5% en la Región Metropolitana). El `r pct("Sexo", "Mujer")`% eran mujeres; el `r pct("Edad", "18-34")`% tenía entre 18 y 34 años, el `r pct("Edad", "35-54")`% entre 35 y 54, y el `r pct("Edad", "55 o más")`% 55 o más. Según el nivel socioeconómico (NSE), registrado en el perfil de cada panelista con las categorías de la Asociación de Investigadores de Mercado y Opinión Pública y agrupado aquí en tres niveles, el `r pct("NSE", "ABC1")`% pertenecía al grupo alto (ABC1), el `r pct("NSE", "C2-C3")`% al medio (C2-C3) y el `r pct("NSE", "D-E")`% al bajo (D-E). La encuesta la realizó Netquest, una empresa de encuestas en línea certificada según la norma ISO 20252:2019, entre el 18 y el 25 de julio de 2023. Netquest cuenta en Chile con un panel de cerca de 300.000 personas registradas para responder encuestas. Invitó por correo a 6.775 de ellas; 2.135 comenzaron la encuesta (31,5%) y 1.626 la completaron y pasaron sus controles de calidad, que excluyeron, por ejemplo, respuestas duplicadas, automatizadas o de personas que fallaron preguntas de atención. Para que la muestra se pareciera a la población en algunos rasgos básicos, se fijaron cuotas por sexo, edad, nivel socioeconómico y zona (Región Metropolitana y resto del país). Aun así, no es una muestra al azar: está formada por personas que responden encuestas en línea, por lo que sus resultados no pueden generalizarse a toda la población chilena. La base no tiene ponderadores. El proyecto fue aprobado por el Comité de Ética de la Universidad Católica del Maule, y cada participante firmó, al inscribirse en el panel, un consentimiento informado incluido en su perfil de usuario. Este estudio es un análisis secundario de datos anonimizados, levantados en el marco de los proyectos Fondecyt N.º 11200893 y N.º 1212677, con objetivos más amplios que los de este artículo.
+
+## Preguntas analizadas
+
+Se analizaron 46 preguntas sobre prácticas de consumo. Treinta y cuatro preguntaban con qué frecuencia la persona realiza prácticas como evitar dejar luces prendidas, comprar productos orgánicos, usar redes sociales para promover empresas éticas o participar en cooperativas, en una escala de 1 (*Nunca*) a 5 (*Siempre*). Las otras 12 preguntaban por actitudes hacia el reciclaje. Para conocer la relación con otras variables se usaron cuatro preguntas de la misma encuesta: el acuerdo con la frase "La forma en que uno consume algunos bienes tiene que ver con la postura política de uno", la posición política (de 1 = izquierda a 10 = derecha), el nivel educacional y el ingreso mensual del hogar.
+
+## Cómo se analizaron los datos
+
+El análisis siguió cinco pasos. Primero, la muestra se dividió al azar en dos mitades. En la primera se exploró qué prácticas tienden a ocurrir juntas, mediante un análisis factorial exploratorio, y se eliminaron las preguntas que no se agrupaban claramente con ninguna dimensión o que se agrupaban con varias. Segundo, en la otra mitad se puso a prueba esa estructura, mediante un análisis factorial confirmatorio, y se comparó con la alternativa de una sola dimensión. En esa misma mitad se eligió después la forma final de las escalas. Tercero, se verificó que las escalas midieran lo mismo en hombres y mujeres, en tres tramos de edad y en tres niveles socioeconómicos, condición necesaria para comparar a esos grupos (invarianza de medida). Cuarto, se compararon los grupos, corrigiendo los resultados por el número de comparaciones realizadas. Quinto, se examinó cómo se relaciona cada dimensión con la lectura política del consumo, la posición política, la educación y la situación económica del hogar.
+
+Como las respuestas son categorías ordenadas, todos los análisis usaron métodos para datos ordinales. Se realizaron en R `r version_r` con los paquetes `lavaan` [@rosseel_lavaan_2012], `semTools` [@jorgensen_semtools_2022] y `psych` [@revelle_psych_2024]. No se registró un plan de análisis antes de examinar los datos. Solo la comparación con un modelo de una sola dimensión se definió antes de mirar los resultados de la segunda mitad; la selección de las preguntas finales, su organización en dos escalas y los ajustes por edad se decidieron después. Por eso la estructura que se presenta es provisional: se eligió y se evaluó con los mismos datos, y debe confirmarse con una muestra independiente. El anexo registra cada decisión y el momento en que se tomó. Los criterios, los modelos alternativos, los análisis de sensibilidad y los resultados técnicos completos se describen en el anexo metodológico y el material suplementario, disponibles en https://github.com/x0czz/Validacion-consumo, y se incluyen también al final de este documento.
+
+# Resultados
+
+## Cuatro dimensiones, dos escalas
+
+Las prácticas de consumo socioambientales no forman una sola dimensión: un modelo que las trataba como expresión de una única disposición representó mal los datos (CFI = `r a2(uni$cfi.scaled)`; valores cercanos a 1 indican un buen ajuste). De las 46 preguntas, 17 formaron cuatro dimensiones (Figura 1 y Tabla 1):
+
+- **Compra sustentable** (4 preguntas): comprar productos orgánicos o reciclados, preferir productos que no dañan el medioambiente aunque sean más caros e informarse de su origen.
+- **Consumo político** (5 preguntas): acciones con una dimensión pública o colectiva, como intentar influir en el consumo de otros, promover empresas éticas en redes sociales, reclamar colectivamente ante el Sernac, participar en cooperativas o en movilizaciones.
+- **Ahorro doméstico** (5 preguntas): ahorrar agua y energía en el hogar.
+- **Planificación de compras** (3 preguntas): hacer un presupuesto y planificar las compras de alimentos y vestuario.
+
+Las cuatro dimensiones se organizan en dos escalas breves, una de consumo sustentable y político (9 preguntas) y otra de prácticas domésticas (8 preguntas), La escala de prácticas domésticas representó bien los datos. La de consumo sustentable y político lo hizo solo de forma aceptable, y según indicadores más exigentes su ajuste es insuficiente, por lo que debe revisarse en futuros estudios (detalles en el anexo). Las cuatro dimensiones también pueden estimarse en un mismo modelo si se admite que algunas preguntas se relacionen levemente con más de una dimensión. Su confiabilidad fue aceptable (ω entre `r a2(min(confiab$omega))` y `r a2(max(confiab$omega))`; valores sobre ,70 se consideran adecuados), aunque cada pregunta por separado refleja solo en parte su dimensión. Las 29 preguntas restantes no formaron dimensiones claras, entre ellas las de reciclaje, reparación de objetos, compra de ropa de segunda mano, compra en pequeños negocios y la única pregunta de boicot.
+
+::: {custom-style="Titulo tabla"}
+**Figura 1**
+
+*Escalas de Prácticas de Consumo Socioambientales: Dimensiones, Preguntas y Relaciones entre Dimensiones*
+:::
+
+```{r}
+#| label: figura-esquema
+#| out-width: 100%
+knitr::include_graphics(here("output", "figures", "esquema_escalas.png"))
+```
+
+*Nota.* Los óvalos son las dimensiones y los rectángulos, las preguntas. El número junto a cada flecha indica cuánto refleja la pregunta su dimensión (carga estandarizada, de 0 a 1). Las líneas curvas indican la correlación entre dimensiones: las continuas, dentro de cada escala; las discontinuas, entre escalas, estimadas con un modelo que permite relaciones pequeñas de cada pregunta con las demás dimensiones. ω = confiabilidad.
+
+::: {custom-style="Titulo tabla"}
+**Tabla 1**
+
+*Preguntas de las Escalas y Cálculo de los Puntajes*
+:::
+
+```{r}
+#| label: tabla-preguntas
+#| results: asis
+orden <- c("O2_11", "O2_12", "O3_4", "O3_7", "O3_2", "O3_3", "O3_5", "O3_8", "O3_9",
+           "O2_1", "O2_2", "O2_3", "O2_4", "O2_5", "O1_10", "O2_8", "O2_9")
+fac_item <- setNames(rev_par$lhs, rev_par$rhs)
+filas <- map_dfr(names(nombres_factor), function(fa) {
+  its <- orden[fac_item[orden] == fa]
+  bind_rows(
+    tibble(cod = "", txt = paste0("**", nombres_factor[fa], "** (", length(its), " preguntas; ω = ",
+                                 a2(confiab$omega[confiab$factor == fa]), ")")),
+    tibble(cod = str_replace(its, "_", "."), txt = str_trim(desc$enunciado[match(its, desc$item)])))
+})
+cat("| Código | Pregunta: ¿Qué tan seguido usted…? |\n",
+    "|:----------|:------------------------------------------------------------------------|\n",
+    paste0("| ", filas$cod, " | ", filas$txt, " |", collapse = "\n"), "\n", sep = "")
+```
+
+*Nota.* Respuestas de 1 (*Nunca*) a 5 (*Siempre*): 1 = *Nunca*, 2 = *Rara vez*, 3 = *A veces*, 4 = *La mayoría de las veces*, 5 = *Siempre*. Escala de consumo sustentable y político: compra sustentable y consumo político. Escala de prácticas domésticas: ahorro doméstico y planificación de compras. El puntaje de cada dimensión es el promedio de sus preguntas (de 1 a 5); no se recomienda sumar las cuatro dimensiones en un puntaje total. Los enunciados se reproducen tal como aparecen en la encuesta original. ω = confiabilidad.
+
+## Cómo se relacionan las dimensiones
+
+La compra sustentable y el consumo político están estrechamente relacionados (*r* = `r r_esem("compra_sust", "consumo_pol")`): quienes compran productos sustentables tienden también a realizar acciones de consumo político, aunque se trata de prácticas distinguibles. Lo mismo ocurre con el ahorro doméstico y la planificación de compras (*r* = `r r_esem("ahorro", "planificacion")`). La compra sustentable se relaciona además con las prácticas domésticas (*r* = `r r_esem("compra_sust", "ahorro")` con el ahorro y `r r_esem("compra_sust", "planificacion")` con la planificación). En cambio, el consumo político y el ahorro doméstico prácticamente no se relacionan (*r* = `r r_esem("consumo_pol", "ahorro")`): saber que una persona ahorra agua y energía en su casa no dice nada sobre si participa en acciones colectivas de consumo.
+
+## ¿Miden lo mismo en distintos grupos?
+
+Las escalas miden lo mismo en hombres y mujeres y en los tres niveles socioeconómicos, de modo que sus puntajes se pueden comparar entre esos grupos. Por edad, tres preguntas funcionan de forma algo distinta: a igual nivel de ahorro o de consumo político, las personas de 35 años o más declaran con menos frecuencia cortar el agua al lavarse los dientes, desenchufar aparatos y participar en marchas que las de 18 a 34 años. Las comparaciones por edad toman en cuenta esa diferencia.
+
+## Diferencias entre grupos sociales
+
+Después de corregir por el número de comparaciones, se sostuvieron tres diferencias (Figura 2). La compra sustentable fue menos frecuente en los niveles socioeconómicos medio y bajo que en el alto (`r s2(media("compra_sust", "NSE", "C2-C3"))` y `r s2(media("compra_sust", "NSE", "D-E"))` desviaciones estándar, una diferencia pequeña). El ahorro doméstico aumentó con la edad, de forma clara en el tramo de 55 años o más (`r s2(media("ahorro", "Edad", "55 o más"))` desviaciones estándar respecto del de 18 a 34), aunque el tamaño exacto de esa diferencia depende de qué preguntas se tomen como referencia. La compra sustentable también fue más frecuente en el tramo de 55 años o más.
+
+Otras diferencias que aparecían a primera vista no se sostuvieron: el menor consumo político en los niveles socioeconómicos medio y bajo, el mayor ahorro doméstico en el nivel bajo, que dependía de una sola pregunta, y la mayor planificación de compras de las mujeres. No hubo diferencias entre hombres y mujeres en compra sustentable ni en consumo político.
+
+::: {custom-style="Titulo tabla"}
+**Figura 2**
+
+*Diferencias entre Grupos en Cada Dimensión*
+:::
+
+```{r}
+#| label: figura-medias
+#| fig-width: 5.5
+#| fig-height: 4.5
+inv_medias %>%
+  left_join(inf_holm %>% select(modelo, variable, grupo, factor, p_holm),
+            by = c("modelo", "variable", "grupo", "factor")) %>%
+  mutate(factor = factor(nombres_factor[factor], levels = nombres_factor),
+         comparacion = paste(grupo, "vs.", referencia),
+         variable = factor(variable, levels = c("Sexo", "Edad", "NSE")),
+         significativo = if_else(p_holm < 0.05, "Diferencia confiable", "Diferencia no confiable")) %>%
+  ggplot(aes(media, comparacion, shape = significativo)) +
+  geom_vline(xintercept = 0, colour = "grey60") +
+  geom_pointrange(aes(xmin = ic_inf, xmax = ic_sup), size = 0.25) +
+  facet_grid(variable ~ factor, scales = "free_y", space = "free_y",
+             labeller = labeller(factor = label_wrap_gen(14))) +
+  scale_shape_manual(values = c("Diferencia confiable" = 16, "Diferencia no confiable" = 1)) +
+  scale_x_continuous(labels = function(x) sub("^-", "−", format(x, decimal.mark = ","))) +
+  labs(x = "Diferencia respecto del grupo de referencia (desviaciones estándar)", y = NULL, shape = NULL) +
+  theme_bw(base_size = 8, base_family = "serif") +
+  theme(legend.position = "top", panel.grid.minor = element_blank())
+```
+
+*Nota.* Cada punto indica cuánto más (a la derecha de 0) o menos (a la izquierda) realiza un grupo cada tipo de práctica respecto del grupo de referencia: hombres, 18 a 34 años o nivel socioeconómico alto (ABC1). Las líneas son intervalos de confianza del 95%. Los puntos rellenos indican diferencias que se sostienen al corregir por el número de comparaciones. NSE = nivel socioeconómico.
+
+## Relación con la política y con la situación económica
+
+Las relaciones con otras variables fueron pequeñas, pero coherentes con lo esperado (Tabla 2). El consumo político fue más frecuente entre quienes consideran que el consumo expresa una postura política y entre quienes se ubican más a la izquierda. El ahorro doméstico, en cambio, fue menos frecuente entre quienes ven el consumo como una postura política, y no se relacionó con la posición política, la educación ni el ingreso del hogar. Tampoco se relacionó con haberse endeudado para comprar alimentos ni con estar más endeudado que tres años antes. La compra sustentable se relacionó apenas con estas variables.
+
+::: {custom-style="Titulo tabla"}
+**Tabla 2**
+
+*Correlaciones de Cada Dimensión con Otras Variables*
+:::
+
+```{r}
+#| label: tabla-validez-divulgativa
+#| results: asis
+tibble(`Dimensión` = unname(nombres_factor),
+       `El consumo es una postura política` = map_chr(names(nombres_factor), ~ r_ext(.x, "politica_consumo")),
+       `Posición política (derecha)` = map_chr(names(nombres_factor), ~ r_ext(.x, "posicion_politica")),
+       `Nivel educacional` = map_chr(names(nombres_factor), ~ r_ext(.x, "educacion")),
+       `Ingreso del hogar` = map_chr(names(nombres_factor), r_eco)) %>%
+  tabla_md(c(22, 18, 16, 14, 14), c("l", "r", "r", "r", "r"))
+```
+
+*Nota.* Correlaciones entre cada dimensión y la variable. Valores cercanos a 0 indican ausencia de relación; ,10 se considera una relación pequeña y ,30, moderada. \* Relación estadísticamente significativa (*p* < ,05).
+
+# Discusión
+
+Las prácticas de consumo socioambientales en Chile no expresan una única disposición a "consumir responsablemente", como suponen los índices sumativos de tipo Akatu y algunas tradiciones de medición de la conducta ecológica [@akatu_pesquisa_2007; @kaiser_general_1998]. Forman al menos cuatro dimensiones distintas, y dos de ellas, el consumo político y el ahorro doméstico, prácticamente no se relacionan entre sí.
+
+La compra sustentable y el consumo político están muy relacionados, pero son distintos. Solo el consumo político se asocia con entender el consumo como una postura política y con una posición de izquierda, coherente con la literatura que distingue el consumo verde del político [@micheletti_political_2003; @stolle_politics_2005; @copeland_political_2022]. Hay que tener presente qué consumo político mide esta escala: sobre todo promoción, reclamo y acción colectiva, porque la única pregunta sobre boicot no se agrupó claramente con ninguna dimensión. Además, preguntas como participar en marchas o reclamar ante el Sernac pueden reflejar participación cívica en general, y no solo consumo político.
+
+Las bases sociales de estas prácticas son más acotadas de lo que sugerían estudios previos. La diferencia más clara es socioeconómica y corresponde a la compra sustentable, menos frecuente en los niveles medio y bajo, lo que es coherente con que dependa de la capacidad de pago [@ariztia_nuevo_2010]. El ahorro doméstico, en cambio, no se asoció con el nivel socioeconómico ni con el ingreso o el endeudamiento, de modo que estos datos no respaldan la idea de que sea principalmente una respuesta a la escasez [@silva_indicadores_2013]. Su rasgo más claro es que aumenta con la edad, lo que podría reflejar hábitos domésticos aprendidos más que una orientación ambiental. En ambos casos, prácticas que suelen leerse como responsabilidad individual pueden depender de la capacidad de pago o de costumbres heredadas, lo que es coherente con la crítica a la individualización del problema ambiental [@barros_consumo_2008; @marambio_consumo_2024].
+
+Estos resultados tienen una consecuencia práctica: sumar todas estas prácticas en un solo puntaje combina perfiles muy distintos. Una persona que ahorra mucho en su casa y otra que participa en cooperativas y movilizaciones pueden obtener el mismo total, aunque sus prácticas tengan poco en común. Por eso se recomienda usar las cuatro dimensiones por separado. Para uso descriptivo, el puntaje de cada dimensión puede calcularse como el promedio de sus preguntas (Tabla 1). Para comparar grupos de edad con precisión, conviene usar modelos que consideren las diferencias de funcionamiento de las preguntas descritas en el anexo. La dimensión de planificación de compras debe considerarse provisional, porque tiene pocas preguntas y su contenido ambiental es indirecto.
+
+El estudio tiene limitaciones. La principal es que la estructura se eligió y se evaluó con la misma encuesta, que además no fue diseñada para construir este instrumento: solo el rechazo de una dimensión única se planteó antes de ver los resultados, por lo que la estructura es provisional hasta su replicación independiente. Las escalas cubren un conjunto acotado de prácticas: el boicot, el reciclaje, la reparación de objetos y la compra de segunda mano quedaron fuera. La muestra proviene de un panel en línea y no es probabilística: aunque se usaron cuotas, subrepresenta a quienes no usan internet o no participan en paneles de encuestas, por lo que las diferencias describen la muestra y no necesariamente a la población chilena. La clasificación socioeconómica la asignó la consultora y no pudo verificarse con los datos disponibles. Por último, la encuesta registra prácticas declaradas, sin vincularlas con las condiciones de producción y de oferta que las hacen posibles.
+
+En conclusión, las prácticas de consumo socioambientales en Chile se organizan en cuatro dimensiones que conviene medir por separado. Las escalas propuestas, de nueve y ocho preguntas, ofrecen una forma breve de hacerlo, pero son una propuesta provisional que debe confirmarse en nuevos estudios.
+
+{{< pagebreak >}}
+
+# Contribución de los autores
+
+Alejandro Marambio-Tapia: Conceptualización, Investigación, Metodología, Análisis formal, Redacción – borrador original. Nicolás Outerbridge Ortega: Curación de datos, Análisis formal, Visualización, Redacción – borrador original, Redacción – revisión y edición.
+
+# Financiación
+
+Este trabajo fue financiado por la Agencia Nacional de Investigación y Desarrollo de Chile (ANID), proyectos Fondecyt N.º 11200893, "El consumo y las formas de lo político", y N.º 1212677. La fuente de financiación no ha participado en el diseño del estudio, la recogida de datos, el análisis o interpretación de estos, la redacción del manuscrito o en la decisión de publicarlo.
+
+# Conflicto de intereses
+
+Los investigadores declaran no tener conflictos de interés.
+
+# Disponibilidad de datos y materiales
+
+Los datos pertenecen a los proyectos Fondecyt N.º 11200893 y N.º 1212677 y no están disponibles públicamente. El anexo metodológico y el material suplementario (Tablas S1 a S17 y Figura S1) se incluyen al final de este documento. Esos documentos, las salidas técnicas completas de los modelos factoriales y de invarianza, el código de análisis en R y las matrices de correlaciones necesarias para reproducir los modelos están disponibles en https://github.com/x0czz/Validacion-consumo.
+
+# Declaración de uso de inteligencia artificial
+
+En la preparación de este trabajo se usó Claude (Anthropic; modelo Claude Opus 5.5, 2026) para pulir la redacción, limpiar y generar código de análisis en R y gestionar las referencias. Los autores revisaron y verificaron todo el código, los resultados y las referencias, y escribieron la versión final del texto, de cuyo contenido son responsables.
+
+# Referencias
+
+::: {#refs}
+:::
+
+{{< pagebreak >}}
+
+# Anexos
+
+Las páginas siguientes reproducen el anexo metodológico y el material suplementario (Tablas S1 a S17 y Figura S1), con los procedimientos estadísticos, los criterios de decisión y los resultados técnicos completos. Las salidas de R de cada modelo y el código de análisis están en https://github.com/x0czz/Validacion-consumo.
