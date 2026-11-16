@@ -25,15 +25,6 @@ Validacion-consumo/
  |  |- bib/
  |  |  |- Akatu.bib
  |  |  |- apa.csl
- |  |- data/
- |  |  |- baterias_msa_075_limpio.rds
- |  |  |- original/
- |  |  |  |- Encuesta Sociedad de Consumo 2023.sav
- |  |  |- proc/
- |  |  |  |- baterias_msa_075_limpio.rds
- |  |  |  |- lca_data.rds
- |  |  |  |- proc_casen22.rds
- |  |- data_procesada.rds
  |  |- images/
  |  |- original-code/
  |- libs/
