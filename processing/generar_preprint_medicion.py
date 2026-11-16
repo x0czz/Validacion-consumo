@@ -6,7 +6,7 @@
 # La versión divulgativa anterior quedó en preprint_medicion_divulgativo.qmd.
 import re
 REPO = 'https://github.com/x0czz/Validacion-consumo'
-ARCH = REPO + '/blob/main/'
+ARCH = 'https://x0czz.github.io/Validacion-consumo/'
 autores = '''**Alejandro Marambio-Tapia**^1^ (ORCID: https://orcid.org/0000-0002-8598-8817) y **Nicolás Outerbridge Ortega**^2^ (ORCID: https://orcid.org/0009-0009-1943-6182)
 
 ^1^ Escuela de Trabajo Social, Universidad de Chile, Santiago, Chile.

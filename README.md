@@ -1,6 +1,6 @@
 # Validación de escalas de prácticas de consumo socioambientales en Chile
 
-Repositorio de análisis de la **Encuesta Sociedad de Consumo 2023** (proyectos Fondecyt N.º 11200893 y N.º 1212677). Contiene el código,resultados y el material complementario de la publicación.
+Repositorio de análisis de la **Encuesta Sociedad de Consumo 2023** (proyectos Fondecyt N.º 11200893 y N.º 1212677). Contiene el código, resultados y el material complementario de la publicación.
 
 ## Publicación: escalas de prácticas de consumo socioambientales
 
@@ -8,10 +8,10 @@ Repositorio de análisis de la **Encuesta Sociedad de Consumo 2023** (proyectos 
 
 | Documento | Contenido |
 |---|---|
-| [Preprint (PDF)](preprints/Marambio_Outerbridge_2026_medicion_preprint.pdf) | Artículo completo. |
-| [Anexo metodológico (PDF)](anexo_metodologico_medicion.pdf) · [Word](anexos/anexo_metodologico_medicion.docx) | Procedimientos estadísticos, criterios de decisión y resultados técnicos completos: índices de ajuste robustos, modelos bifactor, determinación de los puntajes factoriales, funcionamiento diferencial por ítem y análisis de sensibilidad (Tablas A1 a A4 y Figura A1). |
-| [Material suplementario (PDF)](suplemento_medicion.pdf) · [Word](anexos/material_suplementario_medicion.docx) | Tablas S1 a S17 y Figura S1, citadas en el artículo: descriptivos de los ítems, análisis exploratorio y depuración, parámetros, invarianza, funcionamiento diferencial, ESEM, análisis de sensibilidad (incluida la comparación AFC–ESEM con covariables, Tabla S17) y registro de decisiones del análisis (Tabla S16). |
-| [Esquema de las escalas](anexos/esquema_escalas.png) | Escalas finales y modelos de medida (Figura 1 del artículo). |
+| [Preprint (PDF)](https://x0czz.github.io/Validacion-consumo/preprints/Marambio_Outerbridge_2026_medicion_preprint.pdf) | Artículo completo. |
+| [Anexo metodológico (PDF)](https://x0czz.github.io/Validacion-consumo/anexo_metodologico_medicion.pdf) · [Word](https://x0czz.github.io/Validacion-consumo/anexos/anexo_metodologico_medicion.docx) | Procedimientos estadísticos, criterios de decisión y resultados técnicos completos: índices de ajuste robustos, modelos bifactor, determinación de los puntajes factoriales, funcionamiento diferencial por ítem y análisis de sensibilidad (Tablas A1 a A4 y Figura A1). |
+| [Material suplementario (PDF)](https://x0czz.github.io/Validacion-consumo/suplemento_medicion.pdf) · [Word](https://x0czz.github.io/Validacion-consumo/anexos/material_suplementario_medicion.docx) | Tablas S1 a S17 y Figura S1, citadas en el artículo: descriptivos de los ítems, análisis exploratorio y depuración, parámetros, invarianza, funcionamiento diferencial, ESEM, análisis de sensibilidad (incluida la comparación AFC–ESEM con covariables, Tabla S17) y registro de decisiones del análisis (Tabla S16). |
+| [Esquema de las escalas](https://x0czz.github.io/Validacion-consumo/anexos/esquema_escalas.png) | Escalas finales y modelos de medida (Figura 1 del artículo). |
 
 La carpeta [`anexos/`](anexos/) reúne copias del anexo, el material suplementario y el esquema, en PDF y Word.
 
